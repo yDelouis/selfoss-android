@@ -3,12 +3,23 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.4'
+        classpath 'com.android.tools.build:gradle:0.4.2'
     }
 }
 apply plugin: 'android'
 
+configurations {
+    apt
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
 dependencies {
+    compile 'org.androidannotations:androidannotations-api:3.0-SNAPSHOT'
+    apt 'org.androidannotations:androidannotations:3.0-SNAPSHOT'
 }
 
 android {
@@ -18,5 +29,18 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 17
+    }
+
+    applicationVariants.each { variant ->
+        aptOutput = file("${project.buildDir}/source/apt/${variant.dirName}")
+
+        variant.javaCompile.doFirst {
+            aptOutput.mkdirs()
+            variant.javaCompile.options.compilerArgs += [
+                    '-processorpath', configurations.apt.getAsPath(),
+                    '-AandroidManifestFile=' + variant.processResources.manifestFile,
+                    '-s', aptOutput
+            ]
+        }
     }
 }
