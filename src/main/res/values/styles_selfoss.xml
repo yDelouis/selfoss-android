@@ -29,9 +29,9 @@
         <item name="android:actionModeBackground">@drawable/cab_background_top_selfoss</item>
         <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_selfoss</item>
         <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Selfoss</item>
-        
-                <!-- Light.DarkActionBar specific -->
         <item name="android:actionBarWidgetTheme">@style/Theme.Selfoss.Widget</item>
+
+	    <item name="android:windowBackground">@drawable/background</item>
 
     </style>
 
