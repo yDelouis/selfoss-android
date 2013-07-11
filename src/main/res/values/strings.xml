@@ -2,5 +2,12 @@
 <resources>
 
     <string name="app_name">Selfoss</string>
+	<string name="selfossInstanceUrl">Selfoss instance URL</string>
+	<string name="requireAuthentication">Require authentication</string>
+	<string name="username">Username</string>
+	<string name="password">Password</string>
+	<string name="validate">Validate</string>
+	<string name="checking">Checking…</string>
+	<string name="success">Sucess !</string>
 
 </resources>

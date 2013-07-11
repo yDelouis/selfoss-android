@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:padding="16dp"
+	android:gravity="center_horizontal"
+	android:orientation="vertical">
+
+	<ImageView
+		android:layout_width="200dp"
+	    android:layout_height="0dp"
+	    android:layout_weight="1"
+	    android:src="@drawable/img_selfoss" />
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:layout_marginTop="16dp"
+		android:gravity="center_vertical" >
+
+		<ImageView
+			android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_marginRight="8dp"
+		    android:src="@drawable/ic_cloud" />
+
+		<EditText
+			android:id="@+id/url"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="@string/selfossInstanceUrl"
+			android:inputType="textUri"/>
+
+	</LinearLayout>
+
+	<CheckBox
+		android:id="@+id/requireAuth"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="16dp"
+		android:layout_marginLeft="8dp"
+		android:paddingLeft="8dp"
+	    android:text="@string/requireAuthentication"
+		android:textAppearance="@android:style/TextAppearance.Holo.Medium"/>
+
+	<LinearLayout
+		android:id="@+id/usernamePasswordContainer"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:visibility="invisible"
+	    android:orientation="vertical">
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:layout_marginTop="8dp"
+			android:gravity="center_vertical" >
+
+			<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginRight="8dp"
+				android:src="@drawable/ic_user" />
+
+			<EditText
+				android:id="@+id/username"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="@string/username"
+				android:inputType="text"/>
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:layout_marginTop="8dp"
+			android:gravity="center_vertical" >
+
+			<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginRight="8dp"
+				android:src="@drawable/ic_password" />
+
+			<EditText
+				android:id="@+id/password"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="@string/password"
+				android:inputType="textPassword"/>
+
+		</LinearLayout>
+
+    </LinearLayout>
+
+	<LinearLayout
+		android:id="@+id/validate"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_margin="16dp"
+	    android:paddingLeft="32dp"
+	    android:paddingRight="32dp"
+	    android:paddingTop="16dp"
+	    android:paddingBottom="16dp"
+	    android:gravity="center_vertical"
+		android:background="@drawable/bg_button">
+
+		<ProgressBar
+			android:id="@+id/progress"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:visibility="gone"
+		    android:indeterminate="true" />
+
+		<TextView
+			android:id="@+id/validateText"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:textAppearance="@android:style/TextAppearance.Holo.Large"
+		    android:textColor="@android:color/white"
+			android:text="@string/validate" />
+
+	</LinearLayout>
+
+</LinearLayout>

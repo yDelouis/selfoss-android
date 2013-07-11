@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.4.2'
+        classpath 'com.android.tools.build:gradle:0.5.+'
     }
 }
 apply plugin: 'android'
@@ -17,9 +17,14 @@ repositories {
     mavenCentral()
 }
 
+ext.androidAnnotationsVersion = '3.0-SNAPSHOT'
+
 dependencies {
-    compile 'org.androidannotations:androidannotations-api:3.0-SNAPSHOT'
-    apt 'org.androidannotations:androidannotations:3.0-SNAPSHOT'
+    compile "com.android.support:support-v4:13.0.0"
+    compile "org.springframework.android:spring-android-rest-template:1.0.1.RELEASE"
+    compile "com.fasterxml.jackson.core:jackson-databind:2.2.2"
+	compile "org.androidannotations:androidannotations-api:${androidAnnotationsVersion}"
+    apt "org.androidannotations:androidannotations:${androidAnnotationsVersion}"
 }
 
 android {
@@ -32,9 +37,8 @@ android {
     }
 
     applicationVariants.each { variant ->
-        aptOutput = file("${project.buildDir}/source/apt/${variant.dirName}")
-
         variant.javaCompile.doFirst {
+            aptOutput = file("${project.buildDir}/source/apt/${variant.dirName}")
             aptOutput.mkdirs()
             variant.javaCompile.options.compilerArgs += [
                     '-processorpath', configurations.apt.getAsPath(),
