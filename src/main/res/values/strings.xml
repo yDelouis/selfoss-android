@@ -14,5 +14,6 @@
 	<string name="newest">Newest</string>
 	<string name="favorite">Favorite</string>
 	<string name="unread">Unread</string>
+	<string name="tags">Tags</string>
 
 </resources>

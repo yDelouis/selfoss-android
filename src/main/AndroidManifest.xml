@@ -25,7 +25,8 @@
         </activity>
 
 	    <activity
-		    android:name=".activity.SelfossConfigActivity_" />
+		    android:name=".activity.SelfossConfigActivity_"
+		    android:windowSoftInputMode="adjustPan" />
 
     </application>
 

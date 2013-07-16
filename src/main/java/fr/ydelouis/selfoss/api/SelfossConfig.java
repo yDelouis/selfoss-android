@@ -6,6 +6,7 @@ import org.androidannotations.annotations.sharedpreferences.SharedPref;
 public interface SelfossConfig {
 
 	String url();
+	boolean trustAllCertificates();
 	boolean requireAuth();
 	String username();
 	String password();

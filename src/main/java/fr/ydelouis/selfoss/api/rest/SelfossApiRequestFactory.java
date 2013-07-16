@@ -25,7 +25,7 @@ public class SelfossApiRequestFactory extends SimpleClientHttpRequestFactory imp
 	@Override
 	protected void prepareConnection(HttpURLConnection connection, String httpMethod) throws IOException {
 		if (connection instanceof HttpsURLConnection) {
-			((HttpsURLConnection) connection).setHostnameVerifier(this);
+	//		((HttpsURLConnection) connection).setHostnameVerifier(this);
 		}
 		super.prepareConnection(connection, httpMethod);
 	}

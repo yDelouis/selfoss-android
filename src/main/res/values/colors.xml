@@ -5,6 +5,8 @@
     <color name="pressed_selfoss">#CC3D6D69</color>
 	<color name="green_success">#00bf00</color>
 	<color name="grey_menu">#191718</color>
-	<color name="menu_divider">#CCCCCC</color>
+	<color name="menu_divider">#999999</color>
 	<color name="selected_selfoss_menu">#272325</color>
+	<color name="menu_text_primary">#CCD7D7</color>
+	<color name="menu_text_secondary">#494949</color>
 </resources>

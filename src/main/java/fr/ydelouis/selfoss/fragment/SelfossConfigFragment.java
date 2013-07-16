@@ -2,6 +2,7 @@ package fr.ydelouis.selfoss.fragment;
 
 import android.app.Fragment;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -13,10 +14,12 @@ import org.androidannotations.annotations.CheckedChange;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.EditorAction;
+import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
 import org.androidannotations.annotations.sharedpreferences.Pref;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 
 import fr.ydelouis.selfoss.R;
@@ -29,6 +32,7 @@ public class SelfossConfigFragment extends Fragment {
 
 	@Pref protected SelfossConfig_ selfossConfig;
 	@RestService protected LoginRest loginRest;
+	@SystemService protected InputMethodManager inputMethodManager;
 	private ValidationListener validatIonListener;
 
     @ViewById protected EditText url;
@@ -60,6 +64,7 @@ public class SelfossConfigFragment extends Fragment {
 	@Click(R.id.validate)
 	@EditorAction(R.id.password)
 	protected void onValidate() {
+		validateUrl();
 		hydrate();
 		showProgress();
 		tryLogin();
@@ -68,16 +73,25 @@ public class SelfossConfigFragment extends Fragment {
 	private void hydrate() {
 		selfossConfig.edit()
 				.url().put(url.getText().toString())
+				.trustAllCertificates().put(false)
 				.requireAuth().put(requireAuth.isChecked())
 				.username().put(username.getText().toString())
 				.password().put(password.getText().toString())
 				.apply();
 	}
 
+	private void validateUrl() {
+		String validatedUrl = url.getText().toString();
+		validatedUrl = validatedUrl.replace("http://", "");
+		validatedUrl = validatedUrl.replace("https://", "");
+		url.setText(validatedUrl);
+	}
+
 	protected void showProgress() {
 		progress.setVisibility(View.VISIBLE);
 		validateText.setText(R.string.checking);
 		validate.setEnabled(false);
+		inputMethodManager.hideSoftInputFromWindow(url.getWindowToken(), 0);
 	}
 
 	@Background
@@ -89,6 +103,8 @@ public class SelfossConfigFragment extends Fragment {
 			} else {
 				showUsernamePasswordError();
 			}
+		} catch (ResourceAccessException e) {
+			showCertificateError();
 		} catch (RestClientException e) {
 			showUrlError();
 		}
@@ -120,6 +136,12 @@ public class SelfossConfigFragment extends Fragment {
 		hideProgress();
 		requireAuth.setChecked(true);
 		password.setError(getString(R.string.error_usernamePassword));
+	}
+
+	@UiThread
+	protected void showCertificateError() {
+		hideProgress();
+
 	}
 
 	public interface ValidationListener {

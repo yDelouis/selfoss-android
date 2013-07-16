@@ -1,46 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:paddingRight="8dp"
-	android:orientation="vertical"
 	android:background="@drawable/bg_menu">
 
 	<LinearLayout
-		android:id="@+id/newest"
-		style="@style/MenuTypeContainer">
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
 
 		<TextView
-			style="@style/MenuTypeText"
-			android:text="@string/newest"/>
+			android:id="@+id/url"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:paddingTop="8dp"
+			android:paddingBottom="8dp"
+			android:paddingLeft="16dp"
+			android:paddingRight="32dp"
+			android:drawableLeft="@drawable/ic_cloud"
+			android:drawablePadding="8dp"
+			android:textColor="@color/menu_text_primary"
+			android:textSize="22sp"
+			android:background="@drawable/clickable_background_selfoss"/>
 
-    </LinearLayout>
+		<View
+			style="@style/MenuSectionDivider"/>
 
-	<View style="@style/MenuDivider"/>
+		<LinearLayout
+			android:id="@+id/newest"
+			style="@style/MenuTypeContainer">
 
-	<LinearLayout
-		android:id="@+id/unread"
-		style="@style/MenuTypeContainer">
+			<TextView
+				style="@style/MenuTypeText"
+				android:text="@string/newest"/>
+
+		</LinearLayout>
+
+		<View style="@style/MenuDivider"/>
+
+		<LinearLayout
+			android:id="@+id/unread"
+			style="@style/MenuTypeContainer">
+
+			<TextView
+				style="@style/MenuTypeText"
+				android:text="@string/unread"/>
+
+		</LinearLayout>
+
+		<View style="@style/MenuDivider"/>
+
+		<LinearLayout
+			android:id="@+id/favorite"
+			style="@style/MenuTypeContainer">
+
+			<TextView
+				style="@style/MenuTypeText"
+				android:text="@string/favorite"/>
+
+		</LinearLayout>
 
 		<TextView
-			style="@style/MenuTypeText"
-			android:text="@string/unread" />
+			style="@style/MenuSectionText"
+			android:text="@string/tags"/>
+
+		<View style="@style/MenuSectionDivider"/>
 
 	</LinearLayout>
 
-	<View style="@style/MenuDivider"/>
-
-	<LinearLayout
-		android:id="@+id/favorite"
-		style="@style/MenuTypeContainer">
-
-		<TextView
-			style="@style/MenuTypeText"
-			android:text="@string/favorite" />
-
-	</LinearLayout>
-
-	<View style="@style/MenuDivider"/>
-
-</LinearLayout>
+</ScrollView>

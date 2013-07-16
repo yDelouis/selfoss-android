@@ -3,7 +3,7 @@
 
 	<style name="MenuDivider">
 		<item name="android:layout_width">match_parent</item>
-		<item name="android:layout_height">1dp</item>
+		<item name="android:layout_height">0.5dp</item>
 		<item name="android:background">@color/menu_divider</item>
 	</style>
 
@@ -20,7 +20,25 @@
 		<item name="android:layout_width">0dp</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:layout_weight">1</item>
-		<item name="android:textAppearance">@android:style/TextAppearance.Holo.Large.Inverse</item>
-		<item name="android:textSize">26sp</item>
+		<item name="android:textColor">@color/menu_text_primary</item>
+		<item name="android:textSize">20sp</item>
 	</style>
+
+	<style name="MenuSectionText">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_marginLeft">32dp</item>
+		<item name="android:layout_marginTop">12dp</item>
+		<item name="android:layout_marginBottom">8dp</item>
+		<item name="android:textColor">@color/menu_text_secondary</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:textSize">24sp</item>
+	</style>
+
+	<style name="MenuSectionDivider">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">3dp</item>
+		<item name="android:background">@color/menu_divider</item>
+	</style>
+
 </resources>

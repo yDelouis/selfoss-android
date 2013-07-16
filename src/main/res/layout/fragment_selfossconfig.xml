@@ -105,8 +105,8 @@
 	    android:layout_margin="16dp"
 	    android:paddingLeft="32dp"
 	    android:paddingRight="32dp"
-	    android:paddingTop="16dp"
-	    android:paddingBottom="16dp"
+	    android:paddingTop="8dp"
+	    android:paddingBottom="8dp"
 	    android:gravity="center_vertical"
 		android:background="@drawable/bg_button">
 
@@ -121,6 +121,8 @@
 			android:id="@+id/validateText"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
+		    android:layout_marginTop="16dp"
+		    android:layout_marginBottom="16dp"
 		    android:textAppearance="@android:style/TextAppearance.Holo.Large"
 		    android:textColor="@android:color/white"
 			android:text="@string/validate" />
