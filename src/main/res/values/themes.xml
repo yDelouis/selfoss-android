@@ -2,7 +2,7 @@
 <resources>
 
 	<style name="Theme.Selfoss" parent="@android:style/Theme.Holo.Light.DarkActionBar">
-		<item name="android:actionBarItemBackground">@drawable/selectable_background_selfoss</item>
+		<item name="android:actionBarItemBackground">@drawable/clickable_background_selfoss</item>
 		<item name="android:popupMenuStyle">@style/PopupMenu.Selfoss</item>
 		<item name="android:dropDownListViewStyle">@style/DropDownListView.Selfoss</item>
 		<item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Selfoss</item>
@@ -49,7 +49,7 @@
 	</style>
 
 	<style name="DropDownListView.Selfoss" parent="@android:style/Widget.Holo.ListView.DropDown">
-		<item name="android:listSelector">@drawable/selectable_background_selfoss</item>
+		<item name="android:listSelector">@drawable/clickable_background_selfoss</item>
 	</style>
 
 	<style name="ActionBarTabStyle.Selfoss" parent="@android:style/Widget.Holo.ActionBar.TabView">
@@ -59,7 +59,7 @@
 	<style name="DropDownNav.Selfoss" parent="@android:style/Widget.Holo.Spinner">
 		<item name="android:background">@drawable/spinner_background_ab_selfoss</item>
 		<item name="android:popupBackground">@drawable/menu_dropdown_panel_selfoss</item>
-		<item name="android:dropDownSelector">@drawable/selectable_background_selfoss</item>
+		<item name="android:dropDownSelector">@drawable/clickable_background_selfoss</item>
 	</style>
 
 	<style name="ProgressBar.Selfoss" parent="@android:style/Widget.Holo.ProgressBar.Horizontal">

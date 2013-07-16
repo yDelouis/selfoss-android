@@ -3,6 +3,8 @@ package fr.ydelouis.selfoss.api.rest;
 import android.net.Uri;
 import android.util.Log;
 
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
@@ -16,10 +18,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-import fr.ydelouis.selfoss.SelfossApplication;
 import fr.ydelouis.selfoss.api.SelfossConfig_;
 import fr.ydelouis.selfoss.util.Streams;
 
+@EBean
 public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 
 	private static final String TAG = "Selfoss API";
@@ -29,11 +31,7 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 	private static boolean LOG_FULL_REQUEST = true;
 	private static boolean LOG_RESPONSE = true;
 
-	private SelfossConfig_ selfossConfig;
-
-	public SelfossApiInterceptor() {
-		selfossConfig = SelfossApplication.selfossConfig;
-	}
+	@Pref protected SelfossConfig_ selfossConfig;
 
 	public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
 		HttpRequest apiRequest = new ApiHttpRequest(request);

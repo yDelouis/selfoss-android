@@ -3,6 +3,44 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:orientation="vertical">
+	android:paddingRight="8dp"
+	android:orientation="vertical"
+	android:background="@drawable/bg_menu">
+
+	<LinearLayout
+		android:id="@+id/newest"
+		style="@style/MenuTypeContainer">
+
+		<TextView
+			style="@style/MenuTypeText"
+			android:text="@string/newest"/>
+
+    </LinearLayout>
+
+	<View style="@style/MenuDivider"/>
+
+	<LinearLayout
+		android:id="@+id/unread"
+		style="@style/MenuTypeContainer">
+
+		<TextView
+			style="@style/MenuTypeText"
+			android:text="@string/unread" />
+
+	</LinearLayout>
+
+	<View style="@style/MenuDivider"/>
+
+	<LinearLayout
+		android:id="@+id/favorite"
+		style="@style/MenuTypeContainer">
+
+		<TextView
+			style="@style/MenuTypeText"
+			android:text="@string/favorite" />
+
+	</LinearLayout>
+
+	<View style="@style/MenuDivider"/>
 
 </LinearLayout>

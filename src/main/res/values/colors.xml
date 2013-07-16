@@ -4,4 +4,7 @@
 	<color name="button_pressed">#437884</color>
     <color name="pressed_selfoss">#CC3D6D69</color>
 	<color name="green_success">#00bf00</color>
+	<color name="grey_menu">#191718</color>
+	<color name="menu_divider">#CCCCCC</color>
+	<color name="selected_selfoss_menu">#272325</color>
 </resources>
