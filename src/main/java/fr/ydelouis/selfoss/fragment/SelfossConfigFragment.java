@@ -12,6 +12,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.CheckedChange;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EditorAction;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
@@ -57,6 +58,7 @@ public class SelfossConfigFragment extends Fragment {
     }
 
 	@Click(R.id.validate)
+	@EditorAction(R.id.password)
 	protected void onValidate() {
 		hydrate();
 		showProgress();
@@ -92,6 +94,12 @@ public class SelfossConfigFragment extends Fragment {
 		}
 	}
 
+	private void hideProgress() {
+		progress.setVisibility(View.GONE);
+		validate.setEnabled(true);
+		validateText.setText(R.string.validate);
+	}
+
 	@UiThread
 	protected void showSuccessAndQuit() {
 		progress.setVisibility(View.GONE);
@@ -102,13 +110,16 @@ public class SelfossConfigFragment extends Fragment {
 	}
 
 	@UiThread
-	protected void showUsernamePasswordError() {
-
+	protected void showUrlError() {
+		hideProgress();
+		url.setError(getString(R.string.error_url));
 	}
 
 	@UiThread
-	protected void showUrlError() {
-
+	protected void showUsernamePasswordError() {
+		hideProgress();
+		requireAuth.setChecked(true);
+		password.setError(getString(R.string.error_usernamePassword));
 	}
 
 	public interface ValidationListener {

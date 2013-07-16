@@ -6,7 +6,9 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 
 import fr.ydelouis.selfoss.api.entity.Success;
 
-@Rest(converters = { MappingJackson2HttpMessageConverter.class }, interceptors = { SelfossApiInterceptor.class })
+@Rest(converters = { MappingJackson2HttpMessageConverter.class },
+		interceptors = { SelfossApiInterceptor.class },
+		requestFactory = SelfossApiRequestFactory.class)
 public interface LoginRest {
 
 	@Get("/login")

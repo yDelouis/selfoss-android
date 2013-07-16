@@ -27,7 +27,7 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 	private static final String KEY_PASSWORD = "password";
 	private static boolean LOG_REQUEST = true;
 	private static boolean LOG_FULL_REQUEST = true;
-	private static boolean LOG_RESPONSE = false;
+	private static boolean LOG_RESPONSE = true;
 
 	private SelfossConfig_ selfossConfig;
 
@@ -91,7 +91,7 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 		}
 
 		private String getScheme() {
-			return selfossConfig.requireAuth().get() ? "http" : "http";
+			return selfossConfig.requireAuth().get() ? "https" : "http";
 		}
 
 		private String getAuthority() {
@@ -107,6 +107,7 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 		public ApiHttpResponse(ClientHttpResponse response) {
 			try {
 				this.response = response;
+				this.response.getHeaders().set("Content-Type", "application/json");
 				byteResponse = Streams.byteArrayOf(response.getBody());
 			} catch (IOException e) {}
 

@@ -9,5 +9,7 @@
 	<string name="validate">Validate</string>
 	<string name="checking">Checking…</string>
 	<string name="success">Sucess !</string>
+	<string name="error_url">Unable to reach the server.</string>
+	<string name="error_usernamePassword">Authentication failed</string>
 
 </resources>
