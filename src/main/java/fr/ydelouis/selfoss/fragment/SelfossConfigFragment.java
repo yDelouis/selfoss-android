@@ -1,6 +1,8 @@
 package fr.ydelouis.selfoss.fragment;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
@@ -19,21 +21,24 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
 import org.androidannotations.annotations.sharedpreferences.Pref;
-import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 
+import java.io.IOException;
+
 import fr.ydelouis.selfoss.R;
-import fr.ydelouis.selfoss.api.SelfossConfig_;
-import fr.ydelouis.selfoss.api.entity.Success;
-import fr.ydelouis.selfoss.api.rest.LoginRest;
+import fr.ydelouis.selfoss.entity.Success;
+import fr.ydelouis.selfoss.rest.LoginRest;
+import fr.ydelouis.selfoss.rest.SelfossConfig_;
 
 @EFragment(R.layout.fragment_selfossconfig)
 public class SelfossConfigFragment extends Fragment {
 
+	private static final long TIME_HIDE_ERROR = 2 * 1000;
+
 	@Pref protected SelfossConfig_ selfossConfig;
 	@RestService protected LoginRest loginRest;
 	@SystemService protected InputMethodManager inputMethodManager;
-	private ValidationListener validatIonListener;
+	private ValidationListener validationListener;
 
     @ViewById protected EditText url;
     @ViewById protected CheckBox requireAuth;
@@ -44,8 +49,8 @@ public class SelfossConfigFragment extends Fragment {
 	@ViewById protected View progress;
 	@ViewById protected TextView validateText;
 
-	public void setValidatIonListener(ValidationListener listener) {
-		this.validatIonListener = listener;
+	public void setValidationListener(ValidationListener listener) {
+		this.validationListener = listener;
 	}
 
 	@AfterViews
@@ -98,14 +103,26 @@ public class SelfossConfigFragment extends Fragment {
 	protected void tryLogin() {
 		try {
 			Success success = loginRest.login();
-			if (success.isSuccess()) {
-				showSuccessAndQuit();
-			} else {
-				showUsernamePasswordError();
-			}
-		} catch (ResourceAccessException e) {
-			showCertificateError();
+			handleSuccess(success);
 		} catch (RestClientException e) {
+			handleException(e);
+		}
+	}
+
+	private void handleSuccess(Success success) {
+		if (success.isSuccess()) {
+			showSuccessAndQuit();
+		} else {
+			showUsernamePasswordError();
+		}
+	}
+
+	private void handleException(RestClientException e) {
+		if (e.getCause() instanceof IOException
+			&& e.getMessage().contains("Hostname")
+			&& e.getMessage().contains("was not verified")) {
+			showCertificateError();
+		} else {
 			showUrlError();
 		}
 	}
@@ -121,27 +138,57 @@ public class SelfossConfigFragment extends Fragment {
 		progress.setVisibility(View.GONE);
 		validate.setBackgroundResource(R.drawable.bg_button_success);
 		validateText.setText(R.string.success);
-		if (validatIonListener != null)
-			validatIonListener.onValidationSucceed();
+		if (validationListener != null)
+			validationListener.onValidationSucceed();
 	}
 
 	@UiThread
 	protected void showUrlError() {
-		hideProgress();
+		showError();
 		url.setError(getString(R.string.error_url));
 	}
 
 	@UiThread
 	protected void showUsernamePasswordError() {
-		hideProgress();
+		showError();
 		requireAuth.setChecked(true);
 		password.setError(getString(R.string.error_usernamePassword));
 	}
 
 	@UiThread
 	protected void showCertificateError() {
-		hideProgress();
+		showError();
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setTitle(R.string.certificate_error);
+		builder.setMessage(getString(R.string.certificate_error_message, selfossConfig.url().get()));
+		builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				trustAllCertificates();
+			}
+		});
+		builder.setNegativeButton(android.R.string.no, null);
+		builder.show();
+	}
 
+	private void showError() {
+		hideProgress();
+		validate.setBackgroundResource(R.drawable.bg_button_error);
+		validateText.setText(R.string.error);
+		scheduleHideError();
+	}
+
+	@UiThread(delay = TIME_HIDE_ERROR)
+	protected void scheduleHideError() {
+		validate.setBackgroundResource(R.drawable.bg_button_default);
+		validateText.setText(R.string.validate);
+	}
+
+	private void trustAllCertificates() {
+		selfossConfig.trustAllCertificates().put(true);
+		validate.setBackgroundResource(R.drawable.bg_button_default);
+		showProgress();
+		tryLogin();
 	}
 
 	public interface ValidationListener {

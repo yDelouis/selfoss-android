@@ -13,7 +13,7 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import fr.ydelouis.selfoss.R;
-import fr.ydelouis.selfoss.api.SelfossConfig_;
+import fr.ydelouis.selfoss.rest.SelfossConfig_;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends Activity {

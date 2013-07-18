@@ -1,4 +1,4 @@
-package fr.ydelouis.selfoss.api.rest;
+package fr.ydelouis.selfoss.rest;
 
 import android.net.Uri;
 import android.util.Log;
@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-import fr.ydelouis.selfoss.api.SelfossConfig_;
 import fr.ydelouis.selfoss.util.Streams;
 
 @EBean

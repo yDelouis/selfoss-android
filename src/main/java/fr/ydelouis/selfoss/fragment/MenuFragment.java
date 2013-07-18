@@ -11,7 +11,7 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.activity.SelfossConfigActivity_;
-import fr.ydelouis.selfoss.api.SelfossConfig_;
+import fr.ydelouis.selfoss.rest.SelfossConfig_;
 
 @EFragment(R.layout.fragment_menu)
 public class MenuFragment extends Fragment {

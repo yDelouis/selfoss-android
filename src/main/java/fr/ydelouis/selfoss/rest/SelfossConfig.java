@@ -1,4 +1,4 @@
-package fr.ydelouis.selfoss.api;
+package fr.ydelouis.selfoss.rest;
 
 import org.androidannotations.annotations.sharedpreferences.SharedPref;
 

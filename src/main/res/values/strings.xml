@@ -15,5 +15,10 @@
 	<string name="favorite">Favorite</string>
 	<string name="unread">Unread</string>
 	<string name="tags">Tags</string>
+	<string name="error">Error !</string>
+	<string name="certificate_error">Certificate error !</string>
+	<string name="certificate_error_message">Certificate of %s can\'t be verified.\nTrust it anyway
+		?
+	</string>
 
 </resources>

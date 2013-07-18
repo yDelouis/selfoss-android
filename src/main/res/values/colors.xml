@@ -9,4 +9,5 @@
 	<color name="selected_selfoss_menu">#272325</color>
 	<color name="menu_text_primary">#CCD7D7</color>
 	<color name="menu_text_secondary">#494949</color>
+	<color name="red_error">#FF0000</color>
 </resources>

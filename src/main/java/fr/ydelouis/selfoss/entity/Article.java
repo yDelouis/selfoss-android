@@ -1,4 +1,4 @@
-package fr.ydelouis.selfoss.api.entity;
+package fr.ydelouis.selfoss.entity;
 
 public class Article {
 

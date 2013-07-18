@@ -28,7 +28,7 @@
 		<item name="android:layout_width">match_parent</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:layout_marginLeft">32dp</item>
-		<item name="android:layout_marginTop">12dp</item>
+		<item name="android:layout_marginTop">8dp</item>
 		<item name="android:layout_marginBottom">8dp</item>
 		<item name="android:textColor">@color/menu_text_secondary</item>
 		<item name="android:textStyle">bold</item>

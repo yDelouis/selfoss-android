@@ -1,4 +1,4 @@
-package fr.ydelouis.selfoss.api.rest;
+package fr.ydelouis.selfoss.rest;
 
 import org.androidannotations.annotations.rest.Rest;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
