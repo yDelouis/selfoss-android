@@ -27,7 +27,7 @@ import java.io.IOException;
 
 import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.entity.Success;
-import fr.ydelouis.selfoss.rest.LoginRest;
+import fr.ydelouis.selfoss.rest.SelfossRest;
 import fr.ydelouis.selfoss.rest.SelfossConfig_;
 
 @EFragment(R.layout.fragment_selfossconfig)
@@ -36,7 +36,7 @@ public class SelfossConfigFragment extends Fragment {
 	private static final long TIME_HIDE_ERROR = 2 * 1000;
 
 	@Pref protected SelfossConfig_ selfossConfig;
-	@RestService protected LoginRest loginRest;
+	@RestService protected SelfossRest selfossRest;
 	@SystemService protected InputMethodManager inputMethodManager;
 	private ValidationListener validationListener;
 
@@ -102,7 +102,7 @@ public class SelfossConfigFragment extends Fragment {
 	@Background
 	protected void tryLogin() {
 		try {
-			Success success = loginRest.login();
+			Success success = selfossRest.login();
 			handleSuccess(success);
 		} catch (RestClientException e) {
 			handleException(e);
@@ -118,13 +118,17 @@ public class SelfossConfigFragment extends Fragment {
 	}
 
 	private void handleException(RestClientException e) {
-		if (e.getCause() instanceof IOException
-			&& e.getMessage().contains("Hostname")
-			&& e.getMessage().contains("was not verified")) {
+		if (isCertificateException(e)) {
 			showCertificateError();
 		} else {
 			showUrlError();
 		}
+	}
+
+	private boolean isCertificateException(RestClientException e) {
+		return e.getCause() instanceof IOException
+			&& e.getMessage().contains("Hostname")
+			&& e.getMessage().contains("was not verified");
 	}
 
 	private void hideProgress() {

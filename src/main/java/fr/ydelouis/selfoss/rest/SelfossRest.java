@@ -9,7 +9,7 @@ import fr.ydelouis.selfoss.entity.Success;
 @Rest(converters = { MappingJackson2HttpMessageConverter.class },
 		interceptors = { SelfossApiInterceptor.class },
 		requestFactory = SelfossApiRequestFactory.class)
-public interface LoginRest {
+public interface SelfossRest {
 
 	@Get("/login")
 	Success login();
