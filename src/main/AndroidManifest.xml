@@ -28,6 +28,8 @@
 		    android:name=".activity.SelfossConfigActivity_"
 		    android:windowSoftInputMode="adjustPan" />
 
+	    <service android:name=".service.Synchronizer_" />
+
     </application>
 
 </manifest>

@@ -1,9 +1,18 @@
 package fr.ydelouis.selfoss.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
+@DatabaseTable
 public class Tag {
 
+	@DatabaseField(id = true)
+	@JsonProperty("tag")
 	private String name;
+	@DatabaseField
 	private String color;
+	@DatabaseField
 	private int unread;
 
 	public String getName() {

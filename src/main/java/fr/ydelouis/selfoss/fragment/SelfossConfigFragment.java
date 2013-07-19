@@ -17,6 +17,7 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.EditorAction;
 import org.androidannotations.annotations.SystemService;
+import org.androidannotations.annotations.TextChange;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
@@ -27,13 +28,11 @@ import java.io.IOException;
 
 import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.entity.Success;
-import fr.ydelouis.selfoss.rest.SelfossRest;
 import fr.ydelouis.selfoss.rest.SelfossConfig_;
+import fr.ydelouis.selfoss.rest.SelfossRest;
 
 @EFragment(R.layout.fragment_selfossconfig)
 public class SelfossConfigFragment extends Fragment {
-
-	private static final long TIME_HIDE_ERROR = 2 * 1000;
 
 	@Pref protected SelfossConfig_ selfossConfig;
 	@RestService protected SelfossRest selfossRest;
@@ -171,7 +170,12 @@ public class SelfossConfigFragment extends Fragment {
 				trustAllCertificates();
 			}
 		});
-		builder.setNegativeButton(android.R.string.no, null);
+		builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				hideError();
+			}
+		});
 		builder.show();
 	}
 
@@ -179,11 +183,11 @@ public class SelfossConfigFragment extends Fragment {
 		hideProgress();
 		validate.setBackgroundResource(R.drawable.bg_button_error);
 		validateText.setText(R.string.error);
-		scheduleHideError();
 	}
 
-	@UiThread(delay = TIME_HIDE_ERROR)
-	protected void scheduleHideError() {
+
+	@TextChange({ R.id.url, R.id.username, R.id.password })
+	protected void hideError() {
 		validate.setBackgroundResource(R.drawable.bg_button_default);
 		validateText.setText(R.string.validate);
 	}
