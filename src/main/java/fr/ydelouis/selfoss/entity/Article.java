@@ -1,21 +1,44 @@
 package fr.ydelouis.selfoss.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+import fr.ydelouis.selfoss.model.ArticleDao;
+
+@DatabaseTable(daoClass = ArticleDao.class)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Article {
 
+	private static final SimpleDateFormat DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+	@DatabaseField(id = true)
     private int id;
+	@DatabaseField(columnName = ArticleDao.COLUMN_DATETIME)
     private long dateTime;
+	@DatabaseField
     private String title;
+	@DatabaseField
     private String content;
+	@DatabaseField
     private boolean unread;
+	@DatabaseField
     private boolean starred;
+	@DatabaseField
     private int sourceId;
-    private String sourceTitle;
+	@DatabaseField
     private String thumbnail;
+	@DatabaseField
     private String icon;
+	@DatabaseField
     private String uid;
+	@DatabaseField
     private String link;
+	@DatabaseField
     private String tags;
 
 	@JsonProperty("id")
@@ -24,9 +47,9 @@ public class Article {
     }
 
 	@JsonProperty("datetime")
-    public void setDateTime(String dateTimeStr) {
-        dateTime = 16;
-    }
+    public void setDateTime(String dateTimeStr) throws ParseException {
+		dateTime = DATETIME_FORMAT.parse(dateTimeStr).getTime();
+	}
 
 	@JsonProperty("unread")
 	public void setUnread(String unread) {
@@ -97,14 +120,6 @@ public class Article {
 
 	public void setSourceId(int sourceId) {
 		this.sourceId = sourceId;
-	}
-
-	public String getSourceTitle() {
-		return sourceTitle;
-	}
-
-	public void setSourceTitle(String sourceTitle) {
-		this.sourceTitle = sourceTitle;
 	}
 
 	public String getThumbnail() {

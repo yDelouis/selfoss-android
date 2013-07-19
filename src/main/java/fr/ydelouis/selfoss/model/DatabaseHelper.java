@@ -9,6 +9,7 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 
+import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.Tag;
 
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
@@ -24,6 +25,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	public void onCreate(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource) {
 		try {
 			TableUtils.createTable(connectionSource, Tag.class);
+			TableUtils.createTable(connectionSource, Article.class);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

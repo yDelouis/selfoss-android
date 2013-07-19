@@ -11,6 +11,7 @@ import org.androidannotations.annotations.UiThread;
 
 import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.fragment.SelfossConfigFragment;
+import fr.ydelouis.selfoss.service.Synchronizer_;
 
 @EActivity(R.layout.activity_selfossconfig)
 public class SelfossConfigActivity extends Activity implements SelfossConfigFragment.ValidationListener {
@@ -33,6 +34,7 @@ public class SelfossConfigActivity extends Activity implements SelfossConfigFrag
 	@Override
 	@UiThread(delay = TIME_TO_CLOSE)
 	public void onValidationSucceed() {
+		Synchronizer_.intent(this).start();
 		finish();
 	}
 

@@ -6,6 +6,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 
 import java.util.List;
 
+import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.Success;
 import fr.ydelouis.selfoss.entity.Tag;
 
@@ -20,4 +21,6 @@ public interface SelfossRest {
 	@Get("/tags")
 	List<Tag> listTags();
 
+	@Get("/items?offset={offset}&items={count}")
+	List<Article> listArticles(int offset, int count);
 }

@@ -60,6 +60,8 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 
 		public ApiHttpRequest(HttpRequest httpRequest) {
 			this.httpRequest = httpRequest;
+			this.httpRequest.getHeaders().set("Content-Length", "0");
+			this.httpRequest.getHeaders().remove("Content-Type");
 		}
 
 		@Override

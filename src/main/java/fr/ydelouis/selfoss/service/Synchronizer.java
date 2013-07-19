@@ -8,11 +8,14 @@ import com.j256.ormlite.dao.RuntimeExceptionDao;
 import org.androidannotations.annotations.EService;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.rest.RestService;
+import org.springframework.web.client.RestClientException;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.Tag;
+import fr.ydelouis.selfoss.model.ArticleDao;
 import fr.ydelouis.selfoss.model.DatabaseHelper;
 import fr.ydelouis.selfoss.rest.SelfossRest;
 
@@ -20,11 +23,16 @@ import fr.ydelouis.selfoss.rest.SelfossRest;
 public class Synchronizer extends IntentService {
 
 	public static final String ACTION_SYNC_TAGS = "fr.ydelouis.selfoss.ACTION_SYNC_TAGS";
+	public static final String ACTION_SYNC_ARTICLES = "fr.ydelouis.selfoss.ACTION_SYNC_ARTICLES";
+	public static final String ACTION_SYNC_ERROR = "fr.ydelouis.selfoss.ACTION_SYNC_ERROR";
 	public static final String EXTRA_TAGS = "tags";
+	private static final int ARTICLES_PAGE_SIZE = 20;
 
 	@RestService protected SelfossRest selfossRest;
 	@OrmLiteDao(helper = DatabaseHelper.class, model = Tag.class)
 	protected RuntimeExceptionDao<Tag, String> tagDao;
+	@OrmLiteDao(helper = DatabaseHelper.class, model = Article.class)
+	protected ArticleDao articleDao;
 
 	public Synchronizer() {
 		super(Synchronizer.class.getSimpleName());
@@ -33,17 +41,32 @@ public class Synchronizer extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		if (ACTION_SYNC_TAGS.equals(intent.getAction())) {
-			syncTags();
+			try {
+				syncTags();
+			} catch (RestClientException e) {
+				sendErrorBroadcast();
+			}
+		} else if (ACTION_SYNC_ARTICLES.equals(intent.getAction())) {
+			try {
+				syncArticles();
+			} catch (RestClientException e) {
+				sendErrorBroadcast();
+			}
 		} else {
 			syncAll();
 		}
 	}
 
 	private void syncAll() {
-		syncTags();
+		try {
+			syncTags();
+			syncArticles();
+		} catch (RestClientException e) {
+			sendErrorBroadcast();
+		}
 	}
 
-	private void syncTags() {
+	private void syncTags() throws RestClientException {
 		List<Tag> serverTags = selfossRest.listTags();
 		List<Tag> databaseTags = tagDao.queryForAll();
 		for (Tag tag : serverTags) {
@@ -58,5 +81,33 @@ public class Synchronizer extends IntentService {
 		Intent intent = new Intent(ACTION_SYNC_TAGS);
 		intent.putExtra(EXTRA_TAGS, new ArrayList<Tag>(tags));
 		sendBroadcast(intent);
+	}
+
+	private void syncArticles() {
+		int offset = 0;
+		List<Article> articles;
+		Article lastArticle = null;
+		do {
+			articles = selfossRest.listArticles(offset, ARTICLES_PAGE_SIZE);
+			for (Article article : articles) {
+				articleDao.createOrUpdate(article);
+			}
+			if (!articles.isEmpty()) {
+				lastArticle = articles.get(articles.size() - 1);
+			}
+			offset += ARTICLES_PAGE_SIZE;
+		} while (!articles.isEmpty() && offset < ArticleDao.DATABASE_SIZE);
+		if (lastArticle != null) {
+			articleDao.removeOlderThan(lastArticle.getDateTime());
+		}
+		sendArticleBroadcast();
+	}
+
+	private void sendArticleBroadcast() {
+		sendBroadcast(new Intent(ACTION_SYNC_ARTICLES));
+	}
+
+	private void sendErrorBroadcast() {
+		sendBroadcast(new Intent(ACTION_SYNC_ERROR));
 	}
 }
