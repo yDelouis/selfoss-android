@@ -1,54 +1,133 @@
 package fr.ydelouis.selfoss.fragment;
 
 import android.app.Fragment;
-import android.nfc.Tag;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.j256.ormlite.dao.RuntimeExceptionDao;
+
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.OrmLiteDao;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
+
+import java.util.Collections;
+import java.util.List;
 
 import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.activity.SelfossConfigActivity_;
 import fr.ydelouis.selfoss.entity.ArticleType;
+import fr.ydelouis.selfoss.entity.Tag;
+import fr.ydelouis.selfoss.model.DatabaseHelper;
 import fr.ydelouis.selfoss.rest.SelfossConfig_;
+import fr.ydelouis.selfoss.service.Synchronizer;
+import fr.ydelouis.selfoss.view.TagView;
+import fr.ydelouis.selfoss.view.TagView_;
 
 @EFragment(R.layout.fragment_menu)
-public class MenuFragment extends Fragment {
+public class MenuFragment extends Fragment implements View.OnClickListener {
 
 	@Pref protected SelfossConfig_ selfossConfig;
 	@FragmentArg protected ArticleType type = ArticleType.Newest;
+	@FragmentArg protected Tag tag = Tag.ALL;
+	@OrmLiteDao(helper = DatabaseHelper.class, model = Tag.class)
+	protected RuntimeExceptionDao<Tag, String> tagDao;
 	private Listener listener;
+	private BroadcastReceiver tagUpdateReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			sortAndUpdateTags(intent.<Tag>getParcelableArrayListExtra(Synchronizer.EXTRA_TAGS));
+		}
+	};
 
 	@ViewById protected TextView url;
 	@ViewById protected View newest;
 	@ViewById protected View unread;
 	@ViewById protected View favorite;
-
-	public void setListener(Listener listener) {
-		this.listener = listener;
-	}
-
-	@AfterViews
-	protected void updateViews() {
-		url.setText(selfossConfig.url().getOr(""));
-		updateType();
-	}
-
-	private void updateType() {
-		newest.setSelected(type == ArticleType.Newest);
-		unread.setSelected(type == ArticleType.Unread);
-		favorite.setSelected(type == ArticleType.Favorite);
-	}
+	@ViewById protected ViewGroup tagContainer;
 
 	@Override
 	public void onResume() {
 		super.onResume();
 		updateViews();
+		getActivity().registerReceiver(tagUpdateReceiver, new IntentFilter(Synchronizer.ACTION_SYNC_TAGS));
+	}
+
+	@Override
+	public void onPause() {
+		getActivity().unregisterReceiver(tagUpdateReceiver);
+		super.onPause();
+	}
+
+	@AfterViews
+	protected void updateViews() {
+		url.setText(selfossConfig.url().getOr(""));
+		selectType();
+		loadAndUpdateTags();
+	}
+
+	private void selectType() {
+		newest.setSelected(type == ArticleType.Newest);
+		unread.setSelected(type == ArticleType.Unread);
+		favorite.setSelected(type == ArticleType.Favorite);
+	}
+
+	@Background
+	protected void loadAndUpdateTags() {
+		List<Tag> tags = tagDao.queryForAll();
+		sortAndUpdateTags(tags);
+	}
+
+	protected void sortAndUpdateTags(List<Tag> tags) {
+		Collections.sort(tags, Tag.COMPARATOR_UNREAD_INVERSE);
+		int unreadAll = 0;
+		for (Tag tag : tags) {
+			unreadAll += tag.getUnread();
+		}
+		Tag.ALL.setUnread(unreadAll);
+		tags.add(0, Tag.ALL);
+		updateTags(tags);
+	}
+
+	@UiThread
+	protected void updateTags(List<Tag> tags) {
+		tagContainer.removeAllViews();
+		for (Tag tag : tags) {
+			TagView tagView = TagView_.build(getActivity());
+			tagView.setTag(tag);
+			tagView.setSelected(tag.equals(this.tag));
+			tagView.setOnClickListener(this);
+			tagContainer.addView(tagView);
+			tagContainer.addView(newDivider());
+		}
+	}
+
+	private View newDivider() {
+		View view = new View(getActivity());
+		view.setBackgroundResource(R.color.menu_divider);
+		view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+														getResources().getDimensionPixelSize(R.dimen.divider_height)));
+		return view;
+	}
+
+	private void selectTag() {
+		for (int i = 0; i < tagContainer.getChildCount(); i++) {
+			View view = tagContainer.getChildAt(i);
+			if (view instanceof TagView) {
+				TagView tagView = (TagView) view;
+				tagView.setSelected(tagView.getTag().equals(this.tag));
+			}
+		}
 	}
 
 	@Click(R.id.url)
@@ -61,11 +140,29 @@ public class MenuFragment extends Fragment {
 		ArticleType newType = ArticleType.fromId(view.getId());
 		if (newType != type) {
 			this.type = newType;
-			updateType();
+			selectType();
 			if (listener != null) {
 				listener.onArticleTypeChanged(type);
 			}
 		}
+	}
+
+	@Override
+	public void onClick(View view) {
+		if (view instanceof TagView) {
+			Tag newTag = ((TagView) view).getTag();
+			if (!newTag.equals(tag)) {
+				this.tag = newTag;
+				selectTag();
+				if (listener != null) {
+					listener.onTagChanged(tag);
+				}
+			}
+		}
+	}
+
+	public void setListener(Listener listener) {
+		this.listener = listener;
 	}
 
 	public interface Listener {

@@ -14,6 +14,7 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.rest.SelfossConfig_;
+import fr.ydelouis.selfoss.service.Synchronizer_;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends Activity {
@@ -26,8 +27,11 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(!isConfigFilled())
-			SelfossConfigActivity_.intent(this).start();
+		if (savedInstanceState == null) {
+			synchronize();
+			if(!isConfigFilled())
+				SelfossConfigActivity_.intent(this).start();
+		}
 	}
 
 	private boolean isConfigFilled() {
@@ -60,5 +64,9 @@ public class MainActivity extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void synchronize() {
+		Synchronizer_.intent(this).start();
 	}
 }

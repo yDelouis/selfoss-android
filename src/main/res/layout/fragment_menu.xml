@@ -68,6 +68,12 @@
 
 		<View style="@style/MenuSectionDivider"/>
 
+		<LinearLayout
+			android:id="@+id/tagContainer"
+			android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical" />
+
 	</LinearLayout>
 
 </ScrollView>
