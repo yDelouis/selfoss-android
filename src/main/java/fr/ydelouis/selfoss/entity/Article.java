@@ -16,7 +16,7 @@ public class Article {
 
 	private static final SimpleDateFormat DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-	@DatabaseField(id = true)
+	@DatabaseField(id = true, columnName = ArticleDao.COLUMN_ID)
     private int id;
 	@DatabaseField(columnName = ArticleDao.COLUMN_DATETIME)
     private long dateTime;
@@ -70,7 +70,7 @@ public class Article {
 	}
 
 	public int getId() {
-		return id;
+		return Math.abs(id);
 	}
 
 	public void setId(int id) {
@@ -171,5 +171,24 @@ public class Article {
 
 	public void setTags(String tags) {
 		this.tags = tags;
+	}
+
+	public boolean isCached() {
+		return id < 0;
+	}
+
+	public void setCached(boolean cached) {
+		if (cached) {
+			this.id = - getId();
+		} else {
+			this.id = getId();
+		}
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Article))
+			return false;
+		return getId() == ((Article) o).getId();
 	}
 }

@@ -98,6 +98,7 @@ public class Synchronizer extends IntentService {
 		do {
 			articles = selfossRest.listArticles(offset, ARTICLES_PAGE_SIZE);
 			for (Article article : articles) {
+				article.setCached(true);
 				articleDao.createOrUpdate(article);
 			}
 			if (!articles.isEmpty()) {
@@ -106,7 +107,7 @@ public class Synchronizer extends IntentService {
 			offset += ARTICLES_PAGE_SIZE;
 		} while (!articles.isEmpty() && offset < CACHE_SIZE);
 		if (lastArticle != null) {
-			articleDao.removeOlderThan(lastArticle.getDateTime());
+			articleDao.removeCachedOlderThan(lastArticle.getDateTime());
 		}
 	}
 

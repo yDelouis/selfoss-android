@@ -15,6 +15,7 @@ import fr.ydelouis.selfoss.entity.Tag;
 
 public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 
+	public static final String COLUMN_ID = "id";
 	public static final String COLUMN_DATETIME = "dateTime";
 	public static final String COLUMN_UNREAD = "unread";
 	public static final String COLUMN_FAVORITE = "favorite";
@@ -43,7 +44,7 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 			} else if (type == ArticleType.Favorite) {
 				where.eq(COLUMN_FAVORITE, true);
 			} else {
-				where.gt(COLUMN_DATETIME, 0);
+				where.lt(COLUMN_ID, 0);
 			}
 
 			if (!Tag.ALL.equals(tag)) {
@@ -63,11 +64,10 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 		}
 	}
 
-	public void removeOlderThan(long dateTime) {
+	public void removeCachedOlderThan(long dateTime) {
 		try {
 			DeleteBuilder<Article, Integer> deleteBuilder = deleteBuilder();
-			deleteBuilder.where().eq(COLUMN_FAVORITE, false)
-				.and().eq(COLUMN_UNREAD, false)
+			deleteBuilder.where().lt(COLUMN_ID, 0)
 				.and().lt(COLUMN_DATETIME, dateTime);
 			deleteBuilder.delete();
 		} catch (SQLException e) {
