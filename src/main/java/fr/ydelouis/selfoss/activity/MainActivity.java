@@ -9,33 +9,50 @@ import android.view.MenuItem;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import fr.ydelouis.selfoss.R;
+import fr.ydelouis.selfoss.entity.ArticleType;
+import fr.ydelouis.selfoss.entity.Tag;
+import fr.ydelouis.selfoss.fragment.ListFragment;
+import fr.ydelouis.selfoss.fragment.MenuFragment;
 import fr.ydelouis.selfoss.rest.SelfossConfig_;
 import fr.ydelouis.selfoss.service.Synchronizer_;
 
 @EActivity(R.layout.activity_main)
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements MenuFragment.Listener {
 
 	@Pref protected SelfossConfig_ selfossConfig;
 
 	@ViewById protected DrawerLayout drawer;
+	@FragmentById protected ListFragment content;
+	@FragmentById protected MenuFragment menu;
 	private ActionBarDrawerToggle drawerToggle;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (savedInstanceState == null) {
-			synchronize();
-			if(!isConfigFilled())
-				SelfossConfigActivity_.intent(this).start();
+			if(isConfigFilled()) {
+				synchronize();
+			} else {
+				startConfig();
+			}
 		}
 	}
 
 	private boolean isConfigFilled() {
 		return !(selfossConfig.url().getOr("").isEmpty());
+	}
+
+	private void synchronize() {
+		Synchronizer_.intent(this).start();
+	}
+
+	private void startConfig() {
+		SelfossConfigActivity_.intent(this).start();
 	}
 
 	@AfterViews
@@ -44,6 +61,7 @@ public class MainActivity extends Activity {
 		drawer.setDrawerListener(drawerToggle);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setHomeButtonEnabled(true);
+		menu.setListener(this);
 	}
 
 	@Override
@@ -66,7 +84,15 @@ public class MainActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void synchronize() {
-		Synchronizer_.intent(this).start();
+	@Override
+	public void onArticleTypeChanged(ArticleType type) {
+		content.setType(type);
+		drawer.closeDrawers();
+	}
+
+	@Override
+	public void onTagChanged(Tag tag) {
+		content.setTag(tag);
+		drawer.closeDrawers();
 	}
 }

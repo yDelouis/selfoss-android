@@ -24,10 +24,10 @@ public class Article {
     private String title;
 	@DatabaseField
     private String content;
-	@DatabaseField
+	@DatabaseField(columnName = ArticleDao.COLUMN_UNREAD)
     private boolean unread;
-	@DatabaseField
-    private boolean starred;
+	@DatabaseField(columnName = ArticleDao.COLUMN_FAVORITE)
+    private boolean favorite;
 	@DatabaseField
     private int sourceId;
 	@DatabaseField
@@ -39,6 +39,9 @@ public class Article {
 	@DatabaseField
     private String link;
 	@DatabaseField
+	@JsonProperty("sourcetitle")
+	private String sourceTitle;
+	@DatabaseField(columnName = ArticleDao.COLUMN_TAGS)
     private String tags;
 
 	@JsonProperty("id")
@@ -57,8 +60,8 @@ public class Article {
 	}
 
 	@JsonProperty("starred")
-	public void setStarred(String starred) {
-		this.starred = starred.equals("1");
+	public void setFavorite(String favorite) {
+		this.favorite = favorite.equals("1");
 	}
 
 	@JsonProperty("source")
@@ -106,12 +109,12 @@ public class Article {
 		this.unread = unread;
 	}
 
-	public boolean isStarred() {
-		return starred;
+	public boolean isFavorite() {
+		return favorite;
 	}
 
-	public void setStarred(boolean starred) {
-		this.starred = starred;
+	public void setFavorite(boolean favorite) {
+		this.favorite = favorite;
 	}
 
 	public int getSourceId() {
@@ -152,6 +155,14 @@ public class Article {
 
 	public void setLink(String link) {
 		this.link = link;
+	}
+
+	public String getSourceTitle() {
+		return sourceTitle;
+	}
+
+	public void setSourceTitle(String sourceTitle) {
+		this.sourceTitle = sourceTitle;
 	}
 
 	public String getTags() {

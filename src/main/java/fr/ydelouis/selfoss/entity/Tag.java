@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -14,6 +15,7 @@ import java.util.Comparator;
 import fr.ydelouis.selfoss.R;
 
 @DatabaseTable
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Tag implements Parcelable {
 
 	public static final Tag ALL = new Tag(R.string.allTags);

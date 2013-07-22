@@ -23,4 +23,10 @@ public interface SelfossRest {
 
 	@Get("/items?offset={offset}&items={count}")
 	List<Article> listArticles(int offset, int count);
+
+	@Get("/items?type=unread&offset={offset}&items={count}")
+	List<Article> listUnreadArticles(int offset, int count);
+
+	@Get("/items?type=starred&offset={offset}&items={count}")
+	List<Article> listFavoriteArticles(int offset, int count);
 }

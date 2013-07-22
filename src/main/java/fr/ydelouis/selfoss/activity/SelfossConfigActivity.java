@@ -16,7 +16,7 @@ import fr.ydelouis.selfoss.service.Synchronizer_;
 @EActivity(R.layout.activity_selfossconfig)
 public class SelfossConfigActivity extends Activity implements SelfossConfigFragment.ValidationListener {
 
-	private static final long TIME_TO_CLOSE = 2 * 1000;
+	private static final long TIME_TO_CLOSE = 1500;
 
 	@FragmentById protected SelfossConfigFragment configFragment;
 

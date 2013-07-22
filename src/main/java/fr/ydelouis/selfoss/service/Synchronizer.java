@@ -27,6 +27,7 @@ public class Synchronizer extends IntentService {
 	public static final String ACTION_SYNC_ERROR = "fr.ydelouis.selfoss.ACTION_SYNC_ERROR";
 	public static final String EXTRA_TAGS = "tags";
 	private static final int ARTICLES_PAGE_SIZE = 20;
+	private static final int CACHE_SIZE = 100;
 
 	@RestService protected SelfossRest selfossRest;
 	@OrmLiteDao(helper = DatabaseHelper.class, model = Tag.class)
@@ -84,6 +85,13 @@ public class Synchronizer extends IntentService {
 	}
 
 	private void syncArticles() {
+		syncCache();
+		syncUnread();
+		syncFavorite();
+		sendArticleBroadcast();
+	}
+
+	private void syncCache() {
 		int offset = 0;
 		List<Article> articles;
 		Article lastArticle = null;
@@ -96,11 +104,34 @@ public class Synchronizer extends IntentService {
 				lastArticle = articles.get(articles.size() - 1);
 			}
 			offset += ARTICLES_PAGE_SIZE;
-		} while (!articles.isEmpty() && offset < ArticleDao.DATABASE_SIZE);
+		} while (!articles.isEmpty() && offset < CACHE_SIZE);
 		if (lastArticle != null) {
 			articleDao.removeOlderThan(lastArticle.getDateTime());
 		}
-		sendArticleBroadcast();
+	}
+
+	private void syncUnread() {
+		int offset = 0;
+		List<Article> articles;
+		do {
+			articles = selfossRest.listUnreadArticles(offset, ARTICLES_PAGE_SIZE);
+			for (Article article : articles) {
+				articleDao.createOrUpdate(article);
+			}
+			offset += ARTICLES_PAGE_SIZE;
+		} while (!articles.isEmpty());
+	}
+
+	private void syncFavorite() {
+		int offset = 0;
+		List<Article> articles;
+		do {
+			articles = selfossRest.listFavoriteArticles(offset, ARTICLES_PAGE_SIZE);
+			for (Article article : articles) {
+				articleDao.createOrUpdate(article);
+			}
+			offset += ARTICLES_PAGE_SIZE;
+		} while (!articles.isEmpty());
 	}
 
 	private void sendArticleBroadcast() {

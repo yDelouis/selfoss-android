@@ -21,7 +21,8 @@ ext.androidAnnotationsVersion = '3.0-SNAPSHOT'
 
 dependencies {
     compile "com.android.support:support-v4:13.0.0"
-    compile "org.springframework.android:spring-android-rest-template:1.0.1.RELEASE"
+    compile "com.googlecode.android-query:android-query:0.25.9"
+	compile "org.springframework.android:spring-android-rest-template:1.0.1.RELEASE"
     compile "com.fasterxml.jackson.core:jackson-databind:2.2.2"
 	compile "org.androidannotations:androidannotations-api:${androidAnnotationsVersion}"
 	compile "com.j256.ormlite:ormlite-android:4.45"
@@ -52,4 +53,8 @@ android {
 
 task launchDebug(dependsOn: 'installDebug') << {
 	"adb shell am start -n fr.ydelouis.selfoss/.activity.MainActivity_".execute()
+}
+
+task clearData << {
+	"adb shell pm clear fr.ydelouis.selfoss".execute()
 }

@@ -11,4 +11,6 @@
 	<color name="menu_text_primary">#CCD7D7</color>
 	<color name="menu_text_secondary">#494949</color>
 	<color name="red_error">#FF0000</color>
+	<color name="article_source_divider">#AAAAAA</color>
+	<color name="text_read">#999999</color>
 </resources>

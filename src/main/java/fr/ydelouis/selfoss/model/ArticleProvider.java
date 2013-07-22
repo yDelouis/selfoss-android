@@ -1,0 +1,49 @@
+package fr.ydelouis.selfoss.model;
+
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.OrmLiteDao;
+import org.androidannotations.annotations.rest.RestService;
+
+import java.util.List;
+
+import fr.ydelouis.selfoss.entity.Article;
+import fr.ydelouis.selfoss.entity.ArticleType;
+import fr.ydelouis.selfoss.entity.Tag;
+import fr.ydelouis.selfoss.rest.SelfossRest;
+
+@EBean
+public class ArticleProvider {
+
+	private static final long PAGE_SIZE = 10;
+
+	@RestService protected SelfossRest selfossRest;
+	@OrmLiteDao(helper = DatabaseHelper.class, model = Article.class)
+	protected ArticleDao articleDao;
+	private Listener listener;
+	private ArticleType type = ArticleType.Newest;
+	private Tag tag = Tag.ALL;
+
+	public void setTypeAndTag(ArticleType type, Tag tag) {
+		this.type = type;
+		this.tag = tag;
+	}
+
+	public void setListener(Listener listener) {
+		this.listener = listener;
+	}
+
+	@Background
+	public void loadNext(int count, Article item) {
+		List<Article> articles = articleDao.queryForNext(type, tag, item, PAGE_SIZE);
+		if (articles.isEmpty()) {
+
+		}
+		listener.onNextLoaded(articles);
+	}
+
+	public interface Listener {
+		void onNextLoaded(List<Article> articles);
+	}
+
+}
