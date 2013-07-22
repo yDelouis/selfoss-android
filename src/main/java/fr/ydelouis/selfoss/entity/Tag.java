@@ -76,9 +76,16 @@ public class Tag implements Parcelable {
 		if (!(o instanceof Tag))
 			return false;
 		Tag oTag = (Tag) o;
-		if (nameId != 0)
+		if (name == null)
 			return nameId == oTag.nameId;
 		return name.equals(oTag.name);
+	}
+
+	@Override
+	public String toString() {
+		if (name == null)
+			return "All";
+		return name;
 	}
 
 	@Override

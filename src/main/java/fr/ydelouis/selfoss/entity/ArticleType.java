@@ -4,18 +4,25 @@ import fr.ydelouis.selfoss.R;
 
 public enum ArticleType {
 
-	Newest(R.id.newest),
-	Unread(R.id.unread),
-	Favorite(R.id.favorite);
+	Newest(R.id.newest, ""),
+	Unread(R.id.unread, "unread"),
+	Favorite(R.id.favorite, "starred");
 
 	private int id;
+	private String apiName;
 
-	private ArticleType(int id) {
+	private ArticleType(int id, String apiName) {
 		this.id = id;
+		this.apiName = apiName;
 	}
 
 	public int getId() {
 		return id;
+	}
+
+	@Override
+	public String toString() {
+		return apiName;
 	}
 
 	public static ArticleType fromId(int id) {

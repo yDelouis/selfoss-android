@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
+import fr.ydelouis.selfoss.BuildConfig;
 import fr.ydelouis.selfoss.util.Streams;
 
 @EBean
@@ -26,9 +27,9 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 	private static final String TAG = "Selfoss API";
 	private static final String KEY_USERNAME = "username";
 	private static final String KEY_PASSWORD = "password";
-	private static boolean LOG_REQUEST = true;
-	private static boolean LOG_FULL_REQUEST = true;
-	private static boolean LOG_RESPONSE = true;
+	private static boolean LOG_REQUEST = BuildConfig.DEBUG && true;
+	private static boolean LOG_FULL_REQUEST = BuildConfig.DEBUG &&  true;
+	private static boolean LOG_RESPONSE = BuildConfig.DEBUG && true;
 
 	@Pref protected SelfossConfig_ selfossConfig;
 

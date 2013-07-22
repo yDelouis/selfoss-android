@@ -15,7 +15,7 @@ import fr.ydelouis.selfoss.rest.SelfossRest;
 @EBean
 public class ArticleProvider {
 
-	private static final long PAGE_SIZE = 10;
+	private static final int PAGE_SIZE = 10;
 
 	@RestService protected SelfossRest selfossRest;
 	@OrmLiteDao(helper = DatabaseHelper.class, model = Article.class)
@@ -37,9 +37,31 @@ public class ArticleProvider {
 	public void loadNext(int count, Article item) {
 		List<Article> articles = articleDao.queryForNext(type, tag, item, PAGE_SIZE);
 		if (articles.isEmpty()) {
+			if (type == ArticleType.Newest) {
+				if (tag == Tag.ALL) {
+					articles = selfossRest.listArticles(count, PAGE_SIZE);
+				} else {
+					articles = selfossRest.listArticles(tag, count, PAGE_SIZE);
+				}
+			} else {
+				if (tag == Tag.ALL) {
+					articles = selfossRest.listArticles(type, count, PAGE_SIZE);
+				} else {
+					articles = selfossRest.listArticles(type, tag, count, PAGE_SIZE);
 
+				}
+			}
+			if (articles != null && item != null) {
+				keepOnlyNext(articles, item);
+			}
 		}
 		listener.onNextLoaded(articles);
+	}
+
+	private void keepOnlyNext(List<Article> articles, Article item) {
+		while (!articles.isEmpty() && articles.get(0).getDateTime() > item.getDateTime()) {
+			articles.remove(0);
+		}
 	}
 
 	public interface Listener {

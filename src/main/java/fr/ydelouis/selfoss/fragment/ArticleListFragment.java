@@ -1,7 +1,6 @@
 package fr.ydelouis.selfoss.fragment;
 
 import android.app.Fragment;
-import android.widget.AbsListView;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -13,20 +12,21 @@ import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.adapter.ArticleAdapter;
 import fr.ydelouis.selfoss.entity.ArticleType;
 import fr.ydelouis.selfoss.entity.Tag;
+import fr.ydelouis.selfoss.view.PagedAdapterViewWrapper;
 
-@EFragment(R.layout.fragment_list)
-public class ListFragment extends Fragment {
+@EFragment(R.layout.fragment_articlelist)
+public class ArticleListFragment extends Fragment {
 
 	@FragmentArg protected ArticleType type = ArticleType.Newest;
 	@FragmentArg protected Tag tag = Tag.ALL;
 	@Bean protected ArticleAdapter adapter;
 
-	@ViewById protected AbsListView list;
+	@ViewById protected PagedAdapterViewWrapper wrapper;
 
 	@AfterViews
 	protected void initViews() {
+		adapter.setAdapterViewWrapper(wrapper);
 		updateAdapter();
-		list.setAdapter(adapter);
 	}
 
 	private void updateAdapter() {
@@ -42,4 +42,5 @@ public class ListFragment extends Fragment {
 		this.tag = tag;
 		updateAdapter();
 	}
+
 }

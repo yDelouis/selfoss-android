@@ -3,6 +3,7 @@ package fr.ydelouis.selfoss.view;
 import android.content.Context;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -44,9 +45,12 @@ public class ArticleView extends RelativeLayout {
 	}
 
 	public void bind(Article article) {
-		favicon.setImageResource(0);
-		if (article.getIcon() != null && !article.getIcon().isEmpty())
+		if (article.getIcon() != null && !article.getIcon().isEmpty()) {
 			aQuery.id(R.id.favicon).image(util.faviconUrl(article.getIcon()));
+			favicon.setVisibility(View.VISIBLE);
+		} else {
+			favicon.setVisibility(View.INVISIBLE);
+		}
 		sourceTitle.setText(article.getSourceTitle());
 		dateTime.setText(DateUtils.getRelativeTimeSpanString(getContext(), article.getDateTime()));
 		title.setText(article.getTitle());

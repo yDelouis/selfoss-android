@@ -16,7 +16,7 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.entity.ArticleType;
 import fr.ydelouis.selfoss.entity.Tag;
-import fr.ydelouis.selfoss.fragment.ListFragment;
+import fr.ydelouis.selfoss.fragment.ArticleListFragment;
 import fr.ydelouis.selfoss.fragment.MenuFragment;
 import fr.ydelouis.selfoss.rest.SelfossConfig_;
 import fr.ydelouis.selfoss.service.Synchronizer_;
@@ -27,7 +27,7 @@ public class MainActivity extends Activity implements MenuFragment.Listener {
 	@Pref protected SelfossConfig_ selfossConfig;
 
 	@ViewById protected DrawerLayout drawer;
-	@FragmentById protected ListFragment content;
+	@FragmentById protected ArticleListFragment content;
 	@FragmentById protected MenuFragment menu;
 	private ActionBarDrawerToggle drawerToggle;
 
