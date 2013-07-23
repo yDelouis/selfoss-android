@@ -75,4 +75,25 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 		}
 	}
 
+	public void deleteUnread() {
+		try {
+			DeleteBuilder<Article, Integer> deleteBuilder = deleteBuilder();
+			deleteBuilder.where().eq(COLUMN_UNREAD, true)
+				.and().gt(COLUMN_ID, 0);
+			deleteBuilder.delete();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void deleteFavorite() {
+		try {
+			DeleteBuilder<Article, Integer> deleteBuilder = deleteBuilder();
+			deleteBuilder.where().eq(COLUMN_FAVORITE, true)
+				.and().gt(COLUMN_ID, 0);
+			deleteBuilder.delete();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

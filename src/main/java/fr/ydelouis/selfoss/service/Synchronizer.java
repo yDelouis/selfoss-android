@@ -112,6 +112,7 @@ public class Synchronizer extends IntentService {
 	}
 
 	private void syncUnread() {
+		articleDao.deleteUnread();
 		int offset = 0;
 		List<Article> articles;
 		do {
@@ -124,6 +125,7 @@ public class Synchronizer extends IntentService {
 	}
 
 	private void syncFavorite() {
+		articleDao.deleteFavorite();
 		int offset = 0;
 		List<Article> articles;
 		do {
