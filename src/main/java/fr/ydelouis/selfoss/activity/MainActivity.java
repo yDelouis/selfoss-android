@@ -1,15 +1,23 @@
 package fr.ydelouis.selfoss.activity;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.FragmentById;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.OptionsMenuItem;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
@@ -19,16 +27,26 @@ import fr.ydelouis.selfoss.entity.Tag;
 import fr.ydelouis.selfoss.fragment.ArticleListFragment;
 import fr.ydelouis.selfoss.fragment.MenuFragment;
 import fr.ydelouis.selfoss.rest.SelfossConfig_;
+import fr.ydelouis.selfoss.service.Synchronizer;
 import fr.ydelouis.selfoss.service.Synchronizer_;
 
 @EActivity(R.layout.activity_main)
+@OptionsMenu(R.menu.activity_main)
 public class MainActivity extends Activity implements MenuFragment.Listener {
 
 	@Pref protected SelfossConfig_ selfossConfig;
+	@Pref protected Synchronizer_.SyncState_ syncState;
+	private BroadcastReceiver syncReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			updateSyncState();
+		}
+	};
 
 	@ViewById protected DrawerLayout drawer;
 	@FragmentById protected ArticleListFragment content;
 	@FragmentById protected MenuFragment menu;
+	@OptionsMenuItem protected MenuItem synchronize;
 	private ActionBarDrawerToggle drawerToggle;
 
 	@Override
@@ -43,12 +61,51 @@ public class MainActivity extends Activity implements MenuFragment.Listener {
 		}
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		IntentFilter intentFilter = new IntentFilter(Synchronizer.ACTION_SYNC_FINISHED);
+		intentFilter.addAction(Synchronizer.ACTION_SYNC_ERROR);
+		registerReceiver(syncReceiver, intentFilter);
+		updateSyncState();
+	}
+
+	@Override
+	protected void onPause() {
+		unregisterReceiver(syncReceiver);
+		super.onPause();
+	}
+
 	private boolean isConfigFilled() {
 		return !(selfossConfig.url().getOr("").isEmpty());
 	}
 
-	private void synchronize() {
-		Synchronizer_.intent(this).start();
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		updateSyncState();
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@OptionsItem(R.id.synchronize)
+	protected void synchronize() {
+		if (!syncState.isRunning().get()) {
+			Synchronizer_.intent(this).start();
+			setSyncState(true);
+		}
+	}
+
+	private void updateSyncState() {
+		setSyncState(syncState.isRunning().get());
+	}
+
+	private void setSyncState(boolean isSyncing) {
+		if (synchronize == null)
+			return;
+		if (isSyncing) {
+			synchronize.setActionView(R.layout.actionbar_indeterminate_progress);
+		} else {
+			synchronize.setActionView(null);
+		}
 	}
 
 	private void startConfig() {

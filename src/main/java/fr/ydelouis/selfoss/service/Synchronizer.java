@@ -8,6 +8,8 @@ import com.j256.ormlite.dao.RuntimeExceptionDao;
 import org.androidannotations.annotations.EService;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.rest.RestService;
+import org.androidannotations.annotations.sharedpreferences.Pref;
+import org.androidannotations.annotations.sharedpreferences.SharedPref;
 import org.springframework.web.client.RestClientException;
 
 import java.util.ArrayList;
@@ -24,11 +26,13 @@ public class Synchronizer extends IntentService {
 
 	public static final String ACTION_SYNC_TAGS = "fr.ydelouis.selfoss.ACTION_SYNC_TAGS";
 	public static final String ACTION_SYNC_ARTICLES = "fr.ydelouis.selfoss.ACTION_SYNC_ARTICLES";
+	public static final String ACTION_SYNC_FINISHED = "fr.ydelouis.selfoss.ACTION_SYNC_FINISHED";
 	public static final String ACTION_SYNC_ERROR = "fr.ydelouis.selfoss.ACTION_SYNC_ERROR";
 	public static final String EXTRA_TAGS = "tags";
 	private static final int ARTICLES_PAGE_SIZE = 20;
 	private static final int CACHE_SIZE = 100;
 
+	@Pref protected Synchronizer_.SyncState_ syncState;
 	@RestService protected SelfossRest selfossRest;
 	@OrmLiteDao(helper = DatabaseHelper.class, model = Tag.class)
 	protected RuntimeExceptionDao<Tag, String> tagDao;
@@ -41,30 +45,24 @@ public class Synchronizer extends IntentService {
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		if (ACTION_SYNC_TAGS.equals(intent.getAction())) {
-			try {
-				syncTags();
-			} catch (RestClientException e) {
-				sendErrorBroadcast();
-			}
-		} else if (ACTION_SYNC_ARTICLES.equals(intent.getAction())) {
-			try {
-				syncArticles();
-			} catch (RestClientException e) {
-				sendErrorBroadcast();
-			}
-		} else {
-			syncAll();
-		}
+		syncAll();
 	}
 
 	private void syncAll() {
 		try {
+			syncState.isRunning().put(true);
 			syncTags();
 			syncArticles();
+			sendSyncBroadcast();
 		} catch (RestClientException e) {
 			sendErrorBroadcast();
+		} finally {
+			syncState.isRunning().put(false);
 		}
+	}
+
+	private void sendSyncBroadcast() {
+		sendBroadcast(new Intent(ACTION_SYNC_FINISHED));
 	}
 
 	private void syncTags() throws RestClientException {
@@ -143,5 +141,10 @@ public class Synchronizer extends IntentService {
 
 	private void sendErrorBroadcast() {
 		sendBroadcast(new Intent(ACTION_SYNC_ERROR));
+	}
+
+	@SharedPref(SharedPref.Scope.APPLICATION_DEFAULT)
+	public static interface SyncState {
+		boolean isRunning();
 	}
 }

@@ -22,5 +22,6 @@
 	</string>
 	<string name="allTags">All tags</string>
 	<string name="message_noArticle">There is no article available.</string>
+	<string name="synchronize">Synchronize</string>
 
 </resources>
