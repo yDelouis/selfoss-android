@@ -5,7 +5,7 @@
 	android:layout_height="match_parent">
 
 	<fragment android:name="fr.ydelouis.selfoss.fragment.ArticleListFragment_"
-		android:id="@+id/content"
+		android:id="@+id/list"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"/>
 

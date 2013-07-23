@@ -55,7 +55,8 @@ public class ArticleProvider {
 				keepOnlyNext(articles, item);
 			}
 		}
-		listener.onNextLoaded(articles);
+		if (listener != null)
+			listener.onNextLoaded(articles);
 	}
 
 	private void keepOnlyNext(List<Article> articles, Article item) {
@@ -64,8 +65,15 @@ public class ArticleProvider {
 		}
 	}
 
+	public void loadNew(Article firstArticle) {
+		List<Article> articles = articleDao.queryForPrevious(type, tag, firstArticle);
+		if (listener != null)
+			listener.onNewLoaded(articles);
+	}
+
 	public interface Listener {
 		void onNextLoaded(List<Article> articles);
+		void onNewLoaded(List<Article> articles);
 	}
 
 }

@@ -69,6 +69,31 @@ public class ArticleAdapter extends PagedAdapter<Article> implements ArticleProv
 		onItemsLoaded(articles, false);
 	}
 
+	@Override
+	public void loadNewItems() {
+		super.loadNewItems();
+		if (getCount() > 0) {
+			loadNewInBackground();
+		} else {
+			loadNextInBackground();
+		}
+	}
+
+	@Background
+	protected void loadNewInBackground() {
+		Article firstArticle = null;
+		if (getCount() > 0) {
+			firstArticle = getItem(0);
+		}
+		provider.loadNew(firstArticle);
+	}
+
+	@Override
+	@UiThread
+	public void onNewLoaded(List<Article> articles) {
+		onItemsLoaded(articles, true);
+	}
+
 	public void setTypeAndTag(ArticleType type, Tag tag) {
 		provider.setTypeAndTag(type, tag);
 		reset();

@@ -40,11 +40,15 @@ public class MainActivity extends Activity implements MenuFragment.Listener {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			updateSyncState();
+			if (Synchronizer.ACTION_SYNC_FINISHED.equals(intent.getAction())
+				&& list != null) {
+				list.onSyncFinished();
+			}
 		}
 	};
 
 	@ViewById protected DrawerLayout drawer;
-	@FragmentById protected ArticleListFragment content;
+	@FragmentById protected ArticleListFragment list;
 	@FragmentById protected MenuFragment menu;
 	@OptionsMenuItem protected MenuItem synchronize;
 	private ActionBarDrawerToggle drawerToggle;
@@ -143,13 +147,13 @@ public class MainActivity extends Activity implements MenuFragment.Listener {
 
 	@Override
 	public void onArticleTypeChanged(ArticleType type) {
-		content.setType(type);
+		list.setType(type);
 		drawer.closeDrawers();
 	}
 
 	@Override
 	public void onTagChanged(Tag tag) {
-		content.setTag(tag);
+		list.setTag(tag);
 		drawer.closeDrawers();
 	}
 }

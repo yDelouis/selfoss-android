@@ -43,4 +43,7 @@ public class ArticleListFragment extends Fragment {
 		updateAdapter();
 	}
 
+	public void onSyncFinished() {
+		adapter.loadNewItems();
+	}
 }

@@ -34,22 +34,28 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 		}
 	}
 
+	public List<Article> queryForPrevious(ArticleType type, Tag tag, Article firstArticle) {
+		try {
+			QueryBuilder<Article, Integer> queryBuilder = queryBuilder();
+			Where<Article, Integer> where = queryBuilder.where();
+
+			whereTypeAndTag(where, type, tag);
+			where.and().gt(COLUMN_DATETIME, firstArticle.getDateTime());
+
+			queryBuilder.orderBy(COLUMN_DATETIME, false);
+
+			return queryBuilder.query();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public List<Article> queryForNext(ArticleType type, Tag tag, Article article, long pageSize) {
 		try {
 			QueryBuilder<Article, Integer> queryBuilder = queryBuilder();
 			Where<Article, Integer> where = queryBuilder.where();
 
-			if (type == ArticleType.Unread) {
-				where.eq(COLUMN_UNREAD, true);
-			} else if (type == ArticleType.Favorite) {
-				where.eq(COLUMN_FAVORITE, true);
-			} else {
-				where.lt(COLUMN_ID, 0);
-			}
-
-			if (!Tag.ALL.equals(tag)) {
-				where.and().like(COLUMN_TAGS, "%" + tag.getName(null) + "%");
-			}
+			whereTypeAndTag(where, type, tag);
 
 			if (article != null) {
 				where.and().lt(COLUMN_DATETIME, article.getDateTime());
@@ -61,6 +67,20 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 			return queryBuilder.query();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	private void whereTypeAndTag(Where<Article, Integer> where, ArticleType type, Tag tag) throws SQLException {
+		if (type == ArticleType.Unread) {
+			where.eq(COLUMN_UNREAD, true);
+		} else if (type == ArticleType.Favorite) {
+			where.eq(COLUMN_FAVORITE, true);
+		} else {
+			where.lt(COLUMN_ID, 0);
+		}
+
+		if (!Tag.ALL.equals(tag)) {
+			where.and().like(COLUMN_TAGS, "%" + tag.getName(null) + "%");
 		}
 	}
 
