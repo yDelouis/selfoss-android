@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -89,8 +91,9 @@ public class Article {
 		return title;
 	}
 
+	@JsonProperty("title")
 	public void setTitle(String title) {
-		this.title = title;
+		this.title = StringEscapeUtils.unescapeHtml4(title);
 	}
 
 	public String getContent() {

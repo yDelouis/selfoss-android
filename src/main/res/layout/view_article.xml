@@ -24,6 +24,7 @@
 			android:layout_marginLeft="8dp"
 			android:layout_toLeftOf="@+id/dateTime"
 			android:layout_marginRight="8dp"
+			android:ellipsize="end"
 			android:text="Le journal du geek"
 			android:textSize="16sp"/>
 
