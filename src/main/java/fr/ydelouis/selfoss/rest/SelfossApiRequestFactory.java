@@ -1,7 +1,7 @@
 package fr.ydelouis.selfoss.rest;
 
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 
 import java.io.IOException;
@@ -16,10 +16,12 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import fr.ydelouis.selfoss.account.SelfossAccount;
+
 @EBean
 public class SelfossApiRequestFactory extends SimpleClientHttpRequestFactory implements HostnameVerifier, X509TrustManager {
 
-	@Pref protected SelfossConfig_ selfossConfig;
+	@Bean protected SelfossAccount account;
 
 	public SelfossApiRequestFactory() {
 		trustAllHosts();
@@ -27,7 +29,7 @@ public class SelfossApiRequestFactory extends SimpleClientHttpRequestFactory imp
 
 	@Override
 	protected void prepareConnection(HttpURLConnection connection, String httpMethod) throws IOException {
-		if (selfossConfig.trustAllCertificates().get() && connection instanceof HttpsURLConnection) {
+		if (account.trustAllCertificates() && connection instanceof HttpsURLConnection) {
 			((HttpsURLConnection) connection).setHostnameVerifier(this);
 		}
 		super.prepareConnection(connection, httpMethod);

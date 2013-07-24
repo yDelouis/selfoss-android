@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.OptionsItem;
@@ -22,11 +23,11 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import fr.ydelouis.selfoss.R;
+import fr.ydelouis.selfoss.account.SelfossAccount;
 import fr.ydelouis.selfoss.entity.ArticleType;
 import fr.ydelouis.selfoss.entity.Tag;
 import fr.ydelouis.selfoss.fragment.ArticleListFragment;
 import fr.ydelouis.selfoss.fragment.MenuFragment;
-import fr.ydelouis.selfoss.rest.SelfossConfig_;
 import fr.ydelouis.selfoss.service.Synchronizer;
 import fr.ydelouis.selfoss.service.Synchronizer_;
 
@@ -34,7 +35,7 @@ import fr.ydelouis.selfoss.service.Synchronizer_;
 @OptionsMenu(R.menu.activity_main)
 public class MainActivity extends Activity implements MenuFragment.Listener {
 
-	@Pref protected SelfossConfig_ selfossConfig;
+	@Bean protected SelfossAccount account;
 	@Pref protected Synchronizer_.SyncState_ syncState;
 	private BroadcastReceiver syncReceiver = new BroadcastReceiver() {
 		@Override
@@ -81,7 +82,7 @@ public class MainActivity extends Activity implements MenuFragment.Listener {
 	}
 
 	private boolean isConfigFilled() {
-		return !(selfossConfig.url().getOr("").isEmpty());
+		return !(account.getUrl().isEmpty());
 	}
 
 	@Override
@@ -113,7 +114,7 @@ public class MainActivity extends Activity implements MenuFragment.Listener {
 	}
 
 	private void startConfig() {
-		SelfossConfigActivity_.intent(this).start();
+		SelfossAccountActivity_.intent(this).start();
 	}
 
 	@AfterViews

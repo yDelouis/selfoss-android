@@ -3,8 +3,8 @@ package fr.ydelouis.selfoss.rest;
 import android.net.Uri;
 import android.util.Log;
 
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.net.URI;
 
 import fr.ydelouis.selfoss.BuildConfig;
+import fr.ydelouis.selfoss.account.SelfossAccount;
 import fr.ydelouis.selfoss.util.Streams;
 
 @EBean
@@ -31,7 +32,7 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 	private static boolean LOG_FULL_REQUEST = BuildConfig.DEBUG &&  true;
 	private static boolean LOG_RESPONSE = BuildConfig.DEBUG && true;
 
-	@Pref protected SelfossConfig_ selfossConfig;
+	@Bean protected SelfossAccount account;
 
 	public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
 		HttpRequest apiRequest = new ApiHttpRequest(request);
@@ -49,7 +50,7 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 	private void logRequest(HttpRequest request) {
 		String requestUri = request.getURI().toString();
 		if(!LOG_FULL_REQUEST && LOG_REQUEST) {
-			int start = requestUri.indexOf(selfossConfig.url().get());
+			int start = requestUri.indexOf(account.getUrl());
 			requestUri = requestUri.substring(start);
 		}
 		Log.i(TAG, request.getMethod() + " : " + requestUri);
@@ -80,22 +81,18 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 			URI uri = httpRequest.getURI();
 			Uri.Builder builder = new Uri.Builder();
 			builder.scheme(getScheme());
-			builder.authority(getAuthority());
+			builder.authority(account.getUrl());
 			builder.path(uri.getPath());
 			builder.encodedQuery(uri.getQuery());
-			if (selfossConfig.requireAuth().get()) {
-				builder.appendQueryParameter(KEY_USERNAME, selfossConfig.username().get());
-				builder.appendQueryParameter(KEY_PASSWORD, selfossConfig.password().get());
+			if (account.requireAuth()) {
+				builder.appendQueryParameter(KEY_USERNAME, account.getUsername());
+				builder.appendQueryParameter(KEY_PASSWORD, account.getPassword());
 			}
 			return URI.create(builder.build().toString());
 		}
 
 		private String getScheme() {
-			return selfossConfig.requireAuth().get() ? "https" : "http";
-		}
-
-		private String getAuthority() {
-			return selfossConfig.url().get();
+			return account.requireAuth() ? "https" : "http";
 		}
 	}
 

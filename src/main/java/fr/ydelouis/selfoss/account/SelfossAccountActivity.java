@@ -1,8 +1,9 @@
-package fr.ydelouis.selfoss.fragment;
+package fr.ydelouis.selfoss.account;
 
+import android.accounts.AccountAuthenticatorActivity;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
@@ -12,58 +13,63 @@ import android.widget.TextView;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.CheckedChange;
 import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.EditorAction;
+import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.TextChange;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.springframework.web.client.RestClientException;
 
 import java.io.IOException;
 
 import fr.ydelouis.selfoss.R;
+import fr.ydelouis.selfoss.account.SelfossAccount;
 import fr.ydelouis.selfoss.entity.Success;
-import fr.ydelouis.selfoss.rest.SelfossConfig_;
 import fr.ydelouis.selfoss.rest.SelfossRest;
+import fr.ydelouis.selfoss.service.Synchronizer_;
 
-@EFragment(R.layout.fragment_selfossconfig)
-public class SelfossConfigFragment extends Fragment {
+@EActivity(R.layout.activity_selfossaccount)
+public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 
-	@Pref protected SelfossConfig_ selfossConfig;
+	private static final long TIME_TO_CLOSE = 1500;
+
+	@Bean protected SelfossAccount account;
 	@RestService protected SelfossRest selfossRest;
 	@SystemService protected InputMethodManager inputMethodManager;
-	private ValidationListener validationListener;
 
-    @ViewById protected EditText url;
-    @ViewById protected CheckBox requireAuth;
-    @ViewById protected View usernamePasswordContainer;
-    @ViewById protected EditText username;
-    @ViewById protected EditText password;
+	@ViewById protected EditText url;
+	@ViewById protected CheckBox requireAuth;
+	@ViewById protected View usernamePasswordContainer;
+	@ViewById protected EditText username;
+	@ViewById protected EditText password;
 	@ViewById protected View validate;
 	@ViewById protected View progress;
 	@ViewById protected TextView validateText;
 
-	public void setValidationListener(ValidationListener listener) {
-		this.validationListener = listener;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
 	@AfterViews
 	protected void updateUi() {
-		url.setText(selfossConfig.url().getOr(""));
-		requireAuth.setChecked(selfossConfig.requireAuth().getOr(false));
-		username.setText(selfossConfig.username().getOr(""));
-		password.setText(selfossConfig.password().getOr(""));
+		url.setText(account.getUrl());
+		requireAuth.setChecked(account.requireAuth());
+		username.setText(account.getUsername());
+		password.setText(account.getPassword());
 	}
 
-    @CheckedChange(R.id.requireAuth)
-    protected void onProtectedStateChange(CompoundButton checkBox, boolean isChecked) {
-        usernamePasswordContainer.setVisibility(isChecked ? View.VISIBLE : View.INVISIBLE);
-    }
+	@CheckedChange(R.id.requireAuth)
+	protected void onProtectedStateChange(CompoundButton checkBox, boolean isChecked) {
+		usernamePasswordContainer.setVisibility(isChecked ? View.VISIBLE : View.INVISIBLE);
+	}
 
 	@Click(R.id.validate)
 	@EditorAction(R.id.password)
@@ -74,21 +80,22 @@ public class SelfossConfigFragment extends Fragment {
 		tryLogin();
 	}
 
-	private void hydrate() {
-		selfossConfig.edit()
-				.url().put(url.getText().toString())
-				.trustAllCertificates().put(false)
-				.requireAuth().put(requireAuth.isChecked())
-				.username().put(username.getText().toString())
-				.password().put(password.getText().toString())
-				.apply();
-	}
-
 	private void validateUrl() {
 		String validatedUrl = url.getText().toString();
 		validatedUrl = validatedUrl.replace("http://", "");
 		validatedUrl = validatedUrl.replace("https://", "");
 		url.setText(validatedUrl);
+	}
+
+	private void hydrate() {
+		if (requireAuth.isChecked()) {
+			account.create(url.getText().toString(),
+							username.getText().toString(),
+							password.getText().toString());
+		} else {
+			account.create(url.getText().toString());
+		}
+		account.setTrustAllCertificates(false);
 	}
 
 	protected void showProgress() {
@@ -110,7 +117,8 @@ public class SelfossConfigFragment extends Fragment {
 
 	private void handleSuccess(Success success) {
 		if (success.isSuccess()) {
-			showSuccessAndQuit();
+			showSuccess();
+			quitDelayed();
 		} else {
 			showUsernamePasswordError();
 		}
@@ -137,12 +145,16 @@ public class SelfossConfigFragment extends Fragment {
 	}
 
 	@UiThread
-	protected void showSuccessAndQuit() {
+	protected void showSuccess() {
 		progress.setVisibility(View.GONE);
 		validate.setBackgroundResource(R.drawable.bg_button_success);
 		validateText.setText(R.string.success);
-		if (validationListener != null)
-			validationListener.onValidationSucceed();
+	}
+
+	@UiThread(delay = TIME_TO_CLOSE)
+	public void quitDelayed() {
+		Synchronizer_.intent(this).start();
+		finish();
 	}
 
 	@UiThread
@@ -161,9 +173,9 @@ public class SelfossConfigFragment extends Fragment {
 	@UiThread
 	protected void showCertificateError() {
 		showError();
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(R.string.certificate_error);
-		builder.setMessage(getString(R.string.certificate_error_message, selfossConfig.url().get()));
+		builder.setMessage(getString(R.string.certificate_error_message, account.getUrl()));
 		builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -193,14 +205,14 @@ public class SelfossConfigFragment extends Fragment {
 	}
 
 	private void trustAllCertificates() {
-		selfossConfig.trustAllCertificates().put(true);
+		account.setTrustAllCertificates(true);
 		validate.setBackgroundResource(R.drawable.bg_button_default);
 		showProgress();
 		tryLogin();
 	}
 
-	public interface ValidationListener {
-		void onValidationSucceed();
+	@OptionsItem(android.R.id.home)
+	protected void quit() {
+		finish();
 	}
-
 }

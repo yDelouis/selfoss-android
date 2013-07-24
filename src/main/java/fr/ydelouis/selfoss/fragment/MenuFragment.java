@@ -13,23 +13,23 @@ import com.j256.ormlite.dao.RuntimeExceptionDao;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.util.Collections;
 import java.util.List;
 
 import fr.ydelouis.selfoss.R;
-import fr.ydelouis.selfoss.activity.SelfossConfigActivity_;
+import fr.ydelouis.selfoss.account.SelfossAccount;
+import fr.ydelouis.selfoss.activity.SelfossAccountActivity_;
 import fr.ydelouis.selfoss.entity.ArticleType;
 import fr.ydelouis.selfoss.entity.Tag;
 import fr.ydelouis.selfoss.model.DatabaseHelper;
-import fr.ydelouis.selfoss.rest.SelfossConfig_;
 import fr.ydelouis.selfoss.service.Synchronizer;
 import fr.ydelouis.selfoss.view.TagView;
 import fr.ydelouis.selfoss.view.TagView_;
@@ -37,7 +37,7 @@ import fr.ydelouis.selfoss.view.TagView_;
 @EFragment(R.layout.fragment_menu)
 public class MenuFragment extends Fragment implements View.OnClickListener {
 
-	@Pref protected SelfossConfig_ selfossConfig;
+	@Bean protected SelfossAccount account;
 	@FragmentArg protected ArticleType type = ArticleType.Newest;
 	@FragmentArg protected Tag tag = Tag.ALL;
 	@OrmLiteDao(helper = DatabaseHelper.class, model = Tag.class)
@@ -71,7 +71,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 
 	@AfterViews
 	protected void updateViews() {
-		url.setText(selfossConfig.url().getOr(""));
+		url.setText(account.getUrl());
 		selectType();
 		loadAndUpdateTags();
 	}
@@ -132,7 +132,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 
 	@Click(R.id.url)
 	protected void openSelfossConfig() {
-		SelfossConfigActivity_.intent(getActivity()).start();
+		SelfossAccountActivity_.intent(getActivity()).start();
 	}
 
 	@Click({ R.id.newest, R.id.unread, R.id.favorite})

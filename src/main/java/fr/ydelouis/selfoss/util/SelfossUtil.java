@@ -1,16 +1,16 @@
 package fr.ydelouis.selfoss.util;
 
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 
-import fr.ydelouis.selfoss.rest.SelfossConfig_;
+import fr.ydelouis.selfoss.account.SelfossAccount;
 
 @EBean
 public class SelfossUtil {
 
-	@Pref protected SelfossConfig_ selfossConfig;
+	@Bean protected SelfossAccount account;
 
 	public String faviconUrl(String favicon) {
-		return "http://" + selfossConfig.url().get() + "/favicons/" + favicon;
+		return "http://" + account.getUrl() + "/favicons/" + favicon;
 	}
 }
