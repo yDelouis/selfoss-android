@@ -13,7 +13,6 @@ import android.text.TextUtils;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.rest.RestService;
 
-import fr.ydelouis.selfoss.activity.SelfossAccountActivity_;
 import fr.ydelouis.selfoss.rest.SelfossRest;
 
 @EBean

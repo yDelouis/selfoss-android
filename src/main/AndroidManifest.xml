@@ -28,7 +28,7 @@
         </activity>
 
 	    <activity
-		    android:name=".activity.SelfossAccountActivity_"
+		    android:name=".account.SelfossAccountActivity_"
 		    android:windowSoftInputMode="adjustPan" />
 
 	    <service android:name=".service.Synchronizer_" />

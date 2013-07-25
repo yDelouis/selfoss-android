@@ -24,6 +24,7 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.account.SelfossAccount;
+import fr.ydelouis.selfoss.account.SelfossAccountActivity_;
 import fr.ydelouis.selfoss.entity.ArticleType;
 import fr.ydelouis.selfoss.entity.Tag;
 import fr.ydelouis.selfoss.fragment.ArticleListFragment;
