@@ -38,11 +38,9 @@
 
 		<View
 			android:id="@+id/divider"
-			android:layout_width="match_parent"
-			android:layout_height="0.5dp"
 			android:layout_below="@+id/favicon"
 			android:layout_marginTop="8dp"
-			android:background="@color/article_source_divider"/>
+			style="@style/ArticleDivider"/>
 
 		<TextView
 			android:id="@+id/title"

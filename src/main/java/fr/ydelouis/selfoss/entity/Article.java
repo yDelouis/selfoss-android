@@ -1,5 +1,8 @@
 package fr.ydelouis.selfoss.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.j256.ormlite.field.DatabaseField;
@@ -14,7 +17,7 @@ import fr.ydelouis.selfoss.model.ArticleDao;
 
 @DatabaseTable(daoClass = ArticleDao.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Article {
+public class Article implements Parcelable {
 
 	private static final SimpleDateFormat DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -45,6 +48,10 @@ public class Article {
 	private String sourceTitle;
 	@DatabaseField(columnName = ArticleDao.COLUMN_TAGS)
     private String tags;
+
+	public Article() {
+
+	}
 
 	@JsonProperty("id")
     public void setId(String id) {
@@ -194,4 +201,52 @@ public class Article {
 			return false;
 		return getId() == ((Article) o).getId();
 	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(this.id);
+		dest.writeLong(this.dateTime);
+		dest.writeString(this.title);
+		dest.writeString(this.content);
+		dest.writeByte(unread ? (byte) 1 : (byte) 0);
+		dest.writeByte(favorite ? (byte) 1 : (byte) 0);
+		dest.writeInt(this.sourceId);
+		dest.writeString(this.thumbnail);
+		dest.writeString(this.icon);
+		dest.writeString(this.uid);
+		dest.writeString(this.link);
+		dest.writeString(this.sourceTitle);
+		dest.writeString(this.tags);
+	}
+
+	private Article(Parcel in) {
+		this.id = in.readInt();
+		this.dateTime = in.readLong();
+		this.title = in.readString();
+		this.content = in.readString();
+		this.unread = in.readByte() != 0;
+		this.favorite = in.readByte() != 0;
+		this.sourceId = in.readInt();
+		this.thumbnail = in.readString();
+		this.icon = in.readString();
+		this.uid = in.readString();
+		this.link = in.readString();
+		this.sourceTitle = in.readString();
+		this.tags = in.readString();
+	}
+
+	public static Parcelable.Creator<Article> CREATOR = new Parcelable.Creator<Article>() {
+		public Article createFromParcel(Parcel source) {
+			return new Article(source);
+		}
+
+		public Article[] newArray(int size) {
+			return new Article[size];
+		}
+	};
 }

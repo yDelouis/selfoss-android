@@ -26,5 +26,6 @@
 	<string name="loading">Loading…</string>
 	<string name="noMoreArticle">No more article.</string>
 	<string name="error_loading">An error occurred.\nTouch to try again.</string>
+	<string name="openInBrowser">Open in browser</string>
 
 </resources>

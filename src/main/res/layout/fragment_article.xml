@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
+
+	<TextView
+		android:id="@+id/title"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_toLeftOf="@+id/dateTime"
+	    android:layout_margin="16dp"
+		android:textAppearance="@android:style/TextAppearance.Holo.Large"/>
+
+	<TextView
+		android:id="@+id/dateTime"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_marginTop="24dp"
+	    android:layout_marginRight="16dp"
+	    android:layout_alignParentRight="true" />
+
+	<WebView
+		android:id="@+id/webView"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_below="@+id/title"/>
+</RelativeLayout>
