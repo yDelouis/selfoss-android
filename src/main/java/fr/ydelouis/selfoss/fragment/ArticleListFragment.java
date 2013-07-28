@@ -6,6 +6,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.ViewById;
 
 import fr.ydelouis.selfoss.R;
@@ -17,8 +18,10 @@ import fr.ydelouis.selfoss.view.PagedAdapterViewWrapper;
 @EFragment(R.layout.fragment_articlelist)
 public class ArticleListFragment extends Fragment {
 
-	@FragmentArg protected ArticleType type = ArticleType.Newest;
-	@FragmentArg protected Tag tag = Tag.ALL;
+	@FragmentArg @InstanceState
+	protected ArticleType type = ArticleType.Newest;
+	@FragmentArg @InstanceState
+	protected Tag tag = Tag.ALL;
 	@Bean protected ArticleAdapter adapter;
 
 	@ViewById protected PagedAdapterViewWrapper wrapper;

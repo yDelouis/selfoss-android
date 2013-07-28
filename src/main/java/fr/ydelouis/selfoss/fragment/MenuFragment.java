@@ -17,6 +17,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
@@ -38,8 +39,10 @@ import fr.ydelouis.selfoss.view.TagView_;
 public class MenuFragment extends Fragment implements View.OnClickListener {
 
 	@Bean protected SelfossAccount account;
-	@FragmentArg protected ArticleType type = ArticleType.Newest;
-	@FragmentArg protected Tag tag = Tag.ALL;
+	@FragmentArg @InstanceState
+	protected ArticleType type = ArticleType.Newest;
+	@FragmentArg @InstanceState
+	protected Tag tag = Tag.ALL;
 	@OrmLiteDao(helper = DatabaseHelper.class, model = Tag.class)
 	protected RuntimeExceptionDao<Tag, String> tagDao;
 	private Listener listener;
