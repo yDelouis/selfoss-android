@@ -8,7 +8,7 @@
 	<string name="password">Password</string>
 	<string name="validate">Validate</string>
 	<string name="checking">Checking…</string>
-	<string name="success">Sucess !</string>
+	<string name="success">Success !</string>
 	<string name="error_url">Unable to reach the server.</string>
 	<string name="error_usernamePassword">Authentication failed</string>
 	<string name="newest">Newest</string>
@@ -21,7 +21,10 @@
 		?
 	</string>
 	<string name="allTags">All tags</string>
-	<string name="message_noArticle">There is no article available.</string>
+	<string name="noArticle">No article.</string>
 	<string name="synchronize">Synchronize</string>
+	<string name="loading">Loading…</string>
+	<string name="noMoreArticle">No more article.</string>
+	<string name="error_loading">An error occurred.\nTouch to try again.</string>
 
 </resources>

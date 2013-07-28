@@ -230,6 +230,10 @@ public abstract class PagedAdapter<T> extends BaseAdapter implements View.OnClic
         return count;
     }
 
+	public int getItemCount() {
+		return data.size();
+	}
+
     @Override
     public T getItem(int i) {
         if(i < data.size())

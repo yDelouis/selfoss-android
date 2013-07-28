@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <fr.ydelouis.selfoss.view.PagedAdapterViewWrapper
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:id="@+id/wrapper"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+	android:layout_height="match_parent"
+	app:loadingView="@layout/view_loading_horizontal"
+	app:emptyView="@layout/view_empty"
+	app:endView="@layout/view_end"
+	app:emptyErrorView="@layout/view_emptyerror"
+	app:errorView="@layout/view_error" >
 
 	<ListView
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:divider="@null"
-		android:listSelector="@android:color/transparent"/>
+		android:scrollbars="none"
+		android:listSelector="@android:color/transparent" />
 
 </fr.ydelouis.selfoss.view.PagedAdapterViewWrapper>

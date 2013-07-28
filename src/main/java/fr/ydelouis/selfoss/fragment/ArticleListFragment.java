@@ -25,6 +25,7 @@ public class ArticleListFragment extends Fragment {
 
 	@AfterViews
 	protected void initViews() {
+		wrapper.setReloadOnClickOnError(true);
 		adapter.setAdapterViewWrapper(wrapper);
 		updateAdapter();
 	}

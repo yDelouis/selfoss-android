@@ -55,7 +55,7 @@ public class ArticleAdapter extends PagedAdapter<Article> implements ArticleProv
 
 	@Background
 	protected void loadNextInBackground() {
-		int count = getCount();
+		int count = getItemCount();
 		Article lastArticle = null;
 		if (count > 0) {
 			lastArticle = getItem(count-1);

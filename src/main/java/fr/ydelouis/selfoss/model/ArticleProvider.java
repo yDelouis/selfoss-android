@@ -4,6 +4,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.rest.RestService;
+import org.springframework.web.client.RestClientException;
 
 import java.util.List;
 
@@ -37,19 +38,23 @@ public class ArticleProvider {
 	public void loadNext(int count, Article item) {
 		List<Article> articles = articleDao.queryForNext(type, tag, item, PAGE_SIZE);
 		if (articles.isEmpty()) {
-			if (type == ArticleType.Newest) {
-				if (tag == Tag.ALL) {
-					articles = selfossRest.listArticles(count, PAGE_SIZE);
+			try {
+				if (type == ArticleType.Newest) {
+					if (tag == Tag.ALL) {
+						articles = selfossRest.listArticles(count, PAGE_SIZE);
+					} else {
+						articles = selfossRest.listArticles(tag, count, PAGE_SIZE);
+					}
 				} else {
-					articles = selfossRest.listArticles(tag, count, PAGE_SIZE);
-				}
-			} else {
-				if (tag == Tag.ALL) {
-					articles = selfossRest.listArticles(type, count, PAGE_SIZE);
-				} else {
-					articles = selfossRest.listArticles(type, tag, count, PAGE_SIZE);
+					if (tag == Tag.ALL) {
+						articles = selfossRest.listArticles(type, count, PAGE_SIZE);
+					} else {
+						articles = selfossRest.listArticles(type, tag, count, PAGE_SIZE);
 
+					}
 				}
+			} catch (RestClientException e) {
+				articles = null;
 			}
 			if (articles != null && item != null) {
 				keepOnlyNext(articles, item);
