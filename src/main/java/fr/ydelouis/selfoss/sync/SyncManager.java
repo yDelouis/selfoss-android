@@ -18,7 +18,7 @@ public class SyncManager {
 	@Bean protected SelfossAccount selfossAccount;
 
 	@AfterInject
-	public void init() {
+	public void setPeriodicSync() {
 		Account account = selfossAccount.getAccount();
 		ContentResolver.addPeriodicSync(account, AUTHORITY, null, 15 * 60 * 1000);
 	}
