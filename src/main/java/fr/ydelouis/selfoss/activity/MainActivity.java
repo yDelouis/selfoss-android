@@ -1,10 +1,8 @@
 package fr.ydelouis.selfoss.activity;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.ContentResolver;
+import android.content.SyncStatusObserver;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -19,8 +17,8 @@ import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.OptionsMenuItem;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.account.SelfossAccount;
@@ -29,25 +27,15 @@ import fr.ydelouis.selfoss.entity.ArticleType;
 import fr.ydelouis.selfoss.entity.Tag;
 import fr.ydelouis.selfoss.fragment.ArticleListFragment;
 import fr.ydelouis.selfoss.fragment.MenuFragment;
-import fr.ydelouis.selfoss.service.Synchronizer;
-import fr.ydelouis.selfoss.service.Synchronizer_;
+import fr.ydelouis.selfoss.sync.SyncManager;
 
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.activity_main)
-public class MainActivity extends Activity implements MenuFragment.Listener {
+public class MainActivity extends Activity implements MenuFragment.Listener, SyncStatusObserver {
 
 	@Bean protected SelfossAccount account;
-	@Pref protected Synchronizer_.SyncState_ syncState;
-	private BroadcastReceiver syncReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			updateSyncState();
-			if (Synchronizer.ACTION_SYNC_FINISHED.equals(intent.getAction())
-				&& list != null) {
-				list.onSyncFinished();
-			}
-		}
-	};
+	@Bean protected SyncManager syncManager;
+	private Object syncStatusHandler;
 
 	@ViewById protected DrawerLayout drawer;
 	@FragmentById protected ArticleListFragment list;
@@ -70,15 +58,13 @@ public class MainActivity extends Activity implements MenuFragment.Listener {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		IntentFilter intentFilter = new IntentFilter(Synchronizer.ACTION_SYNC_FINISHED);
-		intentFilter.addAction(Synchronizer.ACTION_SYNC_ERROR);
-		registerReceiver(syncReceiver, intentFilter);
+		syncStatusHandler = ContentResolver.addStatusChangeListener(ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE, this);
 		updateSyncState();
 	}
 
 	@Override
 	protected void onPause() {
-		unregisterReceiver(syncReceiver);
+		ContentResolver.removeStatusChangeListener(syncStatusHandler);
 		super.onPause();
 	}
 
@@ -94,17 +80,18 @@ public class MainActivity extends Activity implements MenuFragment.Listener {
 
 	@OptionsItem(R.id.synchronize)
 	protected void synchronize() {
-		if (!syncState.isRunning().get()) {
-			Synchronizer_.intent(this).start();
-			setSyncState(true);
+		if (!syncManager.isActive()) {
+			syncManager.requestSync();
 		}
 	}
 
 	private void updateSyncState() {
-		setSyncState(syncState.isRunning().get());
+		boolean syncState = syncManager.isActive();
+		setSyncState(syncState);
 	}
 
-	private void setSyncState(boolean isSyncing) {
+	@UiThread(propagation = UiThread.Propagation.REUSE)
+	protected void setSyncState(boolean isSyncing) {
 		if (synchronize == null)
 			return;
 		if (isSyncing) {
@@ -157,5 +144,10 @@ public class MainActivity extends Activity implements MenuFragment.Listener {
 	public void onTagChanged(Tag tag) {
 		list.setTag(tag);
 		drawer.closeDrawers();
+	}
+
+	@Override
+	public void onStatusChanged(int which) {
+		updateSyncState();
 	}
 }

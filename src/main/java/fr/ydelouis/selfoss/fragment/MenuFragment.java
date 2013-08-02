@@ -31,7 +31,7 @@ import fr.ydelouis.selfoss.account.SelfossAccountActivity_;
 import fr.ydelouis.selfoss.entity.ArticleType;
 import fr.ydelouis.selfoss.entity.Tag;
 import fr.ydelouis.selfoss.model.DatabaseHelper;
-import fr.ydelouis.selfoss.service.Synchronizer;
+import fr.ydelouis.selfoss.sync.TagSync;
 import fr.ydelouis.selfoss.view.TagView;
 import fr.ydelouis.selfoss.view.TagView_;
 
@@ -49,7 +49,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 	private BroadcastReceiver tagUpdateReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			sortAndUpdateTags(intent.<Tag>getParcelableArrayListExtra(Synchronizer.EXTRA_TAGS));
+			sortAndUpdateTags(intent.<Tag>getParcelableArrayListExtra(TagSync.EXTRA_TAGS));
 		}
 	};
 
@@ -63,7 +63,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 	public void onResume() {
 		super.onResume();
 		updateViews();
-		getActivity().registerReceiver(tagUpdateReceiver, new IntentFilter(Synchronizer.ACTION_SYNC_TAGS));
+		getActivity().registerReceiver(tagUpdateReceiver, new IntentFilter(TagSync.ACTION_SYNC_TAGS));
 	}
 
 	@Override

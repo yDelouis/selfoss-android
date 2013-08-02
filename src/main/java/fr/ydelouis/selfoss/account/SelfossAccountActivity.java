@@ -29,10 +29,9 @@ import org.springframework.web.client.RestClientException;
 import java.io.IOException;
 
 import fr.ydelouis.selfoss.R;
-import fr.ydelouis.selfoss.account.SelfossAccount;
 import fr.ydelouis.selfoss.entity.Success;
 import fr.ydelouis.selfoss.rest.SelfossRest;
-import fr.ydelouis.selfoss.service.Synchronizer_;
+import fr.ydelouis.selfoss.sync.SyncManager;
 
 @EActivity(R.layout.activity_selfossaccount)
 public class SelfossAccountActivity extends AccountAuthenticatorActivity {
@@ -40,6 +39,7 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 	private static final long TIME_TO_CLOSE = 1500;
 
 	@Bean protected SelfossAccount account;
+	@Bean protected SyncManager syncManager;
 	@RestService protected SelfossRest selfossRest;
 	@SystemService protected InputMethodManager inputMethodManager;
 
@@ -153,7 +153,7 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 
 	@UiThread(delay = TIME_TO_CLOSE)
 	public void quitDelayed() {
-		Synchronizer_.intent(this).start();
+		syncManager.requestSync();
 		finish();
 	}
 

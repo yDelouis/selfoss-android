@@ -16,7 +16,7 @@ public class SelfossAccount {
 
 	@SystemService protected AccountManager accountManager;
 
-	private Account getAccount() {
+	public Account getAccount() {
 		Account[] accounts = accountManager.getAccountsByType(ACCOUNT_TYPE);
 		if (accounts.length > 0) {
 			return accounts[0];

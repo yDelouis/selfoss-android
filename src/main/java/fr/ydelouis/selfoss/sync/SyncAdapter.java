@@ -1,0 +1,55 @@
+package fr.ydelouis.selfoss.sync;
+
+import android.accounts.Account;
+import android.content.AbstractThreadedSyncAdapter;
+import android.content.ContentProviderClient;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.SyncResult;
+import android.os.Bundle;
+
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.EBean;
+import org.springframework.web.client.ResourceAccessException;
+
+import java.io.IOException;
+
+@EBean
+public class SyncAdapter extends AbstractThreadedSyncAdapter {
+
+	@Bean protected Uploader uploader;
+	@Bean protected TagSync tagSync;
+	@Bean protected ArticleSync articleSync;
+
+	public SyncAdapter(Context context) {
+		super(context, true);
+	}
+
+	@Override
+	public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
+		try {
+			performSync(extras);
+		} catch (Exception e) {
+			handleException(e, syncResult);
+		}
+	}
+
+	private void performSync(Bundle extras) {
+		if (extras.containsKey(ContentResolver.SYNC_EXTRAS_UPLOAD)) {
+			uploader.performSync();
+		} else {
+			tagSync.performSync();
+			articleSync.performSync();
+		}
+	}
+
+	private void handleException(Exception e, SyncResult syncResult) {
+		if (e instanceof IOException
+			|| e instanceof ResourceAccessException) {
+			syncResult.stats.numIoExceptions++;
+		} else {
+			e.printStackTrace();
+		}
+	}
+
+}
