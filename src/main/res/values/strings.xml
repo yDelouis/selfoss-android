@@ -27,5 +27,10 @@
 	<string name="noMoreArticle">No more article.</string>
 	<string name="error_loading">An error occurred.\nTouch to try again.</string>
 	<string name="openInBrowser">Open in browser</string>
+	<string name="syncPeriod">Sync every</string>
+	<string name="fiveMin">5 minutes</string>
+	<string name="fifteenMin">15 minutes</string>
+	<string name="thirtyMin">30 minutes</string>
+	<string name="hours">hours</string>
 
 </resources>

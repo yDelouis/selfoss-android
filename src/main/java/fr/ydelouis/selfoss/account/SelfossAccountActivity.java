@@ -6,9 +6,11 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.androidannotations.annotations.AfterViews;
@@ -32,6 +34,7 @@ import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.entity.Success;
 import fr.ydelouis.selfoss.rest.SelfossRest;
 import fr.ydelouis.selfoss.sync.SyncManager;
+import fr.ydelouis.selfoss.sync.SyncPeriod;
 
 @EActivity(R.layout.activity_selfossaccount)
 public class SelfossAccountActivity extends AccountAuthenticatorActivity {
@@ -48,6 +51,7 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 	@ViewById protected View usernamePasswordContainer;
 	@ViewById protected EditText username;
 	@ViewById protected EditText password;
+	@ViewById protected Spinner period;
 	@ViewById protected View validate;
 	@ViewById protected View progress;
 	@ViewById protected TextView validateText;
@@ -64,6 +68,8 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 		requireAuth.setChecked(account.requireAuth());
 		username.setText(account.getUsername());
 		password.setText(account.getPassword());
+		period.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, SyncPeriod.getTexts(this)));
+		period.setSelection(SyncPeriod.indexOf(account.getSyncPeriod()));
 	}
 
 	@CheckedChange(R.id.requireAuth)
@@ -88,12 +94,14 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 	}
 
 	private void hydrate() {
+		String url = this.url.getText().toString();
+		long syncPeriod = SyncPeriod.values()[period.getSelectedItemPosition()].getTime();
 		if (requireAuth.isChecked()) {
-			account.create(url.getText().toString(),
-							username.getText().toString(),
-							password.getText().toString());
+			String username = this.username.getText().toString();
+			String password = this.password.getText().toString();
+			account.create(url, username, password,syncPeriod);
 		} else {
-			account.create(url.getText().toString());
+			account.create(url, syncPeriod);
 		}
 		account.setTrustAllCertificates(false);
 	}

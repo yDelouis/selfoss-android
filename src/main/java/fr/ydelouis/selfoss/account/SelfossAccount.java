@@ -6,12 +6,15 @@ import android.accounts.AccountManager;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.SystemService;
 
+import fr.ydelouis.selfoss.sync.SyncPeriod;
+
 @EBean
 public class SelfossAccount {
 
 	public static final String ACCOUNT_TYPE = "fr.ydelouis.selfoss";
 	private static final String KEY_URL = "url";
 	private static final String KEY_REQUIRE_AUTH = "requireAuth";
+	private static final String KEY_SYNC_PERIOD = "syncPeriod";
 	private static final String KEY_TRUST_ALL_CERTIFICATES = "trustAllCertificates";
 
 	@SystemService protected AccountManager accountManager;
@@ -24,15 +27,15 @@ public class SelfossAccount {
 		return null;
 	}
 
-	public void create(String url) {
-		create(url, false, url, "");
+	public void create(String url, long syncPeriod) {
+		create(url, false, url, "", syncPeriod);
 	}
 
-	public void create(String url, String username, String password) {
-		create(url, true, username, password);
+	public void create(String url, String username, String password, long syncPeriod) {
+		create(url, true, username, password, syncPeriod);
 	}
 
-	private void create(String url, boolean requireAuth, String username, String password) {
+	private void create(String url, boolean requireAuth, String username, String password, long syncPeriod) {
 		Account account = getAccount();
 		if (account != null && !account.name.equals(username)) {
 			accountManager.removeAccount(account, null, null);
@@ -44,6 +47,7 @@ public class SelfossAccount {
 		}
 		accountManager.setPassword(account, password);
 		accountManager.setUserData(account, KEY_URL, url);
+		accountManager.setUserData(account, KEY_SYNC_PERIOD, String.valueOf(syncPeriod));
 		accountManager.setUserData(account, KEY_REQUIRE_AUTH, String.valueOf(requireAuth));
 	}
 
@@ -80,6 +84,15 @@ public class SelfossAccount {
 			return "";
 		} else {
 			return accountManager.getPassword(account);
+		}
+	}
+
+	public long getSyncPeriod() {
+		Account account = getAccount();
+		if (account == null) {
+			return SyncPeriod.getDefault().getTime();
+		} else {
+			return Long.valueOf(accountManager.getUserData(account, KEY_SYNC_PERIOD));
 		}
 	}
 

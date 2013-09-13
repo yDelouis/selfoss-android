@@ -20,7 +20,7 @@ public class SyncManager {
 	@AfterInject
 	public void setPeriodicSync() {
 		Account account = selfossAccount.getAccount();
-		ContentResolver.addPeriodicSync(account, AUTHORITY, null, 15 * 60 * 1000);
+		ContentResolver.addPeriodicSync(account, AUTHORITY, null, selfossAccount.getSyncPeriod());
 	}
 
 	public void requestSync() {
