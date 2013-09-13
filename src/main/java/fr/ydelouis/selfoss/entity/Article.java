@@ -143,6 +143,10 @@ public class Article implements Parcelable {
 		this.thumbnail = thumbnail;
 	}
 
+	public boolean hasIcon() {
+		return icon != null && !icon.isEmpty();
+	}
+
 	public String getIcon() {
 		return icon;
 	}

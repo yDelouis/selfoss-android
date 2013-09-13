@@ -4,6 +4,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 import fr.ydelouis.selfoss.account.SelfossAccount;
+import fr.ydelouis.selfoss.entity.Article;
 
 @EBean
 public class SelfossUtil {
@@ -12,5 +13,9 @@ public class SelfossUtil {
 
 	public String faviconUrl(String favicon) {
 		return "http://" + account.getUrl() + "/favicons/" + favicon;
+	}
+
+	public String faviconUrl(Article article) {
+		return faviconUrl(article.getIcon());
 	}
 }
