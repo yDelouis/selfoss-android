@@ -45,8 +45,8 @@ public class ArticleView extends RelativeLayout {
 	}
 
 	public void bind(Article article) {
-		if (article.getIcon() != null && !article.getIcon().isEmpty()) {
-			aQuery.id(R.id.favicon).image(util.faviconUrl(article.getIcon()));
+		if (article.hasIcon()) {
+			aQuery.id(R.id.favicon).image(util.faviconUrl(article));
 			favicon.setVisibility(View.VISIBLE);
 		} else {
 			favicon.setVisibility(View.INVISIBLE);
