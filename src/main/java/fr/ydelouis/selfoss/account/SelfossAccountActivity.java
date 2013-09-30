@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -31,6 +30,7 @@ import org.springframework.web.client.RestClientException;
 import java.io.IOException;
 
 import fr.ydelouis.selfoss.R;
+import fr.ydelouis.selfoss.adapter.SyncPeriodAdapter;
 import fr.ydelouis.selfoss.entity.Success;
 import fr.ydelouis.selfoss.rest.SelfossRest;
 import fr.ydelouis.selfoss.sync.SyncManager;
@@ -68,13 +68,13 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 		requireAuth.setChecked(account.requireAuth());
 		username.setText(account.getUsername());
 		password.setText(account.getPassword());
-		period.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, SyncPeriod.getTexts(this)));
+		period.setAdapter(new SyncPeriodAdapter(this));
 		period.setSelection(SyncPeriod.indexOf(account.getSyncPeriod()));
 	}
 
 	@CheckedChange(R.id.requireAuth)
 	protected void onProtectedStateChange(CompoundButton checkBox, boolean isChecked) {
-		usernamePasswordContainer.setVisibility(isChecked ? View.VISIBLE : View.INVISIBLE);
+		usernamePasswordContainer.setVisibility(isChecked ? View.VISIBLE : View.GONE);
 	}
 
 	@Click(R.id.validate)
