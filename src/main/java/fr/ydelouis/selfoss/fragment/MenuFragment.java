@@ -134,8 +134,11 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 	}
 
 	@Click(R.id.url)
-	protected void openSelfossConfig() {
+	protected void openSelfossAccountActivity() {
 		SelfossAccountActivity_.intent(getActivity()).start();
+		if (listener != null) {
+			listener.onAccountActivityStarted();
+		}
 	}
 
 	@Click({ R.id.newest, R.id.unread, R.id.favorite})
@@ -169,6 +172,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 	}
 
 	public interface Listener {
+		void onAccountActivityStarted();
 		void onArticleTypeChanged(ArticleType type);
 		void onTagChanged(Tag tag);
 	}

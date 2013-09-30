@@ -33,21 +33,27 @@ import fr.ydelouis.selfoss.sync.SyncManager;
 @OptionsMenu(R.menu.activity_main)
 public class MainActivity extends Activity implements MenuFragment.Listener, SyncStatusObserver {
 
-	@Bean protected SelfossAccount account;
-	@Bean protected SyncManager syncManager;
+	@Bean
+	protected SelfossAccount account;
+	@Bean
+	protected SyncManager syncManager;
 	private Object syncStatusHandler;
 
-	@ViewById protected DrawerLayout drawer;
-	@FragmentById protected ArticleListFragment list;
-	@FragmentById protected MenuFragment menu;
-	@OptionsMenuItem protected MenuItem synchronize;
+	@ViewById
+	protected DrawerLayout drawer;
+	@FragmentById
+	protected ArticleListFragment list;
+	@FragmentById
+	protected MenuFragment menu;
+	@OptionsMenuItem
+	protected MenuItem synchronize;
 	private ActionBarDrawerToggle drawerToggle;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if (savedInstanceState == null) {
-			if(isConfigFilled()) {
+			if (isConfigFilled()) {
 				synchronize();
 			} else {
 				startConfig();
@@ -135,6 +141,12 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Syn
 	}
 
 	@Override
+	public void onAccountActivityStarted() {
+		drawer.closeDrawers();
+	}
+
+	@Override
+
 	public void onArticleTypeChanged(ArticleType type) {
 		list.setType(type);
 		drawer.closeDrawers();
