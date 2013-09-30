@@ -69,7 +69,7 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Syn
 	}
 
 	private boolean isConfigFilled() {
-		return !(account.getUrl().isEmpty());
+		return account.getAccount() != null;
 	}
 
 	@Override
