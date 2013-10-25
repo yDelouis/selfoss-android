@@ -1,5 +1,9 @@
 package fr.ydelouis.selfoss.model;
 
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
+
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -21,14 +25,30 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 	public static final String COLUMN_FAVORITE = "favorite";
 	public static final String COLUMN_TAGS = "tags";
 
+	public static final String ACTION_CREATION = "fr.ydelouis.selfoss.article.ACTION_CREATION";
+	public static final String ACTION_UPDATE = "fr.ydelouis.selfoss.article.ACTION_UPDATE";
+	public static final String EXTRA_ARTICLE = "article";
+
+	private Context context;
+
 	public ArticleDao(ConnectionSource connectionSource) throws SQLException {
 		super(connectionSource, Article.class);
+	}
+
+	public void setContext(Context context) {
+		this.context = context.getApplicationContext();
 	}
 
 	@Override
 	public CreateOrUpdateStatus createOrUpdate(Article data) {
 		try {
-			return super.createOrUpdate(data);
+			CreateOrUpdateStatus status = super.createOrUpdate(data);
+			if (status.isCreated()) {
+				notifyCreation(data);
+			} else if (status.isUpdated()) {
+				notifyUpdate(data);
+			}
+			return status;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -114,6 +134,24 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 			deleteBuilder.delete();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	private void notifyCreation(Article article) {
+		broadcast(ACTION_CREATION, article);
+	}
+
+	private void notifyUpdate(Article article) {
+		broadcast(ACTION_UPDATE, article);
+	}
+
+	private void broadcast(String action, Article article) {
+		if (context != null) {
+			Intent intent = new Intent(action);
+			intent.putExtra(EXTRA_ARTICLE, article);
+			context.sendBroadcast(intent);
+		} else {
+			Log.w(ArticleDao.class.getSimpleName(), "Context not set, so changes are not broadcasted");
 		}
 	}
 }

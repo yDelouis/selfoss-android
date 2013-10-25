@@ -3,6 +3,7 @@ package fr.ydelouis.selfoss.sync;
 import android.content.Context;
 import android.content.Intent;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
@@ -18,7 +19,7 @@ import fr.ydelouis.selfoss.rest.SelfossRest;
 @EBean
 public class ArticleSync {
 
-	public static final String ACTION_SYNC_ARTICLES = "fr.ydelouis.selfoss.ACTION_SYNC_ARTICLES";
+	public static final String ACTION_SYNC = "fr.ydelouis.selfoss.article.ACTION_SYNC";
 	private static final int ARTICLES_PAGE_SIZE = 20;
 	private static final int CACHE_SIZE = 100;
 
@@ -27,14 +28,12 @@ public class ArticleSync {
 	@OrmLiteDao(helper = DatabaseHelper.class, model = Article.class)
 	protected ArticleDao articleDao;
 
-	public void performSync() {
-		syncCache();
-		syncUnread();
-		syncFavorite();
-		sendArticleBroadcast();
+	@AfterInject
+	protected void init() {
+		articleDao.setContext(context);
 	}
 
-	private void syncArticles() {
+	public void performSync() {
 		syncCache();
 		syncUnread();
 		syncFavorite();
@@ -88,7 +87,7 @@ public class ArticleSync {
 	}
 
 	private void sendArticleBroadcast() {
-		context.sendBroadcast(new Intent(ACTION_SYNC_ARTICLES));
+		context.sendBroadcast(new Intent(ACTION_SYNC));
 	}
 
 }

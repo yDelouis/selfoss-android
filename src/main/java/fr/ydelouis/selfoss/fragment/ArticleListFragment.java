@@ -36,6 +36,13 @@ public class ArticleListFragment extends Fragment implements AdapterView.OnItemC
 		adapter.setAdapterViewWrapper(wrapper);
 		wrapper.getAdapterView().setOnItemClickListener(this);
 		updateAdapter();
+		adapter.registerReceivers();
+	}
+
+	@Override
+	public void onDestroy() {
+		adapter.unregisterReceivers();
+		super.onDestroy();
 	}
 
 	private void updateAdapter() {
@@ -50,10 +57,6 @@ public class ArticleListFragment extends Fragment implements AdapterView.OnItemC
 	public void setTag(Tag tag) {
 		this.tag = tag;
 		updateAdapter();
-	}
-
-	public void onSyncFinished() {
-		adapter.loadNewItems();
 	}
 
 	@Override

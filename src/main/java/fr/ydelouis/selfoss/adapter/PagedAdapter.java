@@ -135,6 +135,14 @@ public abstract class PagedAdapter<T> extends BaseAdapter implements View.OnClic
         }
     }
 
+	protected void replace(T item) {
+		int index = data.indexOf(item);
+		if (index > -1) {
+			data.set(index, item);
+			notifyDataSetChanged();
+		}
+	}
+
     private void setState(State state) {
         adapterViewWrapper.removeEmptyView();
         if(data.isEmpty() && state != State.Loading)

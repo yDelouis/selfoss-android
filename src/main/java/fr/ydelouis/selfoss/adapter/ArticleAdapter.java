@@ -1,6 +1,9 @@
 package fr.ydelouis.selfoss.adapter;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.view.View;
 
 import org.androidannotations.annotations.AfterInject;
@@ -15,7 +18,9 @@ import java.util.List;
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.ArticleType;
 import fr.ydelouis.selfoss.entity.Tag;
+import fr.ydelouis.selfoss.model.ArticleDao;
 import fr.ydelouis.selfoss.model.ArticleProvider;
+import fr.ydelouis.selfoss.sync.ArticleSync;
 import fr.ydelouis.selfoss.view.ArticleView;
 import fr.ydelouis.selfoss.view.ArticleView_;
 
@@ -27,6 +32,24 @@ public class ArticleAdapter extends PagedAdapter<Article> implements ArticleProv
 	@RootContext protected Context context;
 	@Bean protected ArticleProvider provider;
 
+	private BroadcastReceiver updateReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (ArticleDao.ACTION_UPDATE.equals(intent.getAction())) {
+				updateArticle((Article) intent.getParcelableExtra(ArticleDao.EXTRA_ARTICLE));
+			}
+		}
+	};
+
+	private BroadcastReceiver syncReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (ArticleSync.ACTION_SYNC.equals(intent.getAction())) {
+				loadNewInBackground();
+			}
+		}
+	};
+
 	public ArticleAdapter() {
 		setAnticipation(ANTICIPATION);
 	}
@@ -35,6 +58,16 @@ public class ArticleAdapter extends PagedAdapter<Article> implements ArticleProv
 	protected void init() {
 		provider.setListener(this);
 		provider.setTypeAndTag(ArticleType.Newest, Tag.ALL);
+	}
+
+	public void registerReceivers() {
+		context.registerReceiver(updateReceiver, new IntentFilter(ArticleDao.ACTION_UPDATE));
+		context.registerReceiver(syncReceiver, new IntentFilter(ArticleSync.ACTION_SYNC));
+	}
+
+	public void unregisterReceivers() {
+		context.unregisterReceiver(updateReceiver);
+		context.unregisterReceiver(syncReceiver);
 	}
 
 	@Override
@@ -92,6 +125,10 @@ public class ArticleAdapter extends PagedAdapter<Article> implements ArticleProv
 	@UiThread
 	public void onNewLoaded(List<Article> articles) {
 		onItemsLoaded(articles, true);
+	}
+
+	private void updateArticle(Article article) {
+		replace(article);
 	}
 
 	public void setTypeAndTag(ArticleType type, Tag tag) {
