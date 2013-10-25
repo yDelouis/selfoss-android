@@ -1,6 +1,7 @@
 package fr.ydelouis.selfoss.rest;
 
 import org.androidannotations.annotations.rest.Get;
+import org.androidannotations.annotations.rest.Post;
 import org.androidannotations.annotations.rest.Rest;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
@@ -39,4 +40,20 @@ public interface SelfossRest {
 
 	@Get("/items?type=starred&offset={offset}&items={count}")
 	List<Article> listFavoriteArticles(int offset, int count);
+
+	@Post("mark/{articleId}")
+	Success markRead(int articleId);
+
+	@Post("unmark/{articleId}")
+	Success markUnread(int articleId);
+
+	@Post("mark/{articleIds}")
+	Success markRead(String articleIds);
+
+	@Post("starr/{articleId}")
+	Success favorite(int articleId);
+
+	@Post("unstarr/{articleId}")
+	Success unfavorite(int articleId);
+
 }

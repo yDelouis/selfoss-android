@@ -11,6 +11,7 @@ import java.sql.SQLException;
 
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.Tag;
+import fr.ydelouis.selfoss.sync.ArticleSyncAction;
 
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
@@ -26,6 +27,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 		try {
 			TableUtils.createTable(connectionSource, Tag.class);
 			TableUtils.createTable(connectionSource, Article.class);
+			TableUtils.createTable(connectionSource, ArticleSyncAction.class);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
