@@ -106,8 +106,9 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 				this.response = response;
 				this.response.getHeaders().set("Content-Type", "application/json");
 				byteResponse = Streams.byteArrayOf(response.getBody());
-			} catch (IOException e) {}
-
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 		@Override

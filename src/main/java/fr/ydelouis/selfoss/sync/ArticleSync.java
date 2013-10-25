@@ -21,7 +21,7 @@ public class ArticleSync {
 
 	public static final String ACTION_SYNC = "fr.ydelouis.selfoss.article.ACTION_SYNC";
 	private static final int ARTICLES_PAGE_SIZE = 20;
-	private static final int CACHE_SIZE = 100;
+	private static final int CACHE_SIZE = 50;
 
 	@RootContext protected Context context;
 	@RestService protected SelfossRest selfossRest;
