@@ -29,8 +29,8 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 	private static final String KEY_USERNAME = "username";
 	private static final String KEY_PASSWORD = "password";
 	private static boolean LOG_REQUEST = BuildConfig.DEBUG && true;
-	private static boolean LOG_FULL_REQUEST = BuildConfig.DEBUG &&  true;
-	private static boolean LOG_RESPONSE = BuildConfig.DEBUG && true;
+	private static boolean LOG_FULL_REQUEST = BuildConfig.DEBUG && false;
+	private static boolean LOG_RESPONSE = BuildConfig.DEBUG && false;
 
 	@Bean protected SelfossAccount account;
 
@@ -53,7 +53,12 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 			int start = requestUri.indexOf(account.getUrl());
 			requestUri = requestUri.substring(start);
 		}
+		requestUri = hidePassword(requestUri);
 		Log.i(TAG, request.getMethod() + " : " + requestUri);
+	}
+
+	private String hidePassword(String requestUri) {
+		return requestUri.replace(Uri.encode(account.getPassword()), "************");
 	}
 
 	private class ApiHttpRequest implements HttpRequest

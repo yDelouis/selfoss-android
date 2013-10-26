@@ -27,13 +27,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	@Override
 	public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
 		try {
-			performSync(extras);
+			performSync();
 		} catch (Exception e) {
 			handleException(e, syncResult);
 		}
 	}
 
-	private void performSync(Bundle extras) {
+	private void performSync() {
 		uploader.performSync();
 		tagSync.performSync();
 		articleSync.performSync();
