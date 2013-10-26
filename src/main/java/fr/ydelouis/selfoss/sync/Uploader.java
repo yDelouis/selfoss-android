@@ -28,7 +28,7 @@ public class Uploader {
 	private void syncMarkRead() {
 		String ids = "";
 		for (ArticleSyncAction markReadAction : articleSyncActionDao.queryForMarkRead()) {
-			ids += "ids="+markReadAction.getArticleId()+"&";
+			ids += "ids[]="+markReadAction.getArticleId()+"&";
 		}
 		if (!ids.isEmpty()) {
 			ids = ids.substring(0, ids.length()-1);
