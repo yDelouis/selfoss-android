@@ -93,8 +93,6 @@ public abstract class PagedAdapter<T> extends BaseAdapter implements View.OnClic
 	}
 
     public void onItemsLoaded(List<T> newItems, boolean areNewItems) {
-        if(state != State.Loading)
-            return;
         if(areNewItems && !data.isEmpty())
             addNewItems(newItems);
         else

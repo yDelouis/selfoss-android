@@ -44,7 +44,8 @@ public class ArticleAdapter extends PagedAdapter<Article> implements ArticleProv
 	private BroadcastReceiver syncReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if (ArticleSync.ACTION_SYNC.equals(intent.getAction())) {
+			if (ArticleSync.ACTION_NEW_SYNCED.equals(intent.getAction())
+					|| ArticleSync.ACTION_SYNC.equals(intent.getAction())) {
 				loadNewInBackground();
 			}
 		}
@@ -61,8 +62,10 @@ public class ArticleAdapter extends PagedAdapter<Article> implements ArticleProv
 	}
 
 	public void registerReceivers() {
+		IntentFilter syncIntentFilter = new IntentFilter(ArticleSync.ACTION_SYNC);
+		syncIntentFilter.addAction(ArticleSync.ACTION_NEW_SYNCED);
+		context.registerReceiver(syncReceiver, syncIntentFilter);
 		context.registerReceiver(updateReceiver, new IntentFilter(ArticleDao.ACTION_UPDATE));
-		context.registerReceiver(syncReceiver, new IntentFilter(ArticleSync.ACTION_SYNC));
 	}
 
 	public void unregisterReceivers() {

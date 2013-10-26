@@ -3,6 +3,8 @@ package fr.ydelouis.selfoss.sync;
 import android.content.Context;
 import android.content.Intent;
 
+import com.j256.ormlite.dao.Dao;
+
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
@@ -20,6 +22,7 @@ import fr.ydelouis.selfoss.rest.SelfossRest;
 public class ArticleSync {
 
 	public static final String ACTION_SYNC = "fr.ydelouis.selfoss.article.ACTION_SYNC";
+	public static final String ACTION_NEW_SYNCED = "fr.ydelouis.selfoss.article.ACTION_NEW_SYNCED";
 	private static final int ARTICLES_PAGE_SIZE = 20;
 	private static final int CACHE_SIZE = 50;
 
@@ -37,18 +40,23 @@ public class ArticleSync {
 		syncCache();
 		syncUnread();
 		syncFavorite();
-		sendArticleBroadcast();
+		sendSyncBroadcast();
 	}
 
 	private void syncCache() {
 		int offset = 0;
 		List<Article> articles;
 		Article lastArticle = null;
+		boolean newSynced = false;
 		do {
 			articles = selfossRest.listArticles(offset, ARTICLES_PAGE_SIZE);
 			for (Article article : articles) {
 				article.setCached(true);
-				articleDao.createOrUpdate(article);
+				Dao.CreateOrUpdateStatus status = articleDao.createOrUpdate(article);
+				if (!newSynced && status.isUpdated()) {
+					sendNewSyncedBroadcast();
+					newSynced = true;
+				}
 			}
 			if (!articles.isEmpty()) {
 				lastArticle = articles.get(articles.size() - 1);
@@ -86,8 +94,12 @@ public class ArticleSync {
 		} while (!articles.isEmpty());
 	}
 
-	private void sendArticleBroadcast() {
+	private void sendSyncBroadcast() {
 		context.sendBroadcast(new Intent(ACTION_SYNC));
+	}
+
+	private void sendNewSyncedBroadcast() {
+		context.sendBroadcast(new Intent(ACTION_NEW_SYNCED));
 	}
 
 }
