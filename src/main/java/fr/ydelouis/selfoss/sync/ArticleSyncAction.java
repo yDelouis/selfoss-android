@@ -51,6 +51,10 @@ public class ArticleSyncAction {
 	@DatabaseField(columnName = ArticleSyncActionDao.COLUMN_ACTION)
 	private Action action;
 
+	public ArticleSyncAction() {
+
+	}
+
 	public ArticleSyncAction(Article article, Action action) {
 		this.articleId = article.getId();
 		this.action = action;

@@ -9,6 +9,7 @@ import android.webkit.WebView;
 import android.widget.TextView;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.OptionsItem;
@@ -17,19 +18,21 @@ import org.androidannotations.annotations.ViewById;
 
 import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.entity.Article;
+import fr.ydelouis.selfoss.model.ArticleActionHelper;
 
 @EFragment(R.layout.fragment_article)
 @OptionsMenu(R.menu.fragment_article)
 public class ArticleFragment extends Fragment {
 
 	@FragmentArg protected Article article;
+	@Bean protected ArticleActionHelper articleActionHelper;
 
 	@ViewById protected WebView webView;
 	@ViewById protected TextView title;
 	@ViewById protected TextView dateTime;
 
 	@AfterViews
-	protected void iniViews() {
+	protected void initViews() {
 		webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
 		setArticle(article);
 	}
@@ -40,6 +43,7 @@ public class ArticleFragment extends Fragment {
 			title.setText(article.getTitle());
 			dateTime.setText(DateUtils.getRelativeTimeSpanString(getActivity(), article.getDateTime()));
 			webView.loadData(article.getContent(), "text/html", "utf-8");
+			articleActionHelper.markRead(article);
 		}
 	}
 

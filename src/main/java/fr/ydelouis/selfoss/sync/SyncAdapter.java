@@ -3,7 +3,6 @@ package fr.ydelouis.selfoss.sync;
 import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
@@ -35,12 +34,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 	}
 
 	private void performSync(Bundle extras) {
-		if (extras.containsKey(ContentResolver.SYNC_EXTRAS_UPLOAD)) {
-			uploader.performSync();
-		} else {
-			tagSync.performSync();
-			articleSync.performSync();
-		}
+		uploader.performSync();
+		tagSync.performSync();
+		articleSync.performSync();
 	}
 
 	private void handleException(Exception e, SyncResult syncResult) {
