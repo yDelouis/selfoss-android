@@ -1,2 +1,7 @@
-*.iml
+.gradle/
+.idea/
+local.properties
 build/
+*.iml
+.DS_Store
+.gradletasknamecache
