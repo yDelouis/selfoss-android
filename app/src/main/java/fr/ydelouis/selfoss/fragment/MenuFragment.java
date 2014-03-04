@@ -1,10 +1,7 @@
 package fr.ydelouis.selfoss.fragment;
 
 import android.app.Fragment;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -19,6 +16,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.OrmLiteDao;
+import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
@@ -45,13 +43,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 	protected Tag tag = Tag.ALL;
 	@OrmLiteDao(helper = DatabaseHelper.class, model = Tag.class)
 	protected RuntimeExceptionDao<Tag, String> tagDao;
-	private Listener listener;
-	private BroadcastReceiver tagUpdateReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			sortAndUpdateTags(intent.<Tag>getParcelableArrayListExtra(TagSync.EXTRA_TAGS));
-		}
-	};
+	private Listener listener = new DummyListener();
 
 	@ViewById protected TextView url;
 	@ViewById protected View newest;
@@ -63,13 +55,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 	public void onResume() {
 		super.onResume();
 		updateViews();
-		getActivity().registerReceiver(tagUpdateReceiver, new IntentFilter(TagSync.ACTION_SYNC_TAGS));
-	}
-
-	@Override
-	public void onPause() {
-		getActivity().unregisterReceiver(tagUpdateReceiver);
-		super.onPause();
 	}
 
 	@AfterViews
@@ -89,6 +74,11 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 	protected void loadAndUpdateTags() {
 		List<Tag> tags = tagDao.queryForAll();
 		sortAndUpdateTags(tags);
+	}
+
+	@Receiver(actions = {TagSync.ACTION_SYNC_TAGS}, registerAt = Receiver.RegisterAt.OnResumeOnPause)
+	protected void onTagsSynced(Intent intent) {
+		sortAndUpdateTags(intent.<Tag>getParcelableArrayListExtra(TagSync.EXTRA_TAGS));
 	}
 
 	protected void sortAndUpdateTags(List<Tag> tags) {
@@ -118,8 +108,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 	private View newDivider() {
 		View view = new View(getActivity());
 		view.setBackgroundResource(R.color.menu_divider);
-		view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-														getResources().getDimensionPixelSize(R.dimen.divider_height)));
+		view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getResources().getDimensionPixelSize(R.dimen.divider_height)));
 		return view;
 	}
 
@@ -136,9 +125,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 	@Click(R.id.url)
 	protected void openSelfossAccountActivity() {
 		SelfossAccountActivity_.intent(getActivity()).start();
-		if (listener != null) {
-			listener.onAccountActivityStarted();
-		}
+		listener.onAccountActivityStarted();
 	}
 
 	@Click({ R.id.newest, R.id.unread, R.id.favorite})
@@ -147,9 +134,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 		if (newType != type) {
 			this.type = newType;
 			selectType();
-			if (listener != null) {
-				listener.onArticleTypeChanged(type);
-			}
+			listener.onArticleTypeChanged(type);
 		}
 	}
 
@@ -160,20 +145,30 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 			if (!newTag.equals(tag)) {
 				this.tag = newTag;
 				selectTag();
-				if (listener != null) {
-					listener.onTagChanged(tag);
-				}
+				listener.onTagChanged(tag);
 			}
 		}
 	}
 
 	public void setListener(Listener listener) {
-		this.listener = listener;
+		this.listener = listener != null ? listener : new DummyListener();
 	}
 
 	public interface Listener {
 		void onAccountActivityStarted();
 		void onArticleTypeChanged(ArticleType type);
 		void onTagChanged(Tag tag);
+	}
+
+	private class DummyListener implements Listener {
+
+		@Override
+		public void onAccountActivityStarted() {}
+
+		@Override
+		public void onArticleTypeChanged(ArticleType type) {}
+
+		@Override
+		public void onTagChanged(Tag tag) {}
 	}
 }
