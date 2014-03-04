@@ -16,10 +16,10 @@ public class Streams {
 		try {
 			while ((line = r.readLine()) != null)
 				strBuilder.append(line);
-		} catch (IOException e) {}
+		} catch (IOException ignored) {}
 		try {
 			inputStream.reset();
-		} catch (IOException e) {}
+		} catch (IOException ignored) {}
 		return strBuilder.toString();
 	}
 
