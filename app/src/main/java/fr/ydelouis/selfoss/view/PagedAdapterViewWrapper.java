@@ -20,6 +20,7 @@ public class PagedAdapterViewWrapper extends FrameLayout implements View.OnClick
     private static final String TAG = PagedAdapterViewWrapper.class.getSimpleName();
 
     private PagedAdapter adapter;
+	private int adapterViewId;
     private AbsListView adapterView;
     private View loadingView;
     private View errorView;
@@ -44,6 +45,7 @@ public class PagedAdapterViewWrapper extends FrameLayout implements View.OnClick
 
     private void findViews(AttributeSet attrs) {
         TypedArray tAttrs = getContext().obtainStyledAttributes(attrs, R.styleable.PagedAdapterViewWrapper);
+	    adapterViewId = tAttrs.getResourceId(R.styleable.PagedAdapterViewWrapper_adapterViewId, -1);
         setLoadingView(inflate(tAttrs, R.styleable.PagedAdapterViewWrapper_loadingView));
         setErrorView(inflate(tAttrs, R.styleable.PagedAdapterViewWrapper_errorView));
         setEndView(inflate(tAttrs, R.styleable.PagedAdapterViewWrapper_endView));
@@ -180,7 +182,17 @@ public class PagedAdapterViewWrapper extends FrameLayout implements View.OnClick
     private void addAdapterView(View child) {
         if (child instanceof AbsListView)
             adapterView = (AbsListView) child;
+	    else if (adapterViewId != -1)
+	        findAdapterView(child);
     }
+
+	private void findAdapterView(View child) {
+		View adapterView = child.findViewById(adapterViewId);
+		System.out.println(adapterView);
+		if (adapterView instanceof AbsListView) {
+			this.adapterView = (AbsListView) adapterView;
+		}
+	}
 
     @Override
     public void onClick(View v) {

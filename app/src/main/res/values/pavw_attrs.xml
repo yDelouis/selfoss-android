@@ -2,6 +2,7 @@
 <resources>
 
 	<declare-styleable name="PagedAdapterViewWrapper">
+        <attr name="adapterViewId" format="reference" />
 		<attr name="loadingView" format="reference" />
 		<attr name="errorView" format="reference" />
 		<attr name="endView" format="reference" />
