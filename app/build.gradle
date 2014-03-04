@@ -3,62 +3,60 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.5.+'
+        classpath 'com.android.tools.build:gradle:0.9.+'
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.2'
     }
 }
 apply plugin: 'android'
-
-configurations {
-    apt
-}
+apply plugin: 'android-apt'
 
 repositories {
-    mavenLocal()
     mavenCentral()
 }
 
-ext.androidAnnotationsVersion = '3.0-SNAPSHOT'
-
 dependencies {
-    compile "com.android.support:support-v4:13.0.0"
-    compile "com.googlecode.android-query:android-query:0.25.9"
-	compile "org.apache.commons:commons-lang3:3.1"
-	compile "org.springframework.android:spring-android-rest-template:1.0.1.RELEASE"
-    compile "com.fasterxml.jackson.core:jackson-databind:2.2.2"
-	compile "org.androidannotations:androidannotations-api:${androidAnnotationsVersion}"
-	compile "com.j256.ormlite:ormlite-android:4.45"
-    apt "org.androidannotations:androidannotations:${androidAnnotationsVersion}"
+    compile 'com.android.support:support-v4:19.0.1'
+    compile 'com.googlecode.android-query:android-query:0.25.9'
+	compile 'org.apache.commons:commons-lang3:3.1'
+	compile 'org.springframework.android:spring-android-rest-template:1.0.1.RELEASE'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.2.2'
+	compile 'com.j256.ormlite:ormlite-android:4.45'
+
+    apt files('libs/androidannotations-with-codemodel-selfoss.jar')
+    compile files('libs/androidannotations-api-selfoss.jar')
 }
 
 android {
-    compileSdkVersion 18
-    buildToolsVersion "18.1"
+    compileSdkVersion 19
+    buildToolsVersion "19.0.2"
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 18
+        targetSdkVersion 19
+        versionCode 1
+        versionName "1.0"
     }
 
-    applicationVariants.all { variant ->
-        def aptOutputDir = project.file("build/source/apt")
-		def aptOutput = new File(aptOutputDir, variant.dirName)
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
+    }
+}
 
-		android.sourceSets[new File(variant.dirName).getName()].java.srcDirs+= aptOutput.getPath()
-
-	    variant.javaCompile.options.compilerArgs += [
-			'-processorpath', configurations.apt.getAsPath(),
-			'-AandroidManifestFile=' + variant.processResources.manifestFile,
-			'-s', aptOutput
-		]
-
-		variant.javaCompile.source = variant.javaCompile.source.filter { p ->
-			return !p.getPath().startsWith(aptOutputDir.getPath())
-		}
-
-		variant.javaCompile.doFirst {
-			aptOutput.mkdirs()
-		}
-	}
+apt {
+    arguments {
+        logLevel 'warn'
+        androidManifestFile variant.processResources.manifestFile
+        resourcePackageName 'fr.ydelouis.selfoss'
+    }
 }
 
 task launchDebug(dependsOn: 'installDebug') << {
