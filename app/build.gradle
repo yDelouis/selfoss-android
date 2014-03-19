@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.9.+'
+        classpath 'com.android.tools.build:gradle:0.9.1'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.2'
     }
 }
@@ -35,20 +35,35 @@ android {
         minSdkVersion 14
         targetSdkVersion 19
         versionCode 1
-        versionName "1.0"
+        versionName "0.1"
+    }
+
+    signingConfigs {
+        release {
+            storeFile file(project.rootDir.parentFile.absolutePath+"/yDelouis.keystore")
+            storePassword "***********"
+            keyAlias "ydelouis"
+            keyPassword "***********"
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
     }
 
     packagingOptions {
-        exclude 'META-INF/DEPENDENCIES.txt'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/notice.txt'
-        exclude 'META-INF/license.txt'
-        exclude 'META-INF/dependencies.txt'
-        exclude 'META-INF/LGPL2.1'
+        pickFirst 'META-INF/DEPENDENCIES.txt'
+        pickFirst 'META-INF/LICENSE.txt'
+        pickFirst 'META-INF/NOTICE.txt'
+        pickFirst 'META-INF/NOTICE'
+        pickFirst 'META-INF/LICENSE'
+        pickFirst 'META-INF/DEPENDENCIES'
+        pickFirst 'META-INF/notice.txt'
+        pickFirst 'META-INF/license.txt'
+        pickFirst 'META-INF/dependencies.txt'
+        pickFirst 'META-INF/LGPL2.1'
     }
 }
 
@@ -57,6 +72,20 @@ apt {
         logLevel 'warn'
         androidManifestFile variant.processResources.manifestFile
         resourcePackageName 'fr.ydelouis.selfoss'
+    }
+}
+
+task askForPasswords << {
+    def storePw = new String(System.console().readPassword("\n\nKeystore password: "))
+    def keyPw  = new String(System.console().readPassword("Key password: "))
+
+    android.signingConfigs.release.storePassword = storePw
+    android.signingConfigs.release.keyPassword = keyPw
+}
+
+tasks.whenTaskAdded { theTask ->
+    if (theTask.name.equals("packageRelease")) {
+        theTask.dependsOn "askForPasswords"
     }
 }
 
