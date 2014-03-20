@@ -94,6 +94,9 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 
 	@UiThread
 	protected void updateTags(List<Tag> tags) {
+		if (getActivity() == null) {
+			return;
+		}
 		tagContainer.removeAllViews();
 		for (Tag tag : tags) {
 			TagView tagView = TagView_.build(getActivity());
