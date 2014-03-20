@@ -14,6 +14,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.IgnoredWhenDetached;
 import org.androidannotations.annotations.InstanceState;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.Receiver;
@@ -93,10 +94,8 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 	}
 
 	@UiThread
+	@IgnoredWhenDetached
 	protected void updateTags(List<Tag> tags) {
-		if (getActivity() == null) {
-			return;
-		}
 		tagContainer.removeAllViews();
 		for (Tag tag : tags) {
 			TagView tagView = TagView_.build(getActivity());
