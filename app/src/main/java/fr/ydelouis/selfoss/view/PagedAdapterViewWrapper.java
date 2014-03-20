@@ -188,7 +188,6 @@ public class PagedAdapterViewWrapper extends FrameLayout implements View.OnClick
 
 	private void findAdapterView(View child) {
 		View adapterView = child.findViewById(adapterViewId);
-		System.out.println(adapterView);
 		if (adapterView instanceof AbsListView) {
 			this.adapterView = (AbsListView) adapterView;
 		}
