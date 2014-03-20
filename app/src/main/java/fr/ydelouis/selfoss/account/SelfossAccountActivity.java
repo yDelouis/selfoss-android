@@ -80,6 +80,9 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 	@CheckedChange(R.id.requireAuth)
 	protected void onProtectedStateChange(CompoundButton checkBox, boolean isChecked) {
 		usernamePasswordContainer.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+		if (isChecked && !https.isChecked()) {
+			https.setChecked(true);
+		}
 	}
 
 	@Click(R.id.validate)
