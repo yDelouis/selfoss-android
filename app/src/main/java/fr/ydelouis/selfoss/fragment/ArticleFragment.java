@@ -34,6 +34,9 @@ public class ArticleFragment extends Fragment {
 	@AfterViews
 	protected void initViews() {
 		webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+		webView.getSettings().setBuiltInZoomControls(true);
+		webView.getSettings().setSupportZoom(true);
+		webView.getSettings().setDisplayZoomControls(false);
 		setArticle(article);
 	}
 
