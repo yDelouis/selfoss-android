@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -51,6 +52,8 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 	@ViewById protected View usernamePasswordContainer;
 	@ViewById protected EditText username;
 	@ViewById protected EditText password;
+	@ViewById protected RadioButton http;
+	@ViewById protected RadioButton https;
 	@ViewById protected Spinner period;
 	@ViewById protected View validate;
 	@ViewById protected View progress;
@@ -68,6 +71,9 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 		requireAuth.setChecked(account.requireAuth());
 		username.setText(account.getUsername());
 		password.setText(account.getPassword());
+		boolean useHttps = account.useHttps();
+		https.setChecked(useHttps);
+		http.setChecked(!useHttps);
 		period.setAdapter(new SyncPeriodAdapter(this));
 		period.setSelection(SyncPeriod.indexOf(account.getSyncPeriod()));
 	}
@@ -99,7 +105,8 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 		if (requireAuth.isChecked()) {
 			String username = this.username.getText().toString();
 			String password = this.password.getText().toString();
-			account.create(url, username, password,syncPeriod);
+			boolean useHttps = https.isChecked();
+			account.create(url, username, password, useHttps, syncPeriod);
 		} else {
 			account.create(url, syncPeriod);
 		}

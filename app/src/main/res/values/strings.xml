@@ -32,5 +32,7 @@
 	<string name="fifteenMin">15 minutes</string>
 	<string name="thirtyMin">30 minutes</string>
 	<string name="hours">hours</string>
+    <string name="http">HTTP</string>
+    <string name="https">HTTPS</string>
 
 </resources>

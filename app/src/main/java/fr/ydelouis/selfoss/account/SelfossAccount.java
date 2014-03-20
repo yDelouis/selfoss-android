@@ -16,6 +16,7 @@ public class SelfossAccount {
 	private static final String KEY_REQUIRE_AUTH = "requireAuth";
 	private static final String KEY_SYNC_PERIOD = "syncPeriod";
 	private static final String KEY_TRUST_ALL_CERTIFICATES = "trustAllCertificates";
+	private static final String KEY_USE_HTTPS = "useHttps";
 
 	@SystemService protected AccountManager accountManager;
 
@@ -28,14 +29,14 @@ public class SelfossAccount {
 	}
 
 	public void create(String url, long syncPeriod) {
-		create(url, false, url, "", syncPeriod);
+		create(url, false, url, "", false, syncPeriod);
 	}
 
-	public void create(String url, String username, String password, long syncPeriod) {
-		create(url, true, username, password, syncPeriod);
+	public void create(String url, String username, String password, boolean useHttps, long syncPeriod) {
+		create(url, true, username, password, useHttps, syncPeriod);
 	}
 
-	private void create(String url, boolean requireAuth, String username, String password, long syncPeriod) {
+	private void create(String url, boolean requireAuth, String username, String password, boolean useHttps, long syncPeriod) {
 		Account account = getAccount();
 		if (account != null && !account.name.equals(username)) {
 			accountManager.removeAccount(account, null, null);
@@ -47,6 +48,7 @@ public class SelfossAccount {
 		}
 		accountManager.setPassword(account, password);
 		accountManager.setUserData(account, KEY_URL, url);
+		accountManager.setUserData(account, KEY_USE_HTTPS, String.valueOf(useHttps));
 		accountManager.setUserData(account, KEY_SYNC_PERIOD, String.valueOf(syncPeriod));
 		accountManager.setUserData(account, KEY_REQUIRE_AUTH, String.valueOf(requireAuth));
 	}
@@ -114,4 +116,26 @@ public class SelfossAccount {
 		}
 	}
 
+	public boolean useHttps() {
+		Account account = getAccount();
+		if (account == null) {
+			return requireAuth();
+		} else {
+			String useHttpsString = accountManager.getUserData(account, KEY_USE_HTTPS);
+			if (useHttpsString == null) {
+				return requireAuth();
+			} else {
+				return Boolean.valueOf(useHttpsString);
+			}
+		}
+	}
+
+	public void setUseHttps(boolean useHttps) {
+		Account account = getAccount();
+		if (account == null) {
+			throw new IllegalStateException("Account has not been created yet");
+		} else {
+			accountManager.setUserData(account, KEY_USE_HTTPS, String.valueOf(useHttps));
+		}
+	}
 }

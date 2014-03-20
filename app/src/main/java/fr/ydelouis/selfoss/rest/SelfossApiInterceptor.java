@@ -97,7 +97,7 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 		}
 
 		private String getScheme() {
-			return account.requireAuth() ? "https" : "http";
+			return account.useHttps() ? "https" : "http";
 		}
 	}
 
