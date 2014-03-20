@@ -10,6 +10,7 @@ import android.os.Bundle;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestClientException;
 
 import java.io.IOException;
 
@@ -41,7 +42,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 	private void handleException(Exception e, SyncResult syncResult) {
 		if (e instanceof IOException
-			|| e instanceof ResourceAccessException) {
+			|| e instanceof ResourceAccessException
+			|| e instanceof RestClientException) {
 			syncResult.stats.numIoExceptions++;
 		} else {
 			e.printStackTrace();

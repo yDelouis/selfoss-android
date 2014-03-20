@@ -11,15 +11,11 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.rest.RestService;
-
-import fr.ydelouis.selfoss.rest.SelfossRest;
 
 @EBean
 public class SelfossAuthenticator extends AbstractAccountAuthenticator {
 
 	private Context context;
-	@RestService protected SelfossRest selfossRest;
 
 	public SelfossAuthenticator(Context context) {
 		super(context);

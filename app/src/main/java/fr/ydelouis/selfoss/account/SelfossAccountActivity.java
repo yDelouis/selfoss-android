@@ -26,7 +26,6 @@ import org.androidannotations.annotations.TextChange;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
-import org.springframework.web.client.RestClientException;
 
 import java.io.IOException;
 
@@ -125,7 +124,7 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 		try {
 			Success success = selfossRest.login();
 			handleSuccess(success);
-		} catch (RestClientException e) {
+		} catch (Exception e) {
 			handleException(e);
 		}
 	}
@@ -139,7 +138,7 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 		}
 	}
 
-	private void handleException(RestClientException e) {
+	private void handleException(Exception e) {
 		if (isCertificateException(e)) {
 			showCertificateError();
 		} else {
@@ -147,7 +146,7 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 		}
 	}
 
-	private boolean isCertificateException(RestClientException e) {
+	private boolean isCertificateException(Exception e) {
 		return e.getCause() instanceof IOException
 			&& e.getMessage().contains("Hostname")
 			&& e.getMessage().contains("was not verified");
