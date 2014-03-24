@@ -73,6 +73,7 @@ public class MainActivity extends Activity implements MenuFragment.Listener{
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setHomeButtonEnabled(true);
 		menu.setListener(this);
+		setTypeAndTagInTitle();
 	}
 
 	@Override
@@ -101,15 +102,22 @@ public class MainActivity extends Activity implements MenuFragment.Listener{
 	}
 
 	@Override
-
 	public void onArticleTypeChanged(ArticleType type) {
 		list.setType(type);
+		setTypeAndTagInTitle();
 		drawer.closeDrawers();
 	}
 
 	@Override
 	public void onTagChanged(Tag tag) {
 		list.setTag(tag);
+		setTypeAndTagInTitle();
 		drawer.closeDrawers();
+	}
+
+	private void setTypeAndTagInTitle() {
+		ArticleType type = list.getType();
+		Tag tag = list.getArticleTag();
+		setTitle(String.format("%s (%s)", tag.getName(this), type.getName(this)));
 	}
 }

@@ -1,23 +1,31 @@
 package fr.ydelouis.selfoss.entity;
 
+import android.content.Context;
+
 import fr.ydelouis.selfoss.R;
 
 public enum ArticleType {
 
-	Newest(R.id.newest, ""),
-	Unread(R.id.unread, "unread"),
-	Favorite(R.id.favorite, "starred");
+	Newest(R.id.newest, R.string.newest, ""),
+	Unread(R.id.unread, R.string.unread, "unread"),
+	Favorite(R.id.favorite, R.string.favorite, "starred");
 
 	private int id;
+	private int nameResId;
 	private String apiName;
 
-	private ArticleType(int id, String apiName) {
+	private ArticleType(int id, int nameResId, String apiName) {
 		this.id = id;
+		this.nameResId = nameResId;
 		this.apiName = apiName;
 	}
 
 	public int getId() {
 		return id;
+	}
+
+	public String getName(Context context) {
+		return context.getString(nameResId);
 	}
 
 	@Override

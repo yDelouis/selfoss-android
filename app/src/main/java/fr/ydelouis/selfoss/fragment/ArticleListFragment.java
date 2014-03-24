@@ -81,9 +81,17 @@ public class ArticleListFragment extends Fragment implements AdapterView.OnItemC
 		updateAdapter();
 	}
 
+	public ArticleType getType() {
+		return type;
+	}
+
 	public void setTag(Tag tag) {
 		this.tag = tag;
 		updateAdapter();
+	}
+
+	public Tag getArticleTag() {
+		return tag;
 	}
 
 	@Override
