@@ -90,11 +90,28 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 		}
 	}
 
+	public int queryForCount(ArticleType type) {
+		return queryForCount(type, Tag.ALL);
+	}
+
+	private int queryForCount(ArticleType type, Tag tag) {
+		try {
+			QueryBuilder<Article, Integer> queryBuilder = queryBuilder();
+			Where<Article, Integer> where = queryBuilder.where();
+
+			whereTypeAndTag(where, type, tag);
+
+			return (int) queryBuilder.countOf();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private void whereTypeAndTag(Where<Article, Integer> where, ArticleType type, Tag tag) throws SQLException {
 		if (type == ArticleType.Unread) {
-			where.eq(COLUMN_UNREAD, true);
+			where.eq(COLUMN_UNREAD, true).and().gt(COLUMN_ID, 0);
 		} else if (type == ArticleType.Favorite) {
-			where.eq(COLUMN_FAVORITE, true);
+			where.eq(COLUMN_FAVORITE, true).and().gt(COLUMN_ID, 0);
 		} else {
 			where.lt(COLUMN_ID, 0);
 		}

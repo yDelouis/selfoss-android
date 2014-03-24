@@ -29,10 +29,12 @@ import fr.ydelouis.selfoss.account.SelfossAccount;
 import fr.ydelouis.selfoss.account.SelfossAccountActivity_;
 import fr.ydelouis.selfoss.entity.ArticleType;
 import fr.ydelouis.selfoss.entity.Tag;
+import fr.ydelouis.selfoss.model.ArticleDao;
 import fr.ydelouis.selfoss.model.DatabaseHelper;
 import fr.ydelouis.selfoss.sync.TagSync;
 import fr.ydelouis.selfoss.view.TagView;
 import fr.ydelouis.selfoss.view.TagView_;
+import fr.ydelouis.selfoss.view.TypeView;
 
 @EFragment(R.layout.fragment_menu)
 public class MenuFragment extends Fragment implements View.OnClickListener {
@@ -42,33 +44,42 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 	protected ArticleType type = ArticleType.Newest;
 	@FragmentArg @InstanceState
 	protected Tag tag = Tag.ALL;
-	@OrmLiteDao(helper = DatabaseHelper.class, model = Tag.class)
+	@OrmLiteDao(helper = DatabaseHelper.class)
 	protected RuntimeExceptionDao<Tag, String> tagDao;
+	@OrmLiteDao(helper = DatabaseHelper.class)
+	protected ArticleDao articleDao;
 	private Listener listener = new DummyListener();
 
 	@ViewById protected TextView url;
-	@ViewById protected View newest;
-	@ViewById protected View unread;
-	@ViewById protected View favorite;
+	@ViewById protected TypeView newest;
+	@ViewById protected TypeView unread;
+	@ViewById protected TypeView favorite;
 	@ViewById protected ViewGroup tagContainer;
 
-	@Override
-	public void onResume() {
-		super.onResume();
+	public void onOpened() {
 		updateViews();
 	}
 
 	@AfterViews
 	protected void updateViews() {
+		articleDao.setContext(getActivity());
 		url.setText(account.getUrl());
-		selectType();
+		updateTypes();
 		loadAndUpdateTags();
 	}
 
-	private void selectType() {
-		newest.setSelected(type == ArticleType.Newest);
-		unread.setSelected(type == ArticleType.Unread);
-		favorite.setSelected(type == ArticleType.Favorite);
+	private void updateTypes() {
+		for (TypeView typeView : new TypeView[] {newest, unread, favorite}) {
+			typeView.setSelected(type);
+		}
+		for (TypeView typeView : new TypeView[] {unread, favorite}) {
+			loadTypeCount(typeView);
+		}
+	}
+
+	@Background
+	protected void loadTypeCount(TypeView typeView) {
+		typeView.setCount(articleDao.queryForCount(typeView.getType()));
 	}
 
 	@Background
@@ -135,7 +146,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 		ArticleType newType = ArticleType.fromId(view.getId());
 		if (newType != type) {
 			this.type = newType;
-			selectType();
+			updateTypes();
 			listener.onArticleTypeChanged(type);
 		}
 	}

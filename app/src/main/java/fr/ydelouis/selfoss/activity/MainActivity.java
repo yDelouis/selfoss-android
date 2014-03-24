@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
+import android.view.View;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -25,7 +26,7 @@ import fr.ydelouis.selfoss.sync.SyncManager;
 
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.activity_main)
-public class MainActivity extends Activity implements MenuFragment.Listener{
+public class MainActivity extends Activity implements MenuFragment.Listener, DrawerLayout.DrawerListener {
 
 	@Bean
 	protected SelfossAccount account;
@@ -69,7 +70,7 @@ public class MainActivity extends Activity implements MenuFragment.Listener{
 	@AfterViews
 	protected void initDrawer() {
 		drawerToggle = new ActionBarDrawerToggle(this, drawer, R.drawable.ic_drawer, R.string.app_name, R.string.app_name);
-		drawer.setDrawerListener(drawerToggle);
+		drawer.setDrawerListener(this);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setHomeButtonEnabled(true);
 		menu.setListener(this);
@@ -119,5 +120,26 @@ public class MainActivity extends Activity implements MenuFragment.Listener{
 		ArticleType type = list.getType();
 		Tag tag = list.getArticleTag();
 		setTitle(String.format("%s (%s)", tag.getName(this), type.getName(this)));
+	}
+
+	@Override
+	public void onDrawerSlide(View drawerView, float slideOffset) {
+		drawerToggle.onDrawerSlide(drawerView, slideOffset);
+	}
+
+	@Override
+	public void onDrawerOpened(View drawerView) {
+		menu.onOpened();
+		drawerToggle.onDrawerOpened(drawerView);
+	}
+
+	@Override
+	public void onDrawerClosed(View drawerView) {
+		drawerToggle.onDrawerClosed(drawerView);
+	}
+
+	@Override
+	public void onDrawerStateChanged(int newState) {
+		drawerToggle.onDrawerStateChanged(newState);
 	}
 }
