@@ -1,22 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:background="@drawable/selectable_background_selfoss_menu"
-	android:orientation="horizontal">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/selectable_background_selfoss_menu">
 
-	<View
-		android:id="@+id/color"
-		android:layout_width="4dp"
-		android:layout_height="match_parent" />
+    <View
+        android:id="@+id/color"
+        android:layout_width="4dp"
+        android:layout_height="42dp"/>
 
-	<TextView
-		android:id="@+id/name"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_margin="8dp"
-		android:textColor="@color/menu_text_primary"
-		android:textSize="20sp" />
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/color"
+        android:layout_margin="8dp"
+        android:textColor="@color/menu_text_primary"
+        android:textSize="20sp"/>
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/name"
+        android:layout_alignBaseline="@id/name"
+        android:textColor="@color/menu_text_primary"/>
+
+</RelativeLayout>
