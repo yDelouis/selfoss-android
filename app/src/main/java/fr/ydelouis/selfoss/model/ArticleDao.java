@@ -46,9 +46,20 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 			if (status.isCreated()) {
 				notifyCreation(data);
 			} else if (status.isUpdated()) {
+				updateCachedVersion(data);
 				notifyUpdate(data);
 			}
 			return status;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void updateCachedVersion(Article data) {
+		try {
+			data.setCached(!data.isCached());
+			update(data);
+			data.setCached(!data.isCached());
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -124,8 +135,7 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 	public void removeCachedOlderThan(long dateTime) {
 		try {
 			DeleteBuilder<Article, Integer> deleteBuilder = deleteBuilder();
-			deleteBuilder.where().lt(COLUMN_ID, 0)
-				.and().lt(COLUMN_DATETIME, dateTime);
+			deleteBuilder.where().lt(COLUMN_ID, 0).and().lt(COLUMN_DATETIME, dateTime);
 			deleteBuilder.delete();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -135,8 +145,7 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 	public void deleteUnread() {
 		try {
 			DeleteBuilder<Article, Integer> deleteBuilder = deleteBuilder();
-			deleteBuilder.where().eq(COLUMN_UNREAD, true)
-				.and().gt(COLUMN_ID, 0);
+			deleteBuilder.where().eq(COLUMN_UNREAD, true).and().gt(COLUMN_ID, 0);
 			deleteBuilder.delete();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -146,8 +155,7 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 	public void deleteFavorite() {
 		try {
 			DeleteBuilder<Article, Integer> deleteBuilder = deleteBuilder();
-			deleteBuilder.where().eq(COLUMN_FAVORITE, true)
-				.and().gt(COLUMN_ID, 0);
+			deleteBuilder.where().eq(COLUMN_FAVORITE, true).and().gt(COLUMN_ID, 0);
 			deleteBuilder.delete();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -168,7 +176,7 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 			intent.putExtra(EXTRA_ARTICLE, article);
 			context.sendBroadcast(intent);
 		} else {
-			Log.w(ArticleDao.class.getSimpleName(), "Context not set, so changes are not broadcasted");
+			Log.w(ArticleDao.class.getSimpleName(), "Context not set, so changes are not broadcast");
 		}
 	}
 }
