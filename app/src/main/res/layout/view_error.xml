@@ -10,7 +10,7 @@
 		android:layout_height="wrap_content"
 		android:padding="16dp"
 		android:gravity="center"
-		android:background="@drawable/bg_white_rounded"
+		android:background="@drawable/bg_card_selectable"
 		android:textAppearance="@android:style/TextAppearance.Holo"
 		android:text="@string/error_loading"/>
 
