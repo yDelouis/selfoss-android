@@ -22,7 +22,7 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 	public static final String COLUMN_ID = "id";
 	public static final String COLUMN_DATETIME = "dateTime";
 	public static final String COLUMN_UNREAD = "unread";
-	public static final String COLUMN_STARRED = "favorite";
+	public static final String COLUMN_STARRED = "starred";
 	public static final String COLUMN_TAGS = "tags";
 
 	public static final String ACTION_CREATION = "fr.ydelouis.selfoss.article.ACTION_CREATION";

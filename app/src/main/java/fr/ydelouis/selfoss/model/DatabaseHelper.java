@@ -16,7 +16,7 @@ import fr.ydelouis.selfoss.sync.ArticleSyncAction;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
 	private static final String DATABASE_NAME = "selfoss.db";
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -34,7 +34,14 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	}
 
 	@Override
-	public void onUpgrade(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource, int i, int i2) {
-
+	public void onUpgrade(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource, int oldVersion, int newVersion) {
+		try {
+			if (oldVersion < 2) {
+				TableUtils.dropTable(connectionSource, Article.class, true);
+				TableUtils.createTable(connectionSource, Article.class);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }
