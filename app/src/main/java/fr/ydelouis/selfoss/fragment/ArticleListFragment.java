@@ -85,6 +85,7 @@ public class ArticleListFragment extends Fragment
 		super.onResume();
 		syncStatusHandler = ContentResolver.addStatusChangeListener(ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE, this);
 		updateSyncState();
+		updateAdapterIfNotNewest();
 	}
 
 	@Override
@@ -101,6 +102,12 @@ public class ArticleListFragment extends Fragment
 
 	private void updateAdapter() {
 		adapter.setTypeAndTag(type, tag);
+	}
+
+	private void updateAdapterIfNotNewest() {
+		if (!ArticleType.Newest.equals(type)) {
+			updateAdapter();
+		}
 	}
 
 	public void setType(ArticleType type) {
@@ -227,12 +234,6 @@ public class ArticleListFragment extends Fragment
 			actionHelper.markStarred(selectedItems);
 		} else {
 			actionHelper.markUnstarred(selectedItems);
-		}
-	}
-
-	private void updateAdapterIfNotNewest() {
-		if (!ArticleType.Newest.equals(type)) {
-			updateAdapter();
 		}
 	}
 }

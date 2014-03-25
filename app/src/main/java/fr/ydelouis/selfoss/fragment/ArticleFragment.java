@@ -4,6 +4,9 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.format.DateUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.TextView;
@@ -14,6 +17,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.OptionsMenuItem;
 import org.androidannotations.annotations.ViewById;
 
 import fr.ydelouis.selfoss.R;
@@ -30,6 +34,7 @@ public class ArticleFragment extends Fragment {
 	@ViewById protected WebView webView;
 	@ViewById protected TextView title;
 	@ViewById protected TextView dateTime;
+	@OptionsMenuItem protected MenuItem markStarred;
 
 	@AfterViews
 	protected void initViews() {
@@ -47,7 +52,31 @@ public class ArticleFragment extends Fragment {
 			dateTime.setText(DateUtils.getRelativeTimeSpanString(getActivity(), article.getDateTime()));
 			webView.loadData(article.getContent(), "text/html", "utf-8");
 			articleActionHelper.markRead(article);
+			updateMenuItem();
 		}
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		updateMenuItem();
+	}
+
+	private void updateMenuItem() {
+		if (markStarred != null) {
+			markStarred.setIcon(article.isStarred() ? R.drawable.ic_menu_starred : R.drawable.ic_menu_unstarred);
+			markStarred.setTitle(article.isStarred() ? R.string.markUnstarred : R.string.markStarred);
+		}
+	}
+
+	@OptionsItem(R.id.markStarred)
+	protected void markStarredOrUnstarred() {
+		if (article.isStarred()) {
+			articleActionHelper.markUnstarred(article);
+		} else {
+			articleActionHelper.markStarred(article);
+		}
+		updateMenuItem();
 	}
 
 	@OptionsItem(R.id.browser)
