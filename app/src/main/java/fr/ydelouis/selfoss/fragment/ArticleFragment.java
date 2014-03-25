@@ -34,6 +34,7 @@ public class ArticleFragment extends Fragment {
 	@ViewById protected WebView webView;
 	@ViewById protected TextView title;
 	@ViewById protected TextView dateTime;
+	@OptionsMenuItem protected MenuItem markRead;
 	@OptionsMenuItem protected MenuItem markStarred;
 
 	@AfterViews
@@ -63,10 +64,24 @@ public class ArticleFragment extends Fragment {
 	}
 
 	private void updateMenuItem() {
+		if (markRead != null) {
+			markRead.setIcon(article.isUnread() ? R.drawable.ic_menu_unread : R.drawable.ic_menu_read);
+			markRead.setTitle(article.isUnread() ? R.string.markRead : R.string.markUnread);
+		}
 		if (markStarred != null) {
 			markStarred.setIcon(article.isStarred() ? R.drawable.ic_menu_starred : R.drawable.ic_menu_unstarred);
 			markStarred.setTitle(article.isStarred() ? R.string.markUnstarred : R.string.markStarred);
 		}
+	}
+
+	@OptionsItem(R.id.markRead)
+	protected void markReadOrUnread() {
+		if (article.isUnread()) {
+			articleActionHelper.markRead(article);
+		} else {
+			articleActionHelper.markUnread(article);
+		}
+		updateMenuItem();
 	}
 
 	@OptionsItem(R.id.markStarred)
