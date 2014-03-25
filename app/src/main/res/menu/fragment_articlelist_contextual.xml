@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/markStarred"
+        android:title="@string/markStarred"
+        android:icon="@drawable/ic_menu_starred"
+        android:showAsAction="always" />
+
+    <item
+        android:id="@+id/markRead"
+        android:title="@string/markRead"
+        android:icon="@drawable/ic_menu_unread"
+        android:showAsAction="always"/>
+
+</menu>

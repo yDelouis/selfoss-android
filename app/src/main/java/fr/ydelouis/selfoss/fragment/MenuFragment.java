@@ -53,7 +53,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 	@ViewById protected TextView url;
 	@ViewById protected TypeView newest;
 	@ViewById protected TypeView unread;
-	@ViewById protected TypeView favorite;
+	@ViewById protected TypeView starred;
 	@ViewById protected ViewGroup tagContainer;
 
 	public void onOpened() {
@@ -69,10 +69,10 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 	}
 
 	private void updateTypes() {
-		for (TypeView typeView : new TypeView[] {newest, unread, favorite}) {
+		for (TypeView typeView : new TypeView[] {newest, unread, starred}) {
 			typeView.setSelected(type);
 		}
-		for (TypeView typeView : new TypeView[] {unread, favorite}) {
+		for (TypeView typeView : new TypeView[] {unread, starred}) {
 			loadTypeCount(typeView);
 		}
 	}
@@ -141,7 +141,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 		listener.onAccountActivityStarted();
 	}
 
-	@Click({ R.id.newest, R.id.unread, R.id.favorite})
+	@Click({ R.id.newest, R.id.unread, R.id.starred})
 	protected void onArticleTypeClick(View view) {
 		ArticleType newType = ArticleType.fromId(view.getId());
 		if (newType != type) {

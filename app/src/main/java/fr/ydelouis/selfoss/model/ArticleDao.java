@@ -22,7 +22,7 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 	public static final String COLUMN_ID = "id";
 	public static final String COLUMN_DATETIME = "dateTime";
 	public static final String COLUMN_UNREAD = "unread";
-	public static final String COLUMN_FAVORITE = "favorite";
+	public static final String COLUMN_STARRED = "favorite";
 	public static final String COLUMN_TAGS = "tags";
 
 	public static final String ACTION_CREATION = "fr.ydelouis.selfoss.article.ACTION_CREATION";
@@ -40,26 +40,18 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 	}
 
 	@Override
-	public CreateOrUpdateStatus createOrUpdate(Article data) {
+	public CreateOrUpdateStatus createOrUpdate(Article article) {
 		try {
-			CreateOrUpdateStatus status = super.createOrUpdate(data);
+			CreateOrUpdateStatus status = super.createOrUpdate(article);
+			article.setCached(!article.isCached());
+			super.createOrUpdate(article);
+			article.setCached(!article.isCached());
 			if (status.isCreated()) {
-				notifyCreation(data);
+				notifyCreation(article);
 			} else if (status.isUpdated()) {
-				updateCachedVersion(data);
-				notifyUpdate(data);
+				notifyUpdate(article);
 			}
 			return status;
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private void updateCachedVersion(Article data) {
-		try {
-			data.setCached(!data.isCached());
-			update(data);
-			data.setCached(!data.isCached());
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -111,6 +103,7 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 			Where<Article, Integer> where = queryBuilder.where();
 
 			whereTypeAndTag(where, type, tag);
+			where.and().gt(COLUMN_ID, 0);
 
 			return (int) queryBuilder.countOf();
 		} catch (SQLException e) {
@@ -120,9 +113,9 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 
 	private void whereTypeAndTag(Where<Article, Integer> where, ArticleType type, Tag tag) throws SQLException {
 		if (type == ArticleType.Unread) {
-			where.eq(COLUMN_UNREAD, true).and().gt(COLUMN_ID, 0);
-		} else if (type == ArticleType.Favorite) {
-			where.eq(COLUMN_FAVORITE, true).and().gt(COLUMN_ID, 0);
+			where.eq(COLUMN_UNREAD, true);
+		} else if (type == ArticleType.Starred) {
+			where.eq(COLUMN_STARRED, true);
 		} else {
 			where.lt(COLUMN_ID, 0);
 		}
@@ -155,7 +148,7 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 	public void deleteFavorite() {
 		try {
 			DeleteBuilder<Article, Integer> deleteBuilder = deleteBuilder();
-			deleteBuilder.where().eq(COLUMN_FAVORITE, true).and().gt(COLUMN_ID, 0);
+			deleteBuilder.where().eq(COLUMN_STARRED, true).and().gt(COLUMN_ID, 0);
 			deleteBuilder.delete();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

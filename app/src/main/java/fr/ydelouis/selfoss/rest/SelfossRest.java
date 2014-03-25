@@ -41,7 +41,7 @@ public interface SelfossRest extends RestClientErrorHandling {
 	List<Article> listUnreadArticles(int offset, int count);
 
 	@Get("/items?type=starred&offset={offset}&items={count}")
-	List<Article> listFavoriteArticles(int offset, int count);
+	List<Article> listStarredArticles(int offset, int count);
 
 	@Post("mark/{articleId}")
 	Success markRead(int articleId);
@@ -53,9 +53,9 @@ public interface SelfossRest extends RestClientErrorHandling {
 	Success markRead(String articleIds);
 
 	@Post("starr/{articleId}")
-	Success favorite(int articleId);
+	Success markStarred(int articleId);
 
 	@Post("unstarr/{articleId}")
-	Success unfavorite(int articleId);
+	Success markUnstarred(int articleId);
 
 }

@@ -31,8 +31,8 @@ public class Article implements Parcelable {
     private String content;
 	@DatabaseField(columnName = ArticleDao.COLUMN_UNREAD)
     private boolean unread;
-	@DatabaseField(columnName = ArticleDao.COLUMN_FAVORITE)
-    private boolean favorite;
+	@DatabaseField(columnName = ArticleDao.COLUMN_STARRED)
+    private boolean starred;
 	@DatabaseField
     private int sourceId;
 	@DatabaseField
@@ -69,8 +69,8 @@ public class Article implements Parcelable {
 	}
 
 	@JsonProperty("starred")
-	public void setFavorite(String favorite) {
-		this.favorite = favorite.equals("1");
+	public void setStarred(String starred) {
+		this.starred = starred.equals("1");
 	}
 
 	@JsonProperty("source")
@@ -119,12 +119,12 @@ public class Article implements Parcelable {
 		this.unread = unread;
 	}
 
-	public boolean isFavorite() {
-		return favorite;
+	public boolean isStarred() {
+		return starred;
 	}
 
-	public void setFavorite(boolean favorite) {
-		this.favorite = favorite;
+	public void setStarred(boolean starred) {
+		this.starred = starred;
 	}
 
 	public int getSourceId() {
@@ -218,7 +218,7 @@ public class Article implements Parcelable {
 		dest.writeString(this.title);
 		dest.writeString(this.content);
 		dest.writeByte(unread ? (byte) 1 : (byte) 0);
-		dest.writeByte(favorite ? (byte) 1 : (byte) 0);
+		dest.writeByte(starred ? (byte) 1 : (byte) 0);
 		dest.writeInt(this.sourceId);
 		dest.writeString(this.thumbnail);
 		dest.writeString(this.icon);
@@ -234,7 +234,7 @@ public class Article implements Parcelable {
 		this.title = in.readString();
 		this.content = in.readString();
 		this.unread = in.readByte() != 0;
-		this.favorite = in.readByte() != 0;
+		this.starred = in.readByte() != 0;
 		this.sourceId = in.readInt();
 		this.thumbnail = in.readString();
 		this.icon = in.readString();

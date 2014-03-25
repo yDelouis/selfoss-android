@@ -8,7 +8,7 @@ public enum ArticleType {
 
 	Newest(R.id.newest, R.string.newest, ""),
 	Unread(R.id.unread, R.string.unread, "unread"),
-	Favorite(R.id.favorite, R.string.favorite, "starred");
+	Starred(R.id.starred, R.string.starred, "starred");
 
 	private int id;
 	private int nameResId;

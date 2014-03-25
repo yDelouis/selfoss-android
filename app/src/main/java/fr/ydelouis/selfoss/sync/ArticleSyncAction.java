@@ -26,16 +26,16 @@ public class ArticleSyncAction {
 				return rest.markUnread(articleId);
 			}
 		},
-		Favorite {
+		MarkStarred {
 			@Override
 			public Success execute(SelfossRest rest, int articleId) {
-				return rest.favorite(articleId);
+				return rest.markStarred(articleId);
 			}
 		},
-		Unfavorite {
+		MarkUnstarred {
 			@Override
 			public Success execute(SelfossRest rest, int articleId) {
-				return rest.unfavorite(articleId);
+				return rest.markUnstarred(articleId);
 			}
 		};
 

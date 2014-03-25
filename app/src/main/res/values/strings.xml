@@ -12,7 +12,7 @@
 	<string name="error_url">Unable to reach the server.</string>
 	<string name="error_usernamePassword">Authentication failed</string>
 	<string name="newest">Newest</string>
-	<string name="favorite">Favorite</string>
+	<string name="starred">Starred</string>
 	<string name="unread">Unread</string>
 	<string name="tags">Tags</string>
 	<string name="error">Error !</string>
@@ -34,5 +34,10 @@
 	<string name="hours">hours</string>
     <string name="http">HTTP</string>
     <string name="https">HTTPS</string>
+    <string name="n_articles">%d articles</string>
+    <string name="markStarred">Mark starred</string>
+    <string name="markRead">Mark read</string>
+    <string name="markUnread">Mark unread</string>
+    <string name="markUnstarred">Mark unstarred</string>
 
 </resources>

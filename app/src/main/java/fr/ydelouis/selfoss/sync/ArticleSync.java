@@ -86,7 +86,7 @@ public class ArticleSync {
 		int offset = 0;
 		List<Article> articles;
 		do {
-			articles = selfossRest.listFavoriteArticles(offset, ARTICLES_PAGE_SIZE);
+			articles = selfossRest.listStarredArticles(offset, ARTICLES_PAGE_SIZE);
 			for (Article article : articles) {
 				articleDao.createOrUpdate(article);
 			}

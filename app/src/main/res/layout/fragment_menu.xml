@@ -43,7 +43,7 @@
 		<View style="@style/MenuDivider"/>
 
 		<fr.ydelouis.selfoss.view.TypeView_
-			android:id="@+id/favorite"
+			android:id="@+id/starred"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

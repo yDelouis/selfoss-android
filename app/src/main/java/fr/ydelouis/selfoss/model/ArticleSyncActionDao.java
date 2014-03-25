@@ -55,6 +55,24 @@ public class ArticleSyncActionDao extends BaseDaoImpl<ArticleSyncAction, Integer
 		}
 	}
 
+	public void markStarred(Article article) {
+		try {
+			deleteMarkStarredAndUnStarred(article);
+			create(new ArticleSyncAction(article, ArticleSyncAction.Action.MarkStarred));
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void markUnstarred(Article article) {
+		try {
+			deleteMarkStarredAndUnStarred(article);
+			create(new ArticleSyncAction(article, ArticleSyncAction.Action.MarkUnstarred));
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	@Override
 	public int delete(ArticleSyncAction data) {
 		try {
@@ -81,6 +99,19 @@ public class ArticleSyncActionDao extends BaseDaoImpl<ArticleSyncAction, Integer
 			where.and(where.eq(COLUMN_ARTICLEID, article.getId()),
 					where.eq(COLUMN_ACTION, ArticleSyncAction.Action.MarkRead)
 						.or().eq(COLUMN_ACTION, ArticleSyncAction.Action.MarkUnread));
+			return deleteBuilder.delete();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public int deleteMarkStarredAndUnStarred(Article article) {
+		try {
+			DeleteBuilder<ArticleSyncAction, Integer> deleteBuilder = deleteBuilder();
+			Where<ArticleSyncAction, Integer> where = deleteBuilder.where();
+			where.and(where.eq(COLUMN_ARTICLEID, article.getId()),
+					where.eq(COLUMN_ACTION, ArticleSyncAction.Action.MarkStarred)
+							.or().eq(COLUMN_ACTION, ArticleSyncAction.Action.MarkUnstarred));
 			return deleteBuilder.delete();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

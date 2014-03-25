@@ -7,6 +7,8 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
 
+import java.util.List;
+
 import fr.ydelouis.selfoss.entity.Article;
 
 @EBean
@@ -29,10 +31,46 @@ public class ArticleActionHelper {
 		articleSyncActionDao.markRead(article);
 	}
 
+	public void markRead(List<Article> articles) {
+		for (Article article : articles) {
+			markRead(article);
+		}
+	}
+
 	public void markUnread(Article article) {
 		article.setUnread(true);
 		articleDao.createOrUpdate(article);
 		articleSyncActionDao.markUnread(article);
+	}
+
+	public void markUnread(List<Article> articles) {
+		for (Article article : articles) {
+			markUnread(article);
+		}
+	}
+
+	public void markStarred(Article article) {
+		article.setStarred(true);
+		articleDao.createOrUpdate(article);
+		articleSyncActionDao.markStarred(article);
+	}
+
+	public void markStarred(List<Article> articles) {
+		for (Article article : articles) {
+			markStarred(article);
+		}
+	}
+
+	public void markUnstarred(Article article) {
+		article.setStarred(false);
+		articleDao.createOrUpdate(article);
+		articleSyncActionDao.markUnstarred(article);
+	}
+
+	public void markUnstarred(List<Article> articles) {
+		for (Article article : articles) {
+			markUnstarred(article);
+		}
 	}
 
 }
