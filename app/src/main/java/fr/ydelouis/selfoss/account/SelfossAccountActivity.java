@@ -146,6 +146,7 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 			showCertificateError();
 		} else {
 			showUrlError();
+			e.printStackTrace();
 		}
 	}
 

@@ -16,7 +16,9 @@ import org.springframework.http.client.ClientHttpResponse;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLDecoder;
 
 import fr.ydelouis.selfoss.BuildConfig;
 import fr.ydelouis.selfoss.account.SelfossAccount;
@@ -29,8 +31,8 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 	private static final String KEY_USERNAME = "username";
 	private static final String KEY_PASSWORD = "password";
 	private static boolean LOG_REQUEST = BuildConfig.DEBUG && true;
-	private static boolean LOG_FULL_REQUEST = BuildConfig.DEBUG && false;
-	private static boolean LOG_RESPONSE = BuildConfig.DEBUG && false;
+	private static boolean LOG_FULL_REQUEST = BuildConfig.DEBUG && true;
+	private static boolean LOG_RESPONSE = BuildConfig.DEBUG && true;
 
 	@Bean protected SelfossAccount account;
 
@@ -47,11 +49,13 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 			Log.i(TAG, response.getStatusCode().value() + " : " + Streams.stringOf(response.getBody()));
 	}
 
-	private void logRequest(HttpRequest request) {
-		String requestUri = request.getURI().toString();
+	private void logRequest(HttpRequest request) throws UnsupportedEncodingException {
+		String requestUri = URLDecoder.decode(request.getURI().toString(), "UTF-8");
 		if(!LOG_FULL_REQUEST && LOG_REQUEST) {
 			int start = requestUri.indexOf(account.getUrl());
-			requestUri = requestUri.substring(start);
+			if (start > 0) {
+				requestUri = requestUri.substring(start);
+			}
 		}
 		requestUri = hidePassword(requestUri);
 		Log.i(TAG, request.getMethod() + " : " + requestUri);
@@ -93,7 +97,10 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 				builder.appendQueryParameter(KEY_USERNAME, account.getUsername());
 				builder.appendQueryParameter(KEY_PASSWORD, account.getPassword());
 			}
-			return URI.create(builder.build().toString());
+			Uri newUri = builder.build();
+			String uriStr = newUri.toString().replace(newUri.getEncodedAuthority(), newUri.getAuthority());
+			System.out.println(uriStr);
+			return URI.create(uriStr);
 		}
 
 		private String getScheme() {
