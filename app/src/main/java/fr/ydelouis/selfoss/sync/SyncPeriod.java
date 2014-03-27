@@ -36,7 +36,7 @@ public enum SyncPeriod {
 	private int textResId;
 
 	private SyncPeriod(long timeInMin, int textResId) {
-		this.time = timeInMin * 60 * 1000;
+		this.time = timeInMin * 60;
 		this.textResId = textResId;
 	}
 
