@@ -31,8 +31,8 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 	private static final String KEY_USERNAME = "username";
 	private static final String KEY_PASSWORD = "password";
 	private static boolean LOG_REQUEST = BuildConfig.DEBUG && true;
-	private static boolean LOG_FULL_REQUEST = BuildConfig.DEBUG && true;
-	private static boolean LOG_RESPONSE = BuildConfig.DEBUG && true;
+	private static boolean LOG_FULL_REQUEST = BuildConfig.DEBUG && false;
+	private static boolean LOG_RESPONSE = BuildConfig.DEBUG && false;
 
 	@Bean protected SelfossAccount account;
 
@@ -52,9 +52,10 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 	private void logRequest(HttpRequest request) throws UnsupportedEncodingException {
 		String requestUri = URLDecoder.decode(request.getURI().toString(), "UTF-8");
 		if(!LOG_FULL_REQUEST && LOG_REQUEST) {
-			int start = requestUri.indexOf(account.getUrl());
-			if (start > 0) {
-				requestUri = requestUri.substring(start);
+			String url = account.getUrl();
+			int start = requestUri.indexOf(url);
+			if (start != -1) {
+				requestUri = requestUri.substring(start+url.length());
 			}
 		}
 		requestUri = hidePassword(requestUri);
@@ -62,7 +63,7 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 	}
 
 	private String hidePassword(String requestUri) {
-		return requestUri.replace(Uri.encode(account.getPassword()), "************");
+		return requestUri.replace(account.getPassword(), "************");
 	}
 
 	private class ApiHttpRequest implements HttpRequest
@@ -99,7 +100,6 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 			}
 			Uri newUri = builder.build();
 			String uriStr = newUri.toString().replace(newUri.getEncodedAuthority(), newUri.getAuthority());
-			System.out.println(uriStr);
 			return URI.create(uriStr);
 		}
 
