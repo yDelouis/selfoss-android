@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.FragmentById;
@@ -23,6 +24,7 @@ import fr.ydelouis.selfoss.entity.Tag;
 import fr.ydelouis.selfoss.fragment.ArticleListFragment;
 import fr.ydelouis.selfoss.fragment.MenuFragment;
 import fr.ydelouis.selfoss.sync.SyncManager;
+import fr.ydelouis.selfoss.sync.Uploader;
 
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.activity_main)
@@ -32,6 +34,8 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Dra
 	protected SelfossAccount account;
 	@Bean
 	protected SyncManager syncManager;
+	@Bean
+	protected Uploader uploader;
 
 	@ViewById
 	protected DrawerLayout drawer;
@@ -81,6 +85,17 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Dra
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
 		drawerToggle.syncState();
+	}
+
+	@Override
+	protected void onDestroy() {
+		upload();
+		super.onDestroy();
+	}
+
+	@Background
+	protected void upload() {
+		uploader.performSync();
 	}
 
 	@Override
