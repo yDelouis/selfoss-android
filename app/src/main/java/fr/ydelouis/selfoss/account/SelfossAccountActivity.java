@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -78,7 +77,7 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 	}
 
 	@CheckedChange(R.id.requireAuth)
-	protected void onProtectedStateChange(CompoundButton checkBox, boolean isChecked) {
+	protected void onProtectedStateChange(boolean isChecked) {
 		usernamePasswordContainer.setVisibility(isChecked ? View.VISIBLE : View.GONE);
 		if (isChecked && !https.isChecked()) {
 			https.setChecked(true);
