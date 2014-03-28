@@ -94,28 +94,6 @@
 
             </LinearLayout>
 
-            <RadioGroup
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/http"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/http"/>
-
-                <RadioButton
-                    android:id="@+id/https"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="64dp"
-                    android:text="@string/https"/>
-
-                </RadioGroup>
-
         </LinearLayout>
 
         <LinearLayout

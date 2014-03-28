@@ -28,8 +28,8 @@ public class SelfossAccount {
 		return null;
 	}
 
-	public void create(String url, long syncPeriod) {
-		create(url, false, url, "", false, syncPeriod);
+	public void create(String url, boolean useHttps, long syncPeriod) {
+		create(url, false, url, "", useHttps, syncPeriod);
 	}
 
 	public void create(String url, String username, String password, boolean useHttps, long syncPeriod) {

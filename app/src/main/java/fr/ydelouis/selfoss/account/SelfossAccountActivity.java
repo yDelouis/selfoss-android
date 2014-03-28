@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -50,8 +49,6 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 	@ViewById protected View usernamePasswordContainer;
 	@ViewById protected EditText username;
 	@ViewById protected EditText password;
-	@ViewById protected RadioButton http;
-	@ViewById protected RadioButton https;
 	@ViewById protected Spinner period;
 	@ViewById protected View validate;
 	@ViewById protected View progress;
@@ -65,53 +62,77 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 
 	@AfterViews
 	protected void updateUi() {
-		url.setText(account.getUrl());
+		url.setText(getDisplayedUrl());
 		requireAuth.setChecked(account.requireAuth());
-		username.setText(account.getUsername());
+		username.setText(getDisplayedUsername());
 		password.setText(account.getPassword());
-		boolean useHttps = account.useHttps();
-		https.setChecked(useHttps);
-		http.setChecked(!useHttps);
 		period.setAdapter(new SyncPeriodAdapter(this));
 		period.setSelection(SyncPeriod.indexOf(account.getSyncPeriod()));
+	}
+
+	private String getDisplayedUrl() {
+		String url = account.getUrl();
+		if (account.requireAuth() != account.useHttps()) {
+			if (account.useHttps()) {
+				url = "https://" + url;
+			} else {
+				url = "http://" + url;
+			}
+		}
+		return url;
+	}
+
+	private String getDisplayedUsername() {
+		String url = account.getUrl();
+		String username = account.getUsername();
+		return url.equals(username) ? "" : username;
 	}
 
 	@CheckedChange(R.id.requireAuth)
 	protected void onProtectedStateChange(boolean isChecked) {
 		usernamePasswordContainer.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-		if (isChecked && !https.isChecked()) {
-			https.setChecked(true);
-		}
 	}
 
 	@Click(R.id.validate)
 	@EditorAction(R.id.password)
 	protected void onValidate() {
-		validateUrl();
 		hydrate();
 		showProgress();
 		tryLogin();
 	}
 
-	private void validateUrl() {
-		String validatedUrl = url.getText().toString();
-		validatedUrl = validatedUrl.replace("http://", "");
-		validatedUrl = validatedUrl.replace("https://", "");
-		url.setText(validatedUrl);
-	}
-
 	private void hydrate() {
 		String url = this.url.getText().toString();
+		boolean useHttps = useHttps(url);
+		url = removeScheme(url);
 		long syncPeriod = SyncPeriod.values()[period.getSelectedItemPosition()].getTime();
 		if (requireAuth.isChecked()) {
 			String username = this.username.getText().toString();
 			String password = this.password.getText().toString();
-			boolean useHttps = https.isChecked();
 			account.create(url, username, password, useHttps, syncPeriod);
 		} else {
-			account.create(url, syncPeriod);
+			account.create(url, useHttps, syncPeriod);
 		}
 		account.setTrustAllCertificates(false);
+	}
+
+	private boolean useHttps(String url) {
+		if (url.startsWith("https://")) {
+			return true;
+		} else if (url.startsWith("http://")) {
+			return false;
+		} else {
+			return requireAuth.isChecked();
+		}
+	}
+
+	private String removeScheme(String url) {
+		String schemeMark = "://";
+		int start = url.indexOf(schemeMark);
+		if (start != -1) {
+			return url.substring(start+schemeMark.length());
+		}
+		return url;
 	}
 
 	protected void showProgress() {
