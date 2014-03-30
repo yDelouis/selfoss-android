@@ -27,7 +27,7 @@ public class ArticleActionHelper {
 
 	public void markRead(Article article) {
 		article.setUnread(false);
-		articleDao.createOrUpdate(article);
+		articleDao.updateAlsoCached(article);
 		articleSyncActionDao.markRead(article);
 	}
 
@@ -39,7 +39,7 @@ public class ArticleActionHelper {
 
 	public void markUnread(Article article) {
 		article.setUnread(true);
-		articleDao.createOrUpdate(article);
+		articleDao.updateAlsoCached(article);
 		articleSyncActionDao.markUnread(article);
 	}
 
@@ -51,7 +51,7 @@ public class ArticleActionHelper {
 
 	public void markStarred(Article article) {
 		article.setStarred(true);
-		articleDao.createOrUpdate(article);
+		articleDao.updateAlsoCached(article);
 		articleSyncActionDao.markStarred(article);
 	}
 
@@ -63,7 +63,7 @@ public class ArticleActionHelper {
 
 	public void markUnstarred(Article article) {
 		article.setStarred(false);
-		articleDao.createOrUpdate(article);
+		articleDao.updateAlsoCached(article);
 		articleSyncActionDao.markUnstarred(article);
 	}
 

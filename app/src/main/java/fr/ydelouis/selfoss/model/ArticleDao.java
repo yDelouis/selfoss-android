@@ -43,15 +43,25 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 	public CreateOrUpdateStatus createOrUpdate(Article article) {
 		try {
 			CreateOrUpdateStatus status = super.createOrUpdate(article);
-			article.setCached(!article.isCached());
-			super.createOrUpdate(article);
-			article.setCached(!article.isCached());
 			if (status.isCreated()) {
 				notifyCreation(article);
 			} else if (status.isUpdated()) {
 				notifyUpdate(article);
 			}
 			return status;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void updateAlsoCached(Article article) {
+		try {
+			int updated = update(article);
+			if (updated != 0) {
+				article.setCached(!article.isCached());
+				createOrUpdate(article);
+				article.setCached(!article.isCached());
+			}
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
