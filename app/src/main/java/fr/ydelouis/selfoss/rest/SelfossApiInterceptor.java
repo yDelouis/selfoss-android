@@ -63,7 +63,10 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 	}
 
 	private String hidePassword(String requestUri) {
-		return requestUri.replace(account.getPassword(), "************");
+		if (account.requireAuth()) {
+			return requestUri.replace(account.getPassword(), "************");
+		}
+		return requestUri;
 	}
 
 	private class ApiHttpRequest implements HttpRequest

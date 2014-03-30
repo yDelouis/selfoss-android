@@ -95,7 +95,11 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Dra
 
 	@Background
 	protected void upload() {
-		uploader.performSync();
+		try {
+			uploader.performSync();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
