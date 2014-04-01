@@ -62,7 +62,7 @@ public class ArticleSync {
 				lastArticle = articles.get(articles.size() - 1);
 			}
 			offset += ARTICLES_PAGE_SIZE;
-		} while (!articles.isEmpty() && offset < CACHE_SIZE);
+		} while (articles.size() == ARTICLES_PAGE_SIZE && offset < CACHE_SIZE);
 		if (lastArticle != null) {
 			articleDao.removeCachedOlderThan(lastArticle.getDateTime());
 		}
@@ -78,7 +78,7 @@ public class ArticleSync {
 				articleDao.createOrUpdate(article);
 			}
 			offset += ARTICLES_PAGE_SIZE;
-		} while (!articles.isEmpty());
+		} while (articles.size() == ARTICLES_PAGE_SIZE);
 	}
 
 	private void syncFavorite() {
@@ -91,7 +91,7 @@ public class ArticleSync {
 				articleDao.createOrUpdate(article);
 			}
 			offset += ARTICLES_PAGE_SIZE;
-		} while (!articles.isEmpty());
+		} while (articles.size() == ARTICLES_PAGE_SIZE);
 	}
 
 	private void sendSyncBroadcast() {
