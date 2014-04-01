@@ -58,6 +58,7 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 		try {
 			int updated = update(article);
 			if (updated != 0) {
+				notifyUpdate(article);
 				article.setCached(!article.isCached());
 				createOrUpdate(article);
 				article.setCached(!article.isCached());

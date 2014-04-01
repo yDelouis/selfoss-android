@@ -80,6 +80,14 @@ public class ArticleProvider {
 		listener.onNewLoaded(articles);
 	}
 
+	public ArticleType getType() {
+		return type;
+	}
+
+	public Tag getTag() {
+		return tag;
+	}
+
 	public interface Listener {
 		void onNextLoaded(List<Article> articles);
 		void onNewLoaded(List<Article> articles);

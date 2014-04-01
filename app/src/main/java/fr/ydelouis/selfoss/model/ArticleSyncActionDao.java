@@ -92,6 +92,7 @@ public class ArticleSyncActionDao extends BaseDaoImpl<ArticleSyncAction, Integer
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public int deleteMarkReadAndUnread(Article article) {
 		try {
 			DeleteBuilder<ArticleSyncAction, Integer> deleteBuilder = deleteBuilder();
@@ -105,6 +106,7 @@ public class ArticleSyncActionDao extends BaseDaoImpl<ArticleSyncAction, Integer
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public int deleteMarkStarredAndUnStarred(Article article) {
 		try {
 			DeleteBuilder<ArticleSyncAction, Integer> deleteBuilder = deleteBuilder();

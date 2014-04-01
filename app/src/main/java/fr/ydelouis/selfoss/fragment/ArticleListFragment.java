@@ -192,7 +192,7 @@ public class ArticleListFragment extends Fragment
 			return true;
 		}
 		if (item.getItemId() == R.id.markStarred) {
-			markFavoriteOrUnfavorite();
+			markFavoriteOrUnstarred();
 			mode.finish();
 			updateAdapterIfNotNewest();
 			return true;
@@ -229,7 +229,7 @@ public class ArticleListFragment extends Fragment
 		}
 	}
 
-	private void markFavoriteOrUnfavorite() {
+	private void markFavoriteOrUnstarred() {
 		if (willMarkStarred()) {
 			actionHelper.markStarred(selectedItems);
 		} else {

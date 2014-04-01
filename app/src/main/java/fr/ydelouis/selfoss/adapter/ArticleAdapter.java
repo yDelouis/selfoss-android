@@ -131,7 +131,13 @@ public class ArticleAdapter extends PagedAdapter<Article> implements ArticleProv
 	}
 
 	private void updateArticle(Article article) {
-		replace(article);
+		if (isInList(article)) {
+			replace(article);
+		}
+	}
+
+	private boolean isInList(Article article) {
+		return article.isCached() == provider.getType().equals(ArticleType.Newest);
 	}
 
 	public void setTypeAndTag(ArticleType type, Tag tag) {
