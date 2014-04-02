@@ -74,7 +74,9 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 			Where<Article, Integer> where = queryBuilder.where();
 
 			whereTypeAndTag(where, type, tag);
-			where.and().gt(COLUMN_DATETIME, firstArticle.getDateTime());
+			if (firstArticle != null) {
+				where.and().gt(COLUMN_DATETIME, firstArticle.getDateTime());
+			}
 
 			queryBuilder.orderBy(COLUMN_DATETIME, false);
 
