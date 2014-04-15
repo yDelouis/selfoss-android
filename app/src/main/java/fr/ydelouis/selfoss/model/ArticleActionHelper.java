@@ -10,6 +10,8 @@ import org.androidannotations.annotations.RootContext;
 import java.util.List;
 
 import fr.ydelouis.selfoss.entity.Article;
+import fr.ydelouis.selfoss.entity.ArticleType;
+import fr.ydelouis.selfoss.entity.Tag;
 
 @EBean
 public class ArticleActionHelper {
@@ -35,6 +37,10 @@ public class ArticleActionHelper {
 		for (Article article : articles) {
 			markRead(article);
 		}
+	}
+
+	public void markAllRead(ArticleType type, Tag tag) {
+		markRead(articleDao.queryForAll(type, tag));
 	}
 
 	public void markUnread(Article article) {

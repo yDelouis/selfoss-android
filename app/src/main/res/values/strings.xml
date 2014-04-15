@@ -39,5 +39,6 @@
     <string name="markRead">Mark read</string>
     <string name="markUnread">Mark unread</string>
     <string name="markUnstarred">Mark unstarred</string>
+    <string name="markAllRead">Mark all read</string>
 
 </resources>
