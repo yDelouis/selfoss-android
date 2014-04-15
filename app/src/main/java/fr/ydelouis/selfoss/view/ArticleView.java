@@ -24,6 +24,7 @@ public class ArticleView extends RelativeLayout {
 	@Bean protected SelfossUtil util;
 	private AQuery aQuery;
 
+	@ViewById protected View background;
 	@ViewById protected ImageView favicon;
 	@ViewById protected TextView sourceTitle;
 	@ViewById protected TextView dateTime;
@@ -55,6 +56,7 @@ public class ArticleView extends RelativeLayout {
 		dateTime.setText(DateUtils.getRelativeTimeSpanString(getContext(), article.getDateTime()));
 		title.setText(article.getTitle());
 		setUnread(article.isUnread());
+		setStarred(article.isStarred());
 	}
 
 	private void setUnread(boolean unread) {
@@ -63,5 +65,9 @@ public class ArticleView extends RelativeLayout {
 		sourceTitle.setTextColor(color);
 		dateTime.setTextColor(color);
 		title.setTextColor(color);
+	}
+
+	private void setStarred(boolean isStarred) {
+		background.setBackgroundResource(isStarred ? R.drawable.bg_card_selectable_starred : R.drawable.bg_card_selectable);
 	}
 }

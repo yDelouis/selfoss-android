@@ -2,7 +2,7 @@
 <resources>
 	<color name="green_selfoss">#3D6D69</color>
 	<color name="button_pressed">#437884</color>
-    <color name="pressed_selfoss">#CC3D6D69</color>
+    <color name="pressed_selfoss">#3D6D69</color>
 	<color name="green_success">#00bf00</color>
 	<color name="grey_menu">#191718</color>
 	<color name="menu_divider_section">#999999</color>
@@ -13,4 +13,5 @@
 	<color name="red_error">#FF0000</color>
 	<color name="article_source_divider">#AAAAAA</color>
 	<color name="text_read">#999999</color>
+    <color name="starred">#CAFFC800</color>
 </resources>
