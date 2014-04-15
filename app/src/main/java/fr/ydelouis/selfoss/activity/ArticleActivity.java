@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.view.ViewPager;
+import android.util.TypedValue;
 import android.widget.ImageView;
 
 import com.androidquery.AQuery;
@@ -50,14 +51,18 @@ public class ArticleActivity extends Activity implements ViewPager.OnPageChangeL
 	private void setArticle(Article article) {
 		setTitle(article.getSourceTitle());
 		if (article.hasIcon()) {
-			new AQuery(this).image(util.faviconUrl(article), true, true, 0, 0, new BitmapAjaxCallback() {
+			new AQuery(new ImageView(this)).image(util.faviconUrl(article), true, true, 0, 0, new BitmapAjaxCallback() {
 				@Override
 				protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status) {
 					if (bm != null) {
-						getActionBar().setIcon(new BitmapDrawable(getResources(), bm));
+						int size = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, 48, getResources().getDisplayMetrics());
+						Bitmap scaledBitmap = Bitmap.createScaledBitmap(bm, size, size, true);
+						getActionBar().setIcon(new BitmapDrawable(getResources(), scaledBitmap));
 					}
 				}
 			});
+		} else {
+			getActionBar().setIcon(R.drawable.ic_selfoss);
 		}
 	}
 
