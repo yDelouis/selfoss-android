@@ -30,7 +30,8 @@
         </activity>
 
 	    <activity
-		    android:name=".activity.ArticleActivity_" />
+		    android:name=".activity.ArticleActivity_"
+            android:configChanges="orientation|screenSize" />
 
 	    <activity
 		    android:name=".account.SelfossAccountActivity_"
