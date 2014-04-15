@@ -58,7 +58,6 @@ public class ArticleAdapter extends PagedAdapter<Article> implements ArticleProv
 	@AfterInject
 	protected void init() {
 		provider.setListener(this);
-		provider.setTypeAndTag(ArticleType.Newest, Tag.ALL);
 	}
 
 	public void registerReceivers() {

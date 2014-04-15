@@ -132,7 +132,7 @@ public class ArticleListFragment extends Fragment
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		Article article = adapter.getItem(position);
 		if (article != null) {
-			ArticleActivity_.intent(getActivity()).article(article).start();
+			ArticleActivity_.intent(getActivity()).article(article).type(type).tag(tag).start();
 		}
 	}
 

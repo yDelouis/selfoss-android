@@ -68,6 +68,10 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 		}
 	}
 
+	public List<Article> queryForAll(ArticleType type, Tag tag) {
+		return queryForPrevious(type, tag, null);
+	}
+
 	public List<Article> queryForPrevious(ArticleType type, Tag tag, Article firstArticle) {
 		try {
 			QueryBuilder<Article, Integer> queryBuilder = queryBuilder();
