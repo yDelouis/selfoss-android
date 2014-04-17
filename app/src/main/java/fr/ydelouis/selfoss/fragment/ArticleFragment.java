@@ -52,6 +52,13 @@ public class ArticleFragment extends Fragment {
 			title.setText(article.getTitle());
 			dateTime.setText(DateUtils.getRelativeTimeSpanString(getActivity(), article.getDateTime()));
 			webView.loadData(article.getContent(), "text/html", "utf-8");
+		}
+	}
+
+	@Override
+	public void setUserVisibleHint(boolean isVisibleToUser) {
+		super.setUserVisibleHint(isVisibleToUser);
+		if (isVisibleToUser && article != null) {
 			articleActionHelper.markRead(article);
 			updateMenuItem();
 		}
