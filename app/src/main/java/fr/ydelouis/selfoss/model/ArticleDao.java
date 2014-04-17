@@ -68,8 +68,20 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 		}
 	}
 
-	public List<Article> queryForAll(ArticleType type, Tag tag) {
-		return queryForPrevious(type, tag, null);
+	public List<Article> queryForUnread(ArticleType type, Tag tag) {
+		try {
+			QueryBuilder<Article, Integer> queryBuilder = queryBuilder();
+			Where<Article, Integer> where = queryBuilder.where();
+
+			whereTypeAndTag(where, type, tag);
+			where.and().eq(COLUMN_UNREAD, true);
+
+			queryBuilder.orderBy(COLUMN_DATETIME, false);
+
+			return queryBuilder.query();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public List<Article> queryForPrevious(ArticleType type, Tag tag, Article firstArticle) {

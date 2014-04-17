@@ -40,7 +40,7 @@ public class ArticleActionHelper {
 	}
 
 	public void markAllRead(ArticleType type, Tag tag) {
-		markRead(articleDao.queryForAll(type, tag));
+		markRead(articleDao.queryForUnread(type, tag));
 	}
 
 	public void markUnread(Article article) {
