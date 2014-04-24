@@ -106,6 +106,9 @@ public class AutoFitTextView extends TextView
 
 	@Override
 	protected int getSuggestedMinimumWidth() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+			return getMinimumWidth();
+		}
 		Drawable background = getBackground();
 		setBackground(null);
 		int minWidth = super.getSuggestedMinimumWidth();
@@ -115,6 +118,9 @@ public class AutoFitTextView extends TextView
 
 	@Override
 	protected int getSuggestedMinimumHeight() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+			return getMinimumHeight();
+		}
 		Drawable background = getBackground();
 		setBackground(null);
 		int minHeight = super.getSuggestedMinimumHeight();
@@ -122,9 +128,8 @@ public class AutoFitTextView extends TextView
 		return minHeight;
 	}
 
-	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-	@SuppressWarnings("deprecation")
 	@Override
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	public void setBackground(Drawable background) {
 		if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN)
 			super.setBackground(background);
