@@ -22,7 +22,7 @@ dependencies {
 	compile 'org.springframework.android:spring-android-rest-template:1.0.1.RELEASE'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.2.2'
 	compile 'com.j256.ormlite:ormlite-android:4.45'
-    compile 'com.github.chrisbanes.actionbarpulltorefresh:library:+'
+    compile 'com.github.chrisbanes.actionbarpulltorefresh:library:0.9.3'
 
     apt files('libs/androidannotations-with-codemodel-selfoss.jar')
     compile files('libs/androidannotations-api-selfoss.jar')
