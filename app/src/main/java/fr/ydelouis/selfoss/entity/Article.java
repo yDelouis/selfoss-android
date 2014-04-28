@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 import fr.ydelouis.selfoss.model.ArticleDao;
 
@@ -20,6 +21,9 @@ import fr.ydelouis.selfoss.model.ArticleDao;
 public class Article implements Parcelable {
 
 	private static final SimpleDateFormat DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	static {
+		DATETIME_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+	}
 
 	@DatabaseField(id = true, columnName = ArticleDao.COLUMN_ID)
     private int id;
