@@ -129,6 +129,7 @@ public class AutoFitTextView extends TextView
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	public void setBackground(Drawable background) {
 		if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN)
