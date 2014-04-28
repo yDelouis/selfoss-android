@@ -15,6 +15,7 @@ import java.util.List;
 
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.model.ArticleDao;
+import fr.ydelouis.selfoss.model.ArticleSyncActionDao;
 import fr.ydelouis.selfoss.model.DatabaseHelper;
 import fr.ydelouis.selfoss.rest.SelfossRest;
 
@@ -28,8 +29,10 @@ public class ArticleSync {
 
 	@RootContext protected Context context;
 	@RestService protected SelfossRest selfossRest;
-	@OrmLiteDao(helper = DatabaseHelper.class, model = Article.class)
+	@OrmLiteDao(helper = DatabaseHelper.class)
 	protected ArticleDao articleDao;
+	@OrmLiteDao(helper = DatabaseHelper.class)
+	protected ArticleSyncActionDao articleSyncActionDao;
 
 	@AfterInject
 	protected void init() {
@@ -51,6 +54,7 @@ public class ArticleSync {
 		do {
 			articles = selfossRest.listArticles(offset, ARTICLES_PAGE_SIZE);
 			for (Article article : articles) {
+				applySyncAction(article);
 				article.setCached(true);
 				Dao.CreateOrUpdateStatus status = articleDao.createOrUpdate(article);
 				if (!newSynced && status.isUpdated()) {
@@ -75,6 +79,7 @@ public class ArticleSync {
 		do {
 			articles = selfossRest.listUnreadArticles(offset, ARTICLES_PAGE_SIZE);
 			for (Article article : articles) {
+				applySyncAction(article);
 				articleDao.createOrUpdate(article);
 			}
 			offset += ARTICLES_PAGE_SIZE;
@@ -88,10 +93,18 @@ public class ArticleSync {
 		do {
 			articles = selfossRest.listStarredArticles(offset, ARTICLES_PAGE_SIZE);
 			for (Article article : articles) {
+				applySyncAction(article);
 				articleDao.createOrUpdate(article);
 			}
 			offset += ARTICLES_PAGE_SIZE;
 		} while (articles.size() == ARTICLES_PAGE_SIZE);
+	}
+
+	private void applySyncAction(Article article) {
+		ArticleSyncAction syncAction = articleSyncActionDao.queryForArticle(article);
+		if (syncAction != null) {
+			syncAction.getAction().execute(article);
+		}
 	}
 
 	private void sendSyncBroadcast() {

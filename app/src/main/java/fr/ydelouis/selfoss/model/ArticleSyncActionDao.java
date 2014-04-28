@@ -37,6 +37,14 @@ public class ArticleSyncActionDao extends BaseDaoImpl<ArticleSyncAction, Integer
 		}
 	}
 
+	public ArticleSyncAction queryForArticle(Article article) {
+		try {
+			return queryBuilder().where().eq(COLUMN_ARTICLEID, article.getId()).queryForFirst();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public void markRead(Article article) {
 		try {
 			deleteMarkReadAndUnread(article);

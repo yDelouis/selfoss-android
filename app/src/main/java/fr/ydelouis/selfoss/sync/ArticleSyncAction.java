@@ -3,8 +3,6 @@ package fr.ydelouis.selfoss.sync;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.security.InvalidParameterException;
-
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.Success;
 import fr.ydelouis.selfoss.model.ArticleSyncActionDao;
@@ -19,11 +17,21 @@ public class ArticleSyncAction {
 			public Success execute(SelfossRest rest, int articleId) {
 				return rest.markRead(articleId);
 			}
+
+			@Override
+			public void execute(Article article) {
+				article.setUnread(false);
+			}
 		},
 		MarkUnread {
 			@Override
 			public Success execute(SelfossRest rest, int articleId) {
 				return rest.markUnread(articleId);
+			}
+
+			@Override
+			public void execute(Article article) {
+				article.setUnread(true);
 			}
 		},
 		MarkStarred {
@@ -31,17 +39,27 @@ public class ArticleSyncAction {
 			public Success execute(SelfossRest rest, int articleId) {
 				return rest.markStarred(articleId);
 			}
+
+			@Override
+			public void execute(Article article) {
+				article.setStarred(true);
+			}
 		},
 		MarkUnstarred {
 			@Override
 			public Success execute(SelfossRest rest, int articleId) {
 				return rest.markUnstarred(articleId);
 			}
+
+			@Override
+			public void execute(Article article) {
+				article.setStarred(false);
+			}
 		};
 
-		public Success execute(SelfossRest rest, int articleId) {
-			throw new InvalidParameterException("The action is not valid");
-		}
+		public abstract Success execute(SelfossRest rest, int articleId);
+
+		public abstract void execute(Article article);
 	}
 
 	@DatabaseField(generatedId = true)
