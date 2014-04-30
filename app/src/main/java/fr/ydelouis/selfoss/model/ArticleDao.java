@@ -126,7 +126,7 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 		return queryForCount(type, Tag.ALL);
 	}
 
-	private int queryForCount(ArticleType type, Tag tag) {
+	public int queryForCount(ArticleType type, Tag tag) {
 		try {
 			QueryBuilder<Article, Integer> queryBuilder = queryBuilder();
 			Where<Article, Integer> where = queryBuilder.where();

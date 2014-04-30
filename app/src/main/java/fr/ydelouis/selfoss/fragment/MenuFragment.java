@@ -85,6 +85,9 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 	@Background
 	protected void loadAndUpdateTags() {
 		List<Tag> tags = tagDao.queryForAll();
+		for (Tag tag : tags) {
+			tag.setUnread(articleDao.queryForCount(ArticleType.Unread, tag));
+		}
 		sortAndUpdateTags(tags);
 	}
 
