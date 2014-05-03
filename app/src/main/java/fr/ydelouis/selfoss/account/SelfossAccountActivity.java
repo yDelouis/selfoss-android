@@ -105,6 +105,7 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 		String url = this.url.getText().toString();
 		boolean useHttps = useHttps(url);
 		url = removeScheme(url);
+		url = removeTrailingSlash(url);
 		long syncPeriod = SyncPeriod.values()[period.getSelectedItemPosition()].getTime();
 		if (requireAuth.isChecked()) {
 			String username = this.username.getText().toString();
@@ -131,6 +132,14 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 		int start = url.indexOf(schemeMark);
 		if (start != -1) {
 			return url.substring(start+schemeMark.length());
+		}
+		return url;
+	}
+
+	private String removeTrailingSlash(String url) {
+		String trailingSlash = "/";
+		if (url.endsWith(trailingSlash)) {
+			return url.substring(0, url.length()-trailingSlash.length());
 		}
 		return url;
 	}
