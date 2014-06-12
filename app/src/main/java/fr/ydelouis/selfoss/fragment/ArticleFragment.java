@@ -51,7 +51,9 @@ public class ArticleFragment extends Fragment {
 		if (article != null) {
 			title.setText(article.getTitle());
 			dateTime.setText(DateUtils.getRelativeTimeSpanString(getActivity(), article.getDateTime()));
-			webView.loadData(article.getContent(), "text/html", "utf-8");
+
+			String html = "<style>img{display: inline;height: auto;max-width: 100%;}</style>"+ article.getContent();
+			webView.loadData(html, "text/html", "utf-8");
 		}
 	}
 
