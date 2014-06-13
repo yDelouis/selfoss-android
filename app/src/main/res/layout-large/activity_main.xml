@@ -1,0 +1,18 @@
+<android.support.v4.widget.DrawerLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/drawer"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<fragment android:name="fr.ydelouis.selfoss.fragment.ArticleListFragment_"
+		android:id="@+id/list"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"/>
+
+	<fragment android:name="fr.ydelouis.selfoss.fragment.MenuFragment_"
+		android:id="@+id/menu"
+		android:layout_width="@dimen/menu_width"
+		android:layout_height="match_parent"
+		android:layout_gravity="left"/>
+
+</android.support.v4.widget.DrawerLayout>

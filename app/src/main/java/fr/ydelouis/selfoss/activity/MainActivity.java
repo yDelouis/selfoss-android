@@ -7,6 +7,7 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -19,10 +20,11 @@ import org.androidannotations.annotations.ViewById;
 import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.account.SelfossAccount;
 import fr.ydelouis.selfoss.account.SelfossAccountActivity_;
+import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.ArticleType;
 import fr.ydelouis.selfoss.entity.Filter;
-import fr.ydelouis.selfoss.entity.Source;
-import fr.ydelouis.selfoss.entity.Tag;
+import fr.ydelouis.selfoss.fragment.ArticleFragment;
+import fr.ydelouis.selfoss.fragment.ArticleFragment_;
 import fr.ydelouis.selfoss.fragment.ArticleListFragment;
 import fr.ydelouis.selfoss.fragment.MenuFragment;
 import fr.ydelouis.selfoss.sync.SyncManager;
@@ -30,7 +32,7 @@ import fr.ydelouis.selfoss.sync.Uploader;
 
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.activity_main)
-public class MainActivity extends Activity implements MenuFragment.Listener, DrawerLayout.DrawerListener {
+public class MainActivity extends Activity implements MenuFragment.Listener, ArticleListFragment.Listener, DrawerLayout.DrawerListener {
 
 	@Bean
 	protected SelfossAccount account;
@@ -41,8 +43,11 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Dra
 
 	@ViewById
 	protected DrawerLayout drawer;
+	@ViewById
+	protected FrameLayout articleFrame;
 	@FragmentById
 	protected ArticleListFragment list;
+	private ArticleFragment article;
 	@FragmentById
 	protected MenuFragment menu;
 	private ActionBarDrawerToggle drawerToggle;
@@ -79,6 +84,7 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Dra
 		drawer.setDrawerListener(this);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setHomeButtonEnabled(true);
+		list.setListener(this);
 		menu.setListener(this);
 		setFilterInTitle();
 	}
@@ -140,6 +146,20 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Dra
 			tagOrSource = filter.getSource().getTitle();
 		}
 		setTitle(String.format("%s (%s)", tagOrSource, type.getName(this)));
+	}
+
+	@Override
+	public void onArticleClicked(Article article) {
+		if (articleFrame != null) {
+			if (this.article == null) {
+				this.article = ArticleFragment_.builder().article(article).build();
+				getFragmentManager().beginTransaction().replace(R.id.articleFrame, this.article).commit();
+			} else {
+				this.article.setArticle(article);
+			}
+		} else {
+			ArticleActivity_.intent(this).article(article).filter(list.getFilter()).start();
+		}
 	}
 
 	@Override

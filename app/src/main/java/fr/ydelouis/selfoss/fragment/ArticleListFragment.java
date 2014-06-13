@@ -25,7 +25,6 @@ import org.androidannotations.annotations.ViewById;
 import java.util.ArrayList;
 
 import fr.ydelouis.selfoss.R;
-import fr.ydelouis.selfoss.activity.ArticleActivity_;
 import fr.ydelouis.selfoss.adapter.ArticleAdapter;
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.ArticleType;
@@ -65,6 +64,8 @@ public class ArticleListFragment extends Fragment
 	protected PullToRefreshLayout pullToRefresh;
 	private MenuItem markRead;
 	private MenuItem markStarred;
+
+	private Listener listener = new DummyListener();
 
 	@AfterViews
 	protected void initViews() {
@@ -111,6 +112,10 @@ public class ArticleListFragment extends Fragment
 		}
 	}
 
+	public void setListener(Listener listener) {
+		this.listener = listener != null ? listener : new DummyListener();
+	}
+
 	public void setFilter(Filter filter) {
 		this.filter = filter;
 		updateAdapter();
@@ -124,7 +129,7 @@ public class ArticleListFragment extends Fragment
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		Article article = adapter.getItem(position);
 		if (article != null) {
-			ArticleActivity_.intent(getActivity()).article(article).filter(filter).start();
+			listener.onArticleClicked(article);
 		}
 	}
 
@@ -233,5 +238,17 @@ public class ArticleListFragment extends Fragment
 	@Background
 	protected void markAllRead() {
 		actionHelper.markAllRead(filter);
+	}
+
+	public interface Listener {
+		void onArticleClicked(Article article);
+	}
+
+	private static class DummyListener implements Listener {
+
+		@Override
+		public void onArticleClicked(Article article) {
+
+		}
 	}
 }
