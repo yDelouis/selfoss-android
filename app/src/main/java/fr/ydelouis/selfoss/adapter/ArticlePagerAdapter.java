@@ -15,8 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.ydelouis.selfoss.entity.Article;
-import fr.ydelouis.selfoss.entity.ArticleType;
-import fr.ydelouis.selfoss.entity.Tag;
+import fr.ydelouis.selfoss.entity.Filter;
 import fr.ydelouis.selfoss.fragment.ArticleFragment_;
 import fr.ydelouis.selfoss.model.ArticleProvider;
 
@@ -37,8 +36,8 @@ public class ArticlePagerAdapter extends FragmentPagerAdapter implements Article
 		provider.setListener(this);
 	}
 
-	public void setTypeAndTag(ArticleType type, Tag tag) {
-		provider.setTypeAndTag(type, tag);
+	public void setFilter(Filter filter) {
+		provider.setFilter(filter);
 	}
 
 	public void setArticle(Article article) {

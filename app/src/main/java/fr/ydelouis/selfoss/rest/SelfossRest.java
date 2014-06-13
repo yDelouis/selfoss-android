@@ -11,6 +11,7 @@ import java.util.List;
 
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.ArticleType;
+import fr.ydelouis.selfoss.entity.Source;
 import fr.ydelouis.selfoss.entity.Success;
 import fr.ydelouis.selfoss.entity.Tag;
 
@@ -22,6 +23,9 @@ public interface SelfossRest extends RestClientErrorHandling {
 	@Get("/login")
 	Success login();
 
+	@Get("/sources/list")
+	List<Source> listSources();
+
 	@Get("/tags")
 	List<Tag> listTags();
 
@@ -31,8 +35,14 @@ public interface SelfossRest extends RestClientErrorHandling {
 	@Get("/items?tag={tag}&offset={offset}&items={count}")
 	List<Article> listArticles(Tag tag, int offset, int count);
 
+	@Get("/items?source={sourceId}&offset={offset}&items={count}")
+	List<Article> listArticles(int sourceId, int offset, int count);
+
 	@Get("/items?type={type}&tag={tag}&offset={offset}&items={count}")
 	List<Article> listArticles(ArticleType type, Tag tag, int offset, int count);
+
+	@Get("/items?type={type}&source={sourceId}&offset={offset}&items={count}")
+	List<Article> listArticles(ArticleType type, int sourceId, int offset, int count);
 
 	@Get("/items?type={type}&offset={offset}&items={count}")
 	List<Article> listArticles(ArticleType type, int offset, int count);

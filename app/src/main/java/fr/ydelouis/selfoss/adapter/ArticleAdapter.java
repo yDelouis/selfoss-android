@@ -17,7 +17,7 @@ import java.util.List;
 
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.ArticleType;
-import fr.ydelouis.selfoss.entity.Tag;
+import fr.ydelouis.selfoss.entity.Filter;
 import fr.ydelouis.selfoss.model.ArticleDao;
 import fr.ydelouis.selfoss.model.ArticleProvider;
 import fr.ydelouis.selfoss.sync.ArticleSync;
@@ -136,11 +136,11 @@ public class ArticleAdapter extends PagedAdapter<Article> implements ArticleProv
 	}
 
 	private boolean isInList(Article article) {
-		return article.isCached() == provider.getType().equals(ArticleType.Newest);
+		return article.isCached() == provider.getFilter().getType().equals(ArticleType.Newest);
 	}
 
-	public void setTypeAndTag(ArticleType type, Tag tag) {
-		provider.setTypeAndTag(type, tag);
+	public void setFilter(Filter filter) {
+		provider.setFilter(filter);
 		reset();
 	}
 

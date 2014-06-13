@@ -37,7 +37,7 @@ public class Article implements Parcelable {
     private boolean unread;
 	@DatabaseField(columnName = ArticleDao.COLUMN_STARRED)
     private boolean starred;
-	@DatabaseField
+	@DatabaseField(columnName = ArticleDao.COLUMN_SOURCE_ID)
     private int sourceId;
 	@DatabaseField
     private String thumbnail;

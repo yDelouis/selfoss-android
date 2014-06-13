@@ -28,10 +28,15 @@ import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.account.SelfossAccount;
 import fr.ydelouis.selfoss.account.SelfossAccountActivity_;
 import fr.ydelouis.selfoss.entity.ArticleType;
+import fr.ydelouis.selfoss.entity.Filter;
+import fr.ydelouis.selfoss.entity.Source;
 import fr.ydelouis.selfoss.entity.Tag;
 import fr.ydelouis.selfoss.model.ArticleDao;
 import fr.ydelouis.selfoss.model.DatabaseHelper;
+import fr.ydelouis.selfoss.sync.SourceSync;
 import fr.ydelouis.selfoss.sync.TagSync;
+import fr.ydelouis.selfoss.view.SourceView;
+import fr.ydelouis.selfoss.view.SourceView_;
 import fr.ydelouis.selfoss.view.TagView;
 import fr.ydelouis.selfoss.view.TagView_;
 import fr.ydelouis.selfoss.view.TypeView;
@@ -41,11 +46,11 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 
 	@Bean protected SelfossAccount account;
 	@FragmentArg @InstanceState
-	protected ArticleType type = ArticleType.Newest;
-	@FragmentArg @InstanceState
-	protected Tag tag = Tag.ALL;
+	protected Filter filter = new Filter();
 	@OrmLiteDao(helper = DatabaseHelper.class)
 	protected RuntimeExceptionDao<Tag, String> tagDao;
+	@OrmLiteDao(helper = DatabaseHelper.class)
+	protected RuntimeExceptionDao<Source, Integer> sourceDao;
 	@OrmLiteDao(helper = DatabaseHelper.class)
 	protected ArticleDao articleDao;
 	private Listener listener = new DummyListener();
@@ -55,6 +60,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 	@ViewById protected TypeView unread;
 	@ViewById protected TypeView starred;
 	@ViewById protected ViewGroup tagContainer;
+	@ViewById protected ViewGroup sourceContainer;
 
 	public void onOpened() {
 		updateViews();
@@ -66,11 +72,12 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 		url.setText(account.getUrl());
 		updateTypes();
 		loadAndUpdateTags();
+		loadAndUpdateSources();
 	}
 
 	private void updateTypes() {
 		for (TypeView typeView : new TypeView[] {newest, unread, starred}) {
-			typeView.setSelected(type);
+			typeView.setSelected(filter.getType());
 		}
 		for (TypeView typeView : new TypeView[] {unread, starred}) {
 			loadTypeCount(typeView);
@@ -91,9 +98,23 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 		sortAndUpdateTags(tags);
 	}
 
+	@Background
+	protected void loadAndUpdateSources() {
+		List<Source> sources = sourceDao.queryForAll();
+		for (Source source : sources) {
+			source.setUnread(articleDao.queryForCount(ArticleType.Unread, source));
+		}
+		sortAndUpdateSources(sources);
+	}
+
 	@Receiver(actions = {TagSync.ACTION_SYNC_TAGS}, registerAt = Receiver.RegisterAt.OnResumeOnPause)
 	protected void onTagsSynced(Intent intent) {
 		sortAndUpdateTags(intent.<Tag>getParcelableArrayListExtra(TagSync.EXTRA_TAGS));
+	}
+
+	@Receiver(actions = {SourceSync.ACTION_SYNC_SOURCES}, registerAt = Receiver.RegisterAt.OnResumeOnPause)
+	protected void onSourcesSynced(Intent intent) {
+		sortAndUpdateSources(intent.<Source>getParcelableArrayListExtra(SourceSync.EXTRA_SOURCES));
 	}
 
 	protected void sortAndUpdateTags(List<Tag> tags) {
@@ -107,6 +128,11 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 		updateTags(tags);
 	}
 
+	protected void sortAndUpdateSources(List<Source> sources) {
+		Collections.sort(sources, Source.COMPARATOR_UNREAD_INVERSE);
+		updateSources(sources);
+	}
+
 	@UiThread
 	@IgnoredWhenDetached
 	protected void updateTags(List<Tag> tags) {
@@ -114,10 +140,24 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 		for (Tag tag : tags) {
 			TagView tagView = TagView_.build(getActivity());
 			tagView.setTag(tag);
-			tagView.setSelected(tag.equals(this.tag));
+			tagView.setSelected(tag.equals(filter.getTag()));
 			tagView.setOnClickListener(this);
 			tagContainer.addView(tagView);
 			tagContainer.addView(newDivider());
+		}
+	}
+
+	@UiThread
+	@IgnoredWhenDetached
+	protected void updateSources(List<Source> sources) {
+		sourceContainer.removeAllViews();
+		for (Source source : sources) {
+			SourceView sourceView = SourceView_.build(getActivity());
+			sourceView.setSource(source);
+			sourceView.setSelected(source.equals(filter.getSource()));
+			sourceView.setOnClickListener(this);
+			sourceContainer.addView(sourceView);
+			sourceContainer.addView(newDivider());
 		}
 	}
 
@@ -128,12 +168,28 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 		return view;
 	}
 
+	private void selectTagAndSource() {
+		selectTag();
+		selectSource();
+		listener.onFilterChanged(filter);
+	}
+
 	private void selectTag() {
 		for (int i = 0; i < tagContainer.getChildCount(); i++) {
 			View view = tagContainer.getChildAt(i);
 			if (view instanceof TagView) {
 				TagView tagView = (TagView) view;
-				tagView.setSelected(tagView.getTag().equals(this.tag));
+				tagView.setSelected(tagView.getTag().equals(filter.getTag()));
+			}
+		}
+	}
+
+	private void selectSource() {
+		for (int i = 0; i < sourceContainer.getChildCount(); i++) {
+			View view = sourceContainer.getChildAt(i);
+			if (view instanceof SourceView) {
+				SourceView sourceView = (SourceView) view;
+				sourceView.setSelected(sourceView.getSource().equals(filter.getSource()));
 			}
 		}
 	}
@@ -147,10 +203,10 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 	@Click({ R.id.newest, R.id.unread, R.id.starred})
 	protected void onArticleTypeClick(View view) {
 		ArticleType newType = ArticleType.fromId(view.getId());
-		if (newType != type) {
-			this.type = newType;
+		if (newType != filter.getType()) {
+			filter.setType(newType);
 			updateTypes();
-			listener.onArticleTypeChanged(type);
+			listener.onFilterChanged(filter);
 		}
 	}
 
@@ -158,10 +214,18 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 	public void onClick(View view) {
 		if (view instanceof TagView) {
 			Tag newTag = ((TagView) view).getTag();
-			if (!newTag.equals(tag)) {
-				this.tag = newTag;
-				selectTag();
-				listener.onTagChanged(tag);
+			if (!newTag.equals(filter.getTag())) {
+				filter.setTag(newTag);
+				selectTagAndSource();
+				listener.onFilterChanged(filter);
+			}
+		}
+		if (view instanceof SourceView) {
+			Source newSource = ((SourceView) view).getSource();
+			if (!newSource.equals(filter.getSource())) {
+				filter.setSource(newSource);
+				selectTagAndSource();
+				listener.onFilterChanged(filter);
 			}
 		}
 	}
@@ -172,8 +236,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 
 	public interface Listener {
 		void onAccountActivityStarted();
-		void onArticleTypeChanged(ArticleType type);
-		void onTagChanged(Tag tag);
+		void onFilterChanged(Filter filter);
 	}
 
 	private class DummyListener implements Listener {
@@ -182,9 +245,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 		public void onAccountActivityStarted() {}
 
 		@Override
-		public void onArticleTypeChanged(ArticleType type) {}
-
-		@Override
-		public void onTagChanged(Tag tag) {}
+		public void onFilterChanged(Filter filter) {}
 	}
 }

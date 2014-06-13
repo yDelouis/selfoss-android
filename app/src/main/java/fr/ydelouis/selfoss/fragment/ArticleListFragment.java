@@ -29,7 +29,7 @@ import fr.ydelouis.selfoss.activity.ArticleActivity_;
 import fr.ydelouis.selfoss.adapter.ArticleAdapter;
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.ArticleType;
-import fr.ydelouis.selfoss.entity.Tag;
+import fr.ydelouis.selfoss.entity.Filter;
 import fr.ydelouis.selfoss.model.ArticleActionHelper;
 import fr.ydelouis.selfoss.sync.SyncManager;
 import fr.ydelouis.selfoss.view.PagedAdapterViewWrapper;
@@ -48,10 +48,7 @@ public class ArticleListFragment extends Fragment
 
 	@FragmentArg
 	@InstanceState
-	protected ArticleType type = ArticleType.Newest;
-	@FragmentArg
-	@InstanceState
-	protected Tag tag = Tag.ALL;
+	protected Filter filter = new Filter();
 	@Bean
 	protected ArticleAdapter adapter;
 	@Bean
@@ -105,38 +102,29 @@ public class ArticleListFragment extends Fragment
 	}
 
 	private void updateAdapter() {
-		adapter.setTypeAndTag(type, tag);
+		adapter.setFilter(filter);
 	}
 
 	private void updateAdapterIfNotNewest() {
-		if (!ArticleType.Newest.equals(type)) {
+		if (!ArticleType.Newest.equals(filter.getType())) {
 			updateAdapter();
 		}
 	}
 
-	public void setType(ArticleType type) {
-		this.type = type;
+	public void setFilter(Filter filter) {
+		this.filter = filter;
 		updateAdapter();
 	}
 
-	public ArticleType getType() {
-		return type;
-	}
-
-	public void setTag(Tag tag) {
-		this.tag = tag;
-		updateAdapter();
-	}
-
-	public Tag getArticleTag() {
-		return tag;
+	public Filter getFilter() {
+		return filter;
 	}
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		Article article = adapter.getItem(position);
 		if (article != null) {
-			ArticleActivity_.intent(getActivity()).article(article).type(type).tag(tag).start();
+			ArticleActivity_.intent(getActivity()).article(article).filter(filter).start();
 		}
 	}
 
@@ -244,6 +232,6 @@ public class ArticleListFragment extends Fragment
 	@OptionsItem(R.id.markRead)
 	@Background
 	protected void markAllRead() {
-		actionHelper.markAllRead(getType(), getArticleTag());
+		actionHelper.markAllRead(filter);
 	}
 }

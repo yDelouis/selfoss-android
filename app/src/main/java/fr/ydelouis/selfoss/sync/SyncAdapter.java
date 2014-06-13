@@ -18,6 +18,7 @@ import java.io.IOException;
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 	@Bean protected Uploader uploader;
+	@Bean protected SourceSync sourceSync;
 	@Bean protected TagSync tagSync;
 	@Bean protected ArticleSync articleSync;
 
@@ -36,6 +37,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 	private void performSync() {
 		uploader.performSync();
+		sourceSync.performSync();
 		tagSync.performSync();
 		articleSync.performSync();
 	}
