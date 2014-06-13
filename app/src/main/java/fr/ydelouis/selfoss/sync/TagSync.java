@@ -25,7 +25,7 @@ public class TagSync {
 
 	@RootContext protected Context context;
 	@RestService protected SelfossRest selfossRest;
-	@OrmLiteDao(helper = DatabaseHelper.class, model = Tag.class)
+	@OrmLiteDao(helper = DatabaseHelper.class)
 	protected RuntimeExceptionDao<Tag, String> tagDao;
 
 	public void performSync() {

@@ -21,16 +21,14 @@ import org.androidannotations.annotations.ViewById;
 import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.adapter.ArticlePagerAdapter;
 import fr.ydelouis.selfoss.entity.Article;
-import fr.ydelouis.selfoss.entity.ArticleType;
-import fr.ydelouis.selfoss.entity.Tag;
+import fr.ydelouis.selfoss.entity.Filter;
 import fr.ydelouis.selfoss.util.SelfossUtil;
 
 @EActivity(R.layout.activity_article)
 public class ArticleActivity extends Activity implements ViewPager.OnPageChangeListener {
 
 	@Extra protected Article article;
-	@Extra protected ArticleType type;
-	@Extra protected Tag tag;
+	@Extra protected Filter filter;
 
 	@Bean protected SelfossUtil util;
 	@Bean ArticlePagerAdapter adapter;
@@ -40,7 +38,7 @@ public class ArticleActivity extends Activity implements ViewPager.OnPageChangeL
 	@AfterViews
 	protected void initViews() {
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-		adapter.setTypeAndTag(type, tag);
+		adapter.setFilter(filter);
 		adapter.setArticle(article);
 		setArticle(article);
 		pager.setAdapter(adapter);

@@ -15,6 +15,8 @@ import java.util.List;
 
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.ArticleType;
+import fr.ydelouis.selfoss.entity.Filter;
+import fr.ydelouis.selfoss.entity.Source;
 import fr.ydelouis.selfoss.entity.Tag;
 
 public class ArticleDao extends BaseDaoImpl<Article, Integer> {
@@ -24,6 +26,7 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 	public static final String COLUMN_UNREAD = "unread";
 	public static final String COLUMN_STARRED = "starred";
 	public static final String COLUMN_TAGS = "tags";
+	public static final String COLUMN_SOURCE_ID = "sourceId";
 
 	public static final String ACTION_CREATION = "fr.ydelouis.selfoss.article.ACTION_CREATION";
 	public static final String ACTION_UPDATE = "fr.ydelouis.selfoss.article.ACTION_UPDATE";
@@ -68,12 +71,12 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 		}
 	}
 
-	public List<Article> queryForUnread(ArticleType type, Tag tag) {
+	public List<Article> queryForUnread(Filter filter) {
 		try {
 			QueryBuilder<Article, Integer> queryBuilder = queryBuilder();
 			Where<Article, Integer> where = queryBuilder.where();
 
-			whereTypeAndTag(where, type, tag);
+			whereFilter(where, filter);
 			where.and().eq(COLUMN_UNREAD, true);
 
 			queryBuilder.orderBy(COLUMN_DATETIME, false);
@@ -84,12 +87,12 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 		}
 	}
 
-	public List<Article> queryForPrevious(ArticleType type, Tag tag, Article firstArticle) {
+	public List<Article> queryForPrevious(Filter filter, Article firstArticle) {
 		try {
 			QueryBuilder<Article, Integer> queryBuilder = queryBuilder();
 			Where<Article, Integer> where = queryBuilder.where();
 
-			whereTypeAndTag(where, type, tag);
+			whereFilter(where, filter);
 			if (firstArticle != null) {
 				where.and().gt(COLUMN_DATETIME, firstArticle.getDateTime());
 			}
@@ -102,12 +105,12 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 		}
 	}
 
-	public List<Article> queryForNext(ArticleType type, Tag tag, Article article, long pageSize) {
+	public List<Article> queryForNext(Filter filter, Article article, long pageSize) {
 		try {
 			QueryBuilder<Article, Integer> queryBuilder = queryBuilder();
 			Where<Article, Integer> where = queryBuilder.where();
 
-			whereTypeAndTag(where, type, tag);
+			whereFilter(where, filter);
 
 			if (article != null) {
 				where.and().lt(COLUMN_DATETIME, article.getDateTime());
@@ -140,7 +143,29 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 		}
 	}
 
-	private void whereTypeAndTag(Where<Article, Integer> where, ArticleType type, Tag tag) throws SQLException {
+	public int queryForCount(ArticleType type, Source source) {
+		try {
+			QueryBuilder<Article, Integer> queryBuilder = queryBuilder();
+			Where<Article, Integer> where = queryBuilder.where();
+
+			whereTypeAndSource(where, type, source);
+			where.and().gt(COLUMN_ID, 0);
+
+			return (int) queryBuilder.countOf();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void whereFilter(Where<Article, Integer> where, Filter filter) throws SQLException {
+		if (filter.getTag() != null) {
+			whereTypeAndTag(where, filter.getType(), filter.getTag());
+		} else {
+			whereTypeAndSource(where, filter.getType(), filter.getSource());
+		}
+	}
+
+	private void whereType(Where<Article, Integer> where, ArticleType type) throws SQLException {
 		if (type == ArticleType.Unread) {
 			where.eq(COLUMN_UNREAD, true);
 		} else if (type == ArticleType.Starred) {
@@ -148,10 +173,18 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 		} else {
 			where.lt(COLUMN_ID, 0);
 		}
+	}
 
+	private void whereTypeAndTag(Where<Article, Integer> where, ArticleType type, Tag tag) throws SQLException {
+		whereType(where, type);
 		if (!Tag.ALL.equals(tag)) {
 			where.and().like(COLUMN_TAGS, "%" + tag.getName(null) + "%");
 		}
+	}
+
+	private void whereTypeAndSource(Where<Article, Integer> where, ArticleType type, Source source) throws SQLException {
+		whereType(where, type);
+		where.and().like(COLUMN_SOURCE_ID, source.getId());
 	}
 
 	public void removeCachedOlderThan(long dateTime) {

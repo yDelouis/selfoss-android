@@ -20,6 +20,8 @@ import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.account.SelfossAccount;
 import fr.ydelouis.selfoss.account.SelfossAccountActivity_;
 import fr.ydelouis.selfoss.entity.ArticleType;
+import fr.ydelouis.selfoss.entity.Filter;
+import fr.ydelouis.selfoss.entity.Source;
 import fr.ydelouis.selfoss.entity.Tag;
 import fr.ydelouis.selfoss.fragment.ArticleListFragment;
 import fr.ydelouis.selfoss.fragment.MenuFragment;
@@ -78,7 +80,7 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Dra
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setHomeButtonEnabled(true);
 		menu.setListener(this);
-		setTypeAndTagInTitle();
+		setFilterInTitle();
 	}
 
 	@Override
@@ -122,23 +124,22 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Dra
 	}
 
 	@Override
-	public void onArticleTypeChanged(ArticleType type) {
-		list.setType(type);
-		setTypeAndTagInTitle();
+	public void onFilterChanged(Filter filter) {
+		list.setFilter(filter);
+		setFilterInTitle();
 		drawer.closeDrawers();
 	}
 
-	@Override
-	public void onTagChanged(Tag tag) {
-		list.setTag(tag);
-		setTypeAndTagInTitle();
-		drawer.closeDrawers();
-	}
-
-	private void setTypeAndTagInTitle() {
-		ArticleType type = list.getType();
-		Tag tag = list.getArticleTag();
-		setTitle(String.format("%s (%s)", tag.getName(this), type.getName(this)));
+	private void setFilterInTitle() {
+		Filter filter = list.getFilter();
+		ArticleType type = filter.getType();
+		String tagOrSource;
+		if (filter.getTag() != null) {
+			tagOrSource = filter.getTag().getName(this);
+		} else {
+			tagOrSource = filter.getSource().getTitle();
+		}
+		setTitle(String.format("%s (%s)", tagOrSource, type.getName(this)));
 	}
 
 	@Override
