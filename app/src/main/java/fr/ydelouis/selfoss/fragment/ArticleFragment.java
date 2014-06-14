@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
 import org.androidannotations.annotations.AfterViews;
@@ -36,6 +37,7 @@ public class ArticleFragment extends Fragment {
 	@ViewById protected TextView dateTime;
 	@OptionsMenuItem protected MenuItem markRead;
 	@OptionsMenuItem protected MenuItem markStarred;
+	@OptionsMenuItem protected MenuItem share;
 
 	@AfterViews
 	protected void initViews() {
@@ -51,12 +53,23 @@ public class ArticleFragment extends Fragment {
 		if (article != null) {
 			title.setText(article.getTitle());
 			dateTime.setText(DateUtils.getRelativeTimeSpanString(getActivity(), article.getDateTime()));
-
-			String html = "<style>img{display: inline;height: auto;max-width: 100%;}</style>"+ article.getContent();
-			webView.loadData(html, "text/html", "utf-8");
-
+			setArticleContent();
 			updateMenuItem();
 		}
+	}
+
+	private void setArticleContent() {
+		String html = "<style>img{display: inline;height: auto;max-width: 100%;}</style>"+ article.getContent();
+		webView.loadData(html, "text/html", "utf-8");
+	}
+
+	private void setShareIntent() {
+		ShareActionProvider shareActionProvider = (ShareActionProvider) share.getActionProvider();
+		Intent intent = new Intent(Intent.ACTION_SEND);
+		intent.putExtra(Intent.EXTRA_TEXT, article.getLink());
+		intent.putExtra(Intent.EXTRA_SUBJECT, article.getTitle());
+		intent.setType("text/plain");
+		shareActionProvider.setShareIntent(intent);
 	}
 
 	@Override
@@ -71,6 +84,7 @@ public class ArticleFragment extends Fragment {
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
+		setShareIntent();
 		updateMenuItem();
 	}
 

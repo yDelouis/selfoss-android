@@ -40,5 +40,6 @@
     <string name="markAllRead">Mark all read</string>
     <string name="sources">Sources</string>
     <string name="allSources">All sources</string>
+    <string name="share">Share</string>
 
 </resources>

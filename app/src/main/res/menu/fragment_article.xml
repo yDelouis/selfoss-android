@@ -19,4 +19,11 @@
 	    android:title="@string/openInBrowser"
 		android:showAsAction="always"/>
 
+    <item
+        android:id="@+id/share"
+        android:showAsAction="ifRoom"
+        android:title="@string/share"
+        android:actionProviderClass=
+            "android.widget.ShareActionProvider" />
+
 </menu>
