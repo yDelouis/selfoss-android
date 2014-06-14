@@ -14,7 +14,6 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.FragmentById;
-import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 
 import fr.ydelouis.selfoss.R;
@@ -31,7 +30,6 @@ import fr.ydelouis.selfoss.sync.SyncManager;
 import fr.ydelouis.selfoss.sync.Uploader;
 
 @EActivity(R.layout.activity_main)
-@OptionsMenu(R.menu.activity_main)
 public class MainActivity extends Activity implements MenuFragment.Listener, ArticleListFragment.Listener, DrawerLayout.DrawerListener {
 
 	@Bean
@@ -157,6 +155,7 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Art
 			} else {
 				this.article.setArticle(article);
 			}
+			this.article.setUserVisibleHint(true);
 		} else {
 			ArticleActivity_.intent(this).article(article).filter(list.getFilter()).start();
 		}

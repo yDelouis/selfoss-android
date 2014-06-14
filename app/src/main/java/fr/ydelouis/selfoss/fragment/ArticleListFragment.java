@@ -234,7 +234,7 @@ public class ArticleListFragment extends Fragment
 		}
 	}
 
-	@OptionsItem(R.id.markRead)
+	@OptionsItem(R.id.markAllRead)
 	@Background
 	protected void markAllRead() {
 		actionHelper.markAllRead(filter);

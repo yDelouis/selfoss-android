@@ -54,6 +54,8 @@ public class ArticleFragment extends Fragment {
 
 			String html = "<style>img{display: inline;height: auto;max-width: 100%;}</style>"+ article.getContent();
 			webView.loadData(html, "text/html", "utf-8");
+
+			updateMenuItem();
 		}
 	}
 
@@ -73,11 +75,11 @@ public class ArticleFragment extends Fragment {
 	}
 
 	private void updateMenuItem() {
-		if (markRead != null) {
+		if (article != null && markRead != null) {
 			markRead.setIcon(article.isUnread() ? R.drawable.ic_menu_unread : R.drawable.ic_menu_read);
 			markRead.setTitle(article.isUnread() ? R.string.markRead : R.string.markUnread);
 		}
-		if (markStarred != null) {
+		if (article != null && markStarred != null) {
 			markStarred.setIcon(article.isStarred() ? R.drawable.ic_menu_starred : R.drawable.ic_menu_unstarred);
 			markStarred.setTitle(article.isStarred() ? R.string.markUnstarred : R.string.markStarred);
 		}
@@ -85,28 +87,34 @@ public class ArticleFragment extends Fragment {
 
 	@OptionsItem(R.id.markRead)
 	protected void markReadOrUnread() {
-		if (article.isUnread()) {
-			articleActionHelper.markRead(article);
-		} else {
-			articleActionHelper.markUnread(article);
+		if (article != null) {
+			if (article.isUnread()) {
+				articleActionHelper.markRead(article);
+			} else {
+				articleActionHelper.markUnread(article);
+			}
+			updateMenuItem();
 		}
-		updateMenuItem();
 	}
 
 	@OptionsItem(R.id.markStarred)
 	protected void markStarredOrUnstarred() {
-		if (article.isStarred()) {
-			articleActionHelper.markUnstarred(article);
-		} else {
-			articleActionHelper.markStarred(article);
+		if (article != null) {
+			if (article.isStarred()) {
+				articleActionHelper.markUnstarred(article);
+			} else {
+				articleActionHelper.markStarred(article);
+			}
+			updateMenuItem();
 		}
-		updateMenuItem();
 	}
 
 	@OptionsItem(R.id.browser)
 	protected void openInBrowser() {
-		Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.setData(Uri.parse(article.getLink()));
-		startActivity(intent);
+		if (article != null) {
+			Intent intent = new Intent(Intent.ACTION_VIEW);
+			intent.setData(Uri.parse(article.getLink()));
+			startActivity(intent);
+		}
 	}
 }
