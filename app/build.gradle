@@ -78,7 +78,7 @@ apt {
 
 task askForPasswords << {
     def storePw = new String(System.console().readPassword("\n\nKeystore password: "))
-    def keyPw  = new String(System.console().readPassword("Key password: "))
+    def keyPw = new String(System.console().readPassword("Key password: "))
 
     android.signingConfigs.release.storePassword = storePw
     android.signingConfigs.release.keyPassword = keyPw
@@ -91,9 +91,9 @@ tasks.whenTaskAdded { theTask ->
 }
 
 task launchDebug(dependsOn: 'installDebug') << {
-	"adb shell am start -n fr.ydelouis.selfoss/.activity.MainActivity_".execute()
+    "adb shell am start -n fr.ydelouis.selfoss/.activity.MainActivity_".execute()
 }
 
 task clearData << {
-	"adb shell pm clear fr.ydelouis.selfoss".execute()
+    "adb shell pm clear fr.ydelouis.selfoss".execute()
 }
