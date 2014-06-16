@@ -23,6 +23,7 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-databind:2.2.2'
 	compile 'com.j256.ormlite:ormlite-android:4.45'
     compile 'com.github.chrisbanes.actionbarpulltorefresh:library:0.9.3'
+    compile 'com.etsy.android.grid:library:+'
 
     apt files('libs/androidannotations-with-codemodel-selfoss.jar')
     compile files('libs/androidannotations-api-selfoss.jar')
