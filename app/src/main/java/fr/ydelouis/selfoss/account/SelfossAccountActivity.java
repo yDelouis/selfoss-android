@@ -24,6 +24,8 @@ import org.androidannotations.annotations.TextChange;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.IOException;
 
@@ -96,9 +98,19 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 	@Click(R.id.validate)
 	@EditorAction(R.id.password)
 	protected void onValidate() {
-		hydrate();
-		showProgress();
-		tryLogin();
+		if (validateFields()) {
+			hydrate();
+			showProgress();
+			checkConfig();
+		}
+	}
+
+	private boolean validateFields() {
+		if (requireAuth.isChecked() && username.getText().toString().isEmpty()) {
+			username.setError(getString(R.string.error_usernameEmpty));
+			return false;
+		}
+		return true;
 	}
 
 	private void hydrate() {
@@ -151,8 +163,16 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 		inputMethodManager.hideSoftInputFromWindow(url.getWindowToken(), 0);
 	}
 
+	private void checkConfig() {
+		if (requireAuth.isChecked()) {
+			checkConfigWithAuth();
+		} else {
+			checkConfigWithoutAuth();
+		}
+	}
+
 	@Background
-	protected void tryLogin() {
+	protected void checkConfigWithAuth() {
 		try {
 			Success success = selfossRest.login();
 			handleSuccess(success);
@@ -163,19 +183,37 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 
 	private void handleSuccess(Success success) {
 		if (success.isSuccess()) {
-			showSuccess();
-			quitDelayed();
+			onConfigCorrect();
 		} else {
 			showUsernamePasswordError();
 		}
+	}
+
+	@Background
+	protected void checkConfigWithoutAuth() {
+		try {
+			selfossRest.login();
+			try {
+				selfossRest.listTags();
+				onConfigCorrect();
+			} catch (Exception e) {
+				showUrlError(e);
+			}
+		} catch (Exception e) {
+			handleException(e);
+		}
+	}
+
+	private void onConfigCorrect() {
+		showSuccess();
+		quitDelayed();
 	}
 
 	private void handleException(Exception e) {
 		if (isCertificateException(e)) {
 			showCertificateError();
 		} else {
-			showUrlError();
-			e.printStackTrace();
+			showUrlError(e);
 		}
 	}
 
@@ -205,9 +243,14 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 	}
 
 	@UiThread
-	protected void showUrlError() {
+	protected void showUrlError(Exception exception) {
 		showError();
-		url.setError(getString(R.string.error_url));
+		String error = getString(R.string.error_url);
+		if (exception instanceof HttpClientErrorException) {
+			HttpStatus status = ((HttpClientErrorException) exception).getStatusCode();
+			error = String.format("(%d) %s", status.value(), status.getReasonPhrase());
+		}
+		url.setError(error);
 	}
 
 	@UiThread
@@ -255,7 +298,7 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 		account.setTrustAllCertificates(true);
 		validate.setBackgroundResource(R.drawable.bg_button_default);
 		showProgress();
-		tryLogin();
+		checkConfig();
 	}
 
 	@OptionsItem(android.R.id.home)

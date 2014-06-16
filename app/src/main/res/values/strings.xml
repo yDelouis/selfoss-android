@@ -41,5 +41,6 @@
     <string name="sources">Sources</string>
     <string name="allSources">All sources</string>
     <string name="share">Share</string>
+    <string name="error_usernameEmpty">Username is required</string>
 
 </resources>
