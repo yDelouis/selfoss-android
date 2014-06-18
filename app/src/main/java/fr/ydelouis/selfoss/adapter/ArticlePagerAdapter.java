@@ -48,7 +48,9 @@ public class ArticlePagerAdapter extends FragmentPagerAdapter implements Article
 
 	@Override
 	public void onNewLoaded(List<Article> newArticles) {
-		articles.addAll(0, newArticles);
+		if (newArticles != null) {
+			articles.addAll(0, newArticles);
+		}
 	}
 
 	public int getPosition(Article article) {
@@ -89,12 +91,15 @@ public class ArticlePagerAdapter extends FragmentPagerAdapter implements Article
 	@Override
 	@UiThread
 	public void onNextLoaded(List<Article> nextArticles) {
-		for(Article article : nextArticles) {
-			if(!articles.contains(article))
-				articles.add(article);
-		}
-		if (!nextArticles.isEmpty()) {
-			notifyDataSetChanged();
+		if (nextArticles != null) {
+			for (Article article : nextArticles) {
+				if (!articles.contains(article)) {
+					articles.add(article);
+				}
+			}
+			if (!nextArticles.isEmpty()) {
+				notifyDataSetChanged();
+			}
 		}
 	}
 }
