@@ -26,6 +26,7 @@ import fr.ydelouis.selfoss.fragment.ArticleFragment;
 import fr.ydelouis.selfoss.fragment.ArticleFragment_;
 import fr.ydelouis.selfoss.fragment.ArticleListFragment;
 import fr.ydelouis.selfoss.fragment.MenuFragment;
+import fr.ydelouis.selfoss.model.ArticleActionHelper;
 import fr.ydelouis.selfoss.sync.SyncManager;
 import fr.ydelouis.selfoss.sync.Uploader;
 
@@ -38,6 +39,8 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Art
 	protected SyncManager syncManager;
 	@Bean
 	protected Uploader uploader;
+	@Bean
+	protected ArticleActionHelper articleActionHelper;
 
 	@ViewById
 	protected DrawerLayout drawer;
@@ -150,12 +153,13 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Art
 	public void onArticleClicked(Article article) {
 		if (articleFrame != null) {
 			if (this.article == null) {
+				articleActionHelper.markRead(article);
 				this.article = ArticleFragment_.builder().article(article).build();
 				getFragmentManager().beginTransaction().replace(R.id.articleFrame, this.article).commit();
 			} else {
 				this.article.setArticle(article);
+				this.article.markArticleRead();
 			}
-			this.article.setUserVisibleHint(true);
 		} else {
 			ArticleActivity_.intent(this).article(article).filter(list.getFilter()).start();
 		}

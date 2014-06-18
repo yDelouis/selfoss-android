@@ -75,7 +75,13 @@ public class ArticleFragment extends Fragment {
 	@Override
 	public void setUserVisibleHint(boolean isVisibleToUser) {
 		super.setUserVisibleHint(isVisibleToUser);
-		if (isVisibleToUser && article != null) {
+		if (isVisibleToUser) {
+			markArticleRead();
+		}
+	}
+
+	public void markArticleRead() {
+		if (article != null) {
 			articleActionHelper.markRead(article);
 			updateMenuItem();
 		}
