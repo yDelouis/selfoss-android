@@ -23,6 +23,11 @@
         android:id="@android:id/list"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
+        android:paddingTop="@dimen/listview_padding_vertical"
+        android:paddingBottom="@dimen/listview_padding_vertical"
+        android:paddingLeft="@dimen/listview_padding_horizontal"
+        android:paddingRight="@dimen/listview_padding_horizontal"
+        android:clipToPadding="false"
 		android:divider="@null"
 		android:scrollbars="none"
 		android:listSelector="@android:color/transparent" />
