@@ -1,16 +1,22 @@
 package fr.ydelouis.selfoss.fragment;
 
 import android.app.Fragment;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebView.HitTestResult;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -39,13 +45,55 @@ public class ArticleFragment extends Fragment {
 	@OptionsMenuItem protected MenuItem markStarred;
 	@OptionsMenuItem protected MenuItem share;
 
-	@AfterViews
+    private String getImageTitle(String url) {
+        String content = article.getContent();
+        String strippedUrl;
+        if (url.indexOf('?') == -1) {
+            strippedUrl = url;
+        } else {
+            strippedUrl = url.substring(0, url.indexOf('?'));
+        }
+        String before = "<.*?title=(\".*?\")[^<]*" + "\\Q" + strippedUrl + "\\E.*?>";
+        String after = "<.*?\\Q" + strippedUrl + "\\E" + "[^>]*title=(\".*?\").*?>";
+        Pattern patternBefore = Pattern.compile(before);
+        Pattern patternAfter = Pattern.compile(after);
+        Matcher matchBefore = patternBefore.matcher(content);
+        Matcher matchAfter = patternAfter.matcher(content);
+        if (matchBefore.find()) {
+            return matchBefore.group(1);
+        } else if (matchAfter.find()) {
+            return matchAfter.group(1);
+        } else {
+            return "";
+        }
+    }
+
+    @AfterViews
 	protected void initViews() {
 		webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
 		webView.getSettings().setBuiltInZoomControls(true);
 		webView.getSettings().setSupportZoom(true);
 		webView.getSettings().setDisplayZoomControls(false);
-		setArticle(article);
+        webView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                HitTestResult result = ((WebView) v).getHitTestResult();
+
+                if (result != null && (result.getType() == HitTestResult.IMAGE_TYPE || result.getType() == HitTestResult.SRC_IMAGE_ANCHOR_TYPE)) {
+                    String imageTitle = getImageTitle(result.getExtra());
+
+                    if (!imageTitle.equals("")) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setMessage(imageTitle);
+                        builder.create().show();
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+        setArticle(article);
 	}
 
 	public void setArticle(Article article) {
