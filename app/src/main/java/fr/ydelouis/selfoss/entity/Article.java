@@ -58,8 +58,12 @@ public class Article implements Parcelable {
 	}
 
 	@JsonProperty("id")
-    public void setId(String id) {
-        this.id = Integer.valueOf(id);
+    public void setId(Object id) {
+		if (id instanceof Number) {
+			this.id = (Integer) id;
+		} else if (id instanceof String) {
+			this.id = Integer.valueOf((String) id);
+		}
     }
 
 	@JsonProperty("datetime")
@@ -68,18 +72,30 @@ public class Article implements Parcelable {
 	}
 
 	@JsonProperty("unread")
-	public void setUnread(String unread) {
-		this.unread = unread.equals("1");
+	public void setUnread(Object unread) {
+		if (unread instanceof Boolean) {
+			this.unread = (Boolean) unread;
+		} else if (unread instanceof String) {
+			this.unread = "1".equals(unread);
+		}
 	}
 
 	@JsonProperty("starred")
-	public void setStarred(String starred) {
-		this.starred = starred.equals("1");
+	public void setStarred(Object starred) {
+		if (starred instanceof Boolean) {
+			this.starred = (Boolean) starred;
+		} else if (starred instanceof String) {
+			this.starred = "1".equals(starred);
+		}
 	}
 
 	@JsonProperty("source")
-	public void setSourceId(String sourceId) {
-		this.sourceId = Integer.valueOf(sourceId);
+	public void setSourceId(Object sourceId) {
+		if (sourceId instanceof Number) {
+			this.sourceId = (Integer) sourceId;
+		} else if (sourceId instanceof String) {
+			this.sourceId = Integer.valueOf((String) sourceId);
+		}
 	}
 
 	public int getId() {
