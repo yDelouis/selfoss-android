@@ -1,31 +1,31 @@
 package fr.ydelouis.selfoss.fragment;
 
-import android.app.Fragment;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebView.HitTestResult;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.LongClick;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.OptionsMenuItem;
 import org.androidannotations.annotations.ViewById;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.entity.Article;
@@ -41,32 +41,9 @@ public class ArticleFragment extends Fragment {
 	@ViewById protected WebView webView;
 	@ViewById protected TextView title;
 	@ViewById protected TextView dateTime;
-	@OptionsMenuItem protected MenuItem markRead;
+ 	@OptionsMenuItem protected MenuItem markRead;
 	@OptionsMenuItem protected MenuItem markStarred;
 	@OptionsMenuItem protected MenuItem share;
-
-    private String getImageTitle(String url) {
-        String content = article.getContent();
-        String strippedUrl;
-        if (url.indexOf('?') == -1) {
-            strippedUrl = url;
-        } else {
-            strippedUrl = url.substring(0, url.indexOf('?'));
-        }
-        String before = "<.*?title=(\".*?\")[^<]*" + "\\Q" + strippedUrl + "\\E.*?>";
-        String after = "<.*?\\Q" + strippedUrl + "\\E" + "[^>]*title=(\".*?\").*?>";
-        Pattern patternBefore = Pattern.compile(before);
-        Pattern patternAfter = Pattern.compile(after);
-        Matcher matchBefore = patternBefore.matcher(content);
-        Matcher matchAfter = patternAfter.matcher(content);
-        if (matchBefore.find()) {
-            return matchBefore.group(1);
-        } else if (matchAfter.find()) {
-            return matchAfter.group(1);
-        } else {
-            return "";
-        }
-    }
 
     @AfterViews
 	protected void initViews() {
@@ -74,25 +51,6 @@ public class ArticleFragment extends Fragment {
 		webView.getSettings().setBuiltInZoomControls(true);
 		webView.getSettings().setSupportZoom(true);
 		webView.getSettings().setDisplayZoomControls(false);
-        webView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                HitTestResult result = ((WebView) v).getHitTestResult();
-
-                if (result != null && (result.getType() == HitTestResult.IMAGE_TYPE || result.getType() == HitTestResult.SRC_IMAGE_ANCHOR_TYPE)) {
-                    String imageTitle = getImageTitle(result.getExtra());
-
-                    if (!imageTitle.equals("")) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setMessage(imageTitle);
-                        builder.create().show();
-                    }
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        });
         setArticle(article);
 	}
 
@@ -132,6 +90,42 @@ public class ArticleFragment extends Fragment {
 		if (article != null) {
 			articleActionHelper.markRead(article);
 			updateMenuItem();
+		}
+	}
+
+	@LongClick(R.id.webView)
+	public boolean onWebViewLongClicked() {
+		HitTestResult result = webView.getHitTestResult();
+		if (result != null && (result.getType() == HitTestResult.IMAGE_TYPE || result.getType() == HitTestResult.SRC_IMAGE_ANCHOR_TYPE)) {
+			String imageTitle = getImageTitleFromImageUrl(result.getExtra());
+			if (imageTitle != null && !imageTitle.isEmpty()) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+				builder.setMessage(imageTitle);
+				builder.show();
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private String getImageTitleFromImageUrl(String url) {
+		String content = article.getContent();
+		String strippedUrl;
+		if (url.indexOf('?') == -1) {
+			strippedUrl = url;
+		} else {
+			strippedUrl = url.substring(0, url.indexOf('?'));
+		}
+		String before = "<.*?title=(\".*?\")[^<]*" + "\\Q" + strippedUrl + "\\E.*?>";
+		String after = "<.*?\\Q" + strippedUrl + "\\E" + "[^>]*title=(\".*?\").*?>";
+		Matcher matchBefore =  Pattern.compile(before).matcher(content);
+		Matcher matchAfter = Pattern.compile(after).matcher(content);
+		if (matchBefore.find()) {
+			return matchBefore.group(1);
+		} else if (matchAfter.find()) {
+			return matchAfter.group(1);
+		} else {
+			return null;
 		}
 	}
 
