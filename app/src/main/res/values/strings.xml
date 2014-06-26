@@ -29,7 +29,7 @@
     <string name="fiveMin">5 minutes</string>
     <string name="fifteenMin">15 minutes</string>
     <string name="thirtyMin">30 minutes</string>
-    <string name="hours">hours</string>
+    <string name="oneHour">1 hours</string>
     <string name="http">HTTP</string>
     <string name="https">HTTPS</string>
     <string name="n_articles">%d articles</string>
@@ -42,5 +42,6 @@
     <string name="allSources">All sources</string>
     <string name="share">Share</string>
     <string name="error_usernameEmpty">Username is required</string>
+    <string name="never">Never</string>
 
 </resources>

@@ -6,6 +6,7 @@ import android.accounts.AccountManager;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.SystemService;
 
+import fr.ydelouis.selfoss.sync.SyncManager;
 import fr.ydelouis.selfoss.sync.SyncPeriod;
 
 @EBean
@@ -51,6 +52,8 @@ public class SelfossAccount {
 		accountManager.setUserData(account, KEY_USE_HTTPS, String.valueOf(useHttps));
 		accountManager.setUserData(account, KEY_SYNC_PERIOD, String.valueOf(syncPeriod));
 		accountManager.setUserData(account, KEY_REQUIRE_AUTH, String.valueOf(requireAuth));
+
+		SyncManager.setPeriodicSync(this);
 	}
 
 	public String getUrl() {
@@ -89,12 +92,12 @@ public class SelfossAccount {
 		}
 	}
 
-	public long getSyncPeriod() {
+	public SyncPeriod getSyncPeriod() {
 		Account account = getAccount();
 		if (account == null) {
-			return SyncPeriod.getDefault().getTime();
+			return SyncPeriod.getDefault();
 		} else {
-			return Long.valueOf(accountManager.getUserData(account, KEY_SYNC_PERIOD));
+			return SyncPeriod.fromTime(Long.valueOf(accountManager.getUserData(account, KEY_SYNC_PERIOD)));
 		}
 	}
 
@@ -127,15 +130,6 @@ public class SelfossAccount {
 			} else {
 				return Boolean.valueOf(useHttpsString);
 			}
-		}
-	}
-
-	public void setUseHttps(boolean useHttps) {
-		Account account = getAccount();
-		if (account == null) {
-			throw new IllegalStateException("Account has not been created yet");
-		} else {
-			accountManager.setUserData(account, KEY_USE_HTTPS, String.valueOf(useHttps));
 		}
 	}
 }

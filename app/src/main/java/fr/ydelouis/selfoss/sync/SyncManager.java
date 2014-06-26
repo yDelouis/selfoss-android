@@ -4,7 +4,6 @@ import android.accounts.Account;
 import android.content.ContentResolver;
 import android.os.Bundle;
 
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
@@ -15,15 +14,15 @@ public class SyncManager {
 
 	private static final String AUTHORITY = "fr.ydelouis.selfoss";
 
-	@Bean protected SelfossAccount selfossAccount;
-
-	@AfterInject
-	public void setPeriodicSync() {
+	public static void setPeriodicSync(SelfossAccount selfossAccount) {
 		Account account = selfossAccount.getAccount();
-        if (account != null) {
-		    ContentResolver.addPeriodicSync(account, AUTHORITY, new Bundle(), selfossAccount.getSyncPeriod());
-        }
+		if (account != null) {
+			ContentResolver.setSyncAutomatically(account, AUTHORITY, selfossAccount.getSyncPeriod().isAutomatic());
+			ContentResolver.addPeriodicSync(account, AUTHORITY, new Bundle(), selfossAccount.getSyncPeriod().getTime());
+		}
 	}
+
+	@Bean protected SelfossAccount selfossAccount;
 
 	public void requestSync() {
 		Account account = selfossAccount.getAccount();

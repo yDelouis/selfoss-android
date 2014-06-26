@@ -9,7 +9,8 @@ public enum SyncPeriod {
 	FiveMin(5, R.string.fiveMin),
 	FifteenMin(15, R.string.fifteenMin),
 	ThirtyMin(30, R.string.thirtyMin),
-	OneHour(60, R.string.hours);
+	OneHour(60, R.string.oneHour),
+	Never(-1, R.string.never);
 
 	public static SyncPeriod getDefault() {
 		return FifteenMin;
@@ -23,13 +24,24 @@ public enum SyncPeriod {
 		return texts;
 	}
 
-	public static int indexOf(long time) {
+	public static int indexOf(SyncPeriod period) {
 		for (int i = 0; i < values().length; i++) {
-			if (values()[i].getTime() == time) {
+			if (values()[i] == period) {
 				return i;
 			}
 		}
-		return 1;
+		return indexOf(SyncPeriod.getDefault());
+	}
+
+
+
+	public static SyncPeriod fromTime(long time) {
+		for (int i = 0; i < values().length; i++) {
+			if (values()[i].getTime() == time) {
+				return values()[i];
+			}
+		}
+		return SyncPeriod.getDefault();
 	}
 
 	private long time;
@@ -46,5 +58,9 @@ public enum SyncPeriod {
 
 	public int getTextResId() {
 		return textResId;
+	}
+
+	public boolean isAutomatic() {
+		return time > 0;
 	}
 }
