@@ -31,7 +31,7 @@
 	</style>
 
     <style name="Widget.Custom.PtrHeader" parent="android:Widget">
-        <item name="ptrProgressBarColor">@color/green_selfoss</item>
+        <item name="ptrProgressBarColor">@color/red_selfoss</item>
         <item name="ptrProgressBarStyle">inside</item>
     </style>
 </resources>

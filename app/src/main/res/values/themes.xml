@@ -14,7 +14,7 @@
 		<item name="android:actionBarWidgetTheme">@style/Theme.Selfoss.Widget</item>
         <item name="ptrHeaderStyle">@style/Widget.Custom.PtrHeader</item>
 
-		<item name="android:editTextStyle">@style/EditTextSelfoss</item>
+		<item name="android:editTextStyle">@style/EditTextSelfoss</item> 
 		<item name="android:checkboxStyle">@style/CheckBoxSelfoss</item>
 		<item name="android:radioButtonStyle">@style/RadioButtonSelfoss</item>
 		<item name="android:spinnerStyle">@style/SpinnerSelfoss</item>
@@ -32,6 +32,8 @@
 		<item name="android:activatedBackgroundIndicator">@drawable/activated_background_holo_light</item>
 
 		<item name="android:windowBackground">@drawable/background</item>
+        <item name="android:actionOverflowButtonStyle">@style/ActionButton.Overflow.Selfoss</item>
+        <item name="android:homeAsUpIndicator">@drawable/ic_homeasupindicator</item>
 
 	</style>
 
@@ -42,6 +44,15 @@
 		<item name="android:progressBarStyle">@style/ProgressBar.Selfoss</item>
         <item name="ptrHeaderStyle">@style/Widget.Custom.PtrHeader</item>
 	</style>
+
+    <style name="ActionBar.Title.Selfoss" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ActionButton.Overflow.Selfoss" parent="android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_menu_overflow</item>
+    </style>
 
 	<style name="PopupMenu.Selfoss" parent="@android:style/Widget.Holo.ListPopupWindow">
 		<item name="android:popupBackground">@drawable/menu_dropdown_panel_selfoss</item>

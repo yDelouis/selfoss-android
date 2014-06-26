@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<color name="green_selfoss">#3D6D69</color>
+    <color name="red_selfoss">#e51c23</color>
 	<color name="button_pressed">#437884</color>
     <color name="pressed_selfoss">#3D6D69</color>
 	<color name="green_success">#00bf00</color>
