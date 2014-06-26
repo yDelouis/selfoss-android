@@ -2,10 +2,14 @@ package fr.ydelouis.selfoss.account;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.content.Context;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SystemService;
 
+import fr.ydelouis.selfoss.model.DatabaseHelper;
 import fr.ydelouis.selfoss.sync.SyncManager;
 import fr.ydelouis.selfoss.sync.SyncPeriod;
 
@@ -20,6 +24,13 @@ public class SelfossAccount {
 	private static final String KEY_USE_HTTPS = "useHttps";
 
 	@SystemService protected AccountManager accountManager;
+	@RootContext protected Context context;
+	private DatabaseHelper databaseHelper;
+
+	@AfterInject
+	protected void init() {
+		databaseHelper = new DatabaseHelper(context);
+	}
 
 	public Account getAccount() {
 		Account[] accounts = accountManager.getAccountsByType(ACCOUNT_TYPE);
@@ -41,6 +52,7 @@ public class SelfossAccount {
 		Account account = getAccount();
 		if (account != null && !account.name.equals(username)) {
 			accountManager.removeAccount(account, null, null);
+			databaseHelper.clearTables();
 			account = null;
 		}
 		if (account == null) {

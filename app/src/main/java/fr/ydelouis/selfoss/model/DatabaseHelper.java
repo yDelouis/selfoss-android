@@ -1,6 +1,7 @@
 package fr.ydelouis.selfoss.model;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
@@ -16,11 +17,16 @@ import fr.ydelouis.selfoss.sync.ArticleSyncAction;
 
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
+	public static final String ACTION_TABLES_CLEARED = "fr.ydelouis.selfoss.ACTION_TABLES_CLEARED";
+
 	private static final String DATABASE_NAME = "selfoss.db";
 	private static final int DATABASE_VERSION = 3;
 
+	private Context context;
+
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+		this.context = context;
 	}
 
 	@Override
@@ -45,6 +51,18 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 			if (oldVersion < 3) {
 				TableUtils.createTable(connectionSource, Source.class);
 			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void clearTables() {
+		try {
+			TableUtils.clearTable(getConnectionSource(), Tag.class);
+			TableUtils.clearTable(getConnectionSource(), Source.class);
+			TableUtils.clearTable(getConnectionSource(), Article.class);
+			TableUtils.clearTable(getConnectionSource(), ArticleSyncAction.class);
+			context.sendBroadcast(new Intent(ACTION_TABLES_CLEARED));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

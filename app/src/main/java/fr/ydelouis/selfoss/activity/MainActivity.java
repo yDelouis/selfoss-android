@@ -14,6 +14,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.FragmentById;
+import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.ViewById;
 
 import fr.ydelouis.selfoss.R;
@@ -27,6 +28,7 @@ import fr.ydelouis.selfoss.fragment.ArticleFragment_;
 import fr.ydelouis.selfoss.fragment.ArticleListFragment;
 import fr.ydelouis.selfoss.fragment.MenuFragment;
 import fr.ydelouis.selfoss.model.ArticleActionHelper;
+import fr.ydelouis.selfoss.model.DatabaseHelper;
 import fr.ydelouis.selfoss.sync.SyncManager;
 import fr.ydelouis.selfoss.sync.Uploader;
 
@@ -162,6 +164,14 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Art
 			}
 		} else {
 			ArticleActivity_.intent(this).article(article).filter(list.getFilter()).start();
+		}
+	}
+
+	@Receiver(actions = DatabaseHelper.ACTION_TABLES_CLEARED)
+	protected void onTablesCleared() {
+		if (articleFrame != null) {
+			articleFrame.removeAllViews();
+			article = null;
 		}
 	}
 

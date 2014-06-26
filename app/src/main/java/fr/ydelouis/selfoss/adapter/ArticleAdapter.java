@@ -20,6 +20,7 @@ import fr.ydelouis.selfoss.entity.ArticleType;
 import fr.ydelouis.selfoss.entity.Filter;
 import fr.ydelouis.selfoss.model.ArticleDao;
 import fr.ydelouis.selfoss.model.ArticleProvider;
+import fr.ydelouis.selfoss.model.DatabaseHelper;
 import fr.ydelouis.selfoss.sync.ArticleSync;
 import fr.ydelouis.selfoss.view.ArticleView;
 import fr.ydelouis.selfoss.view.ArticleView_;
@@ -51,6 +52,13 @@ public class ArticleAdapter extends PagedAdapter<Article> implements ArticleProv
 		}
 	};
 
+	private BroadcastReceiver tableClearReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			reset();
+		}
+	};
+
 	public ArticleAdapter() {
 		setAnticipation(ANTICIPATION);
 	}
@@ -65,11 +73,13 @@ public class ArticleAdapter extends PagedAdapter<Article> implements ArticleProv
 		syncIntentFilter.addAction(ArticleSync.ACTION_NEW_SYNCED);
 		context.registerReceiver(syncReceiver, syncIntentFilter);
 		context.registerReceiver(updateReceiver, new IntentFilter(ArticleDao.ACTION_UPDATE));
+		context.registerReceiver(tableClearReceiver, new IntentFilter(DatabaseHelper.ACTION_TABLES_CLEARED));
 	}
 
 	public void unregisterReceivers() {
 		context.unregisterReceiver(updateReceiver);
 		context.unregisterReceiver(syncReceiver);
+		context.unregisterReceiver(tableClearReceiver);
 	}
 
 	@Override
