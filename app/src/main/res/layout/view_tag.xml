@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/selectable_background_selfoss_menu">
+    android:background="@drawable/selectable_background_selfoss">
 
     <View
         android:id="@+id/color"

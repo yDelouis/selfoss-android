@@ -23,7 +23,7 @@
 			android:drawablePadding="8dp"
 			android:textColor="@color/menu_text_primary"
 			android:textSize="22sp"
-			android:background="@drawable/clickable_background_selfoss"/>
+			android:background="@drawable/selectable_background_selfoss"/>
 
 		<View
 			style="@style/MenuSectionDivider"/>
