@@ -2,30 +2,33 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="48dp"
     android:background="@drawable/selectable_background_selfoss">
 
     <View
         android:id="@+id/color"
-        android:layout_width="4dp"
-        android:layout_height="42dp"/>
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"/>
 
     <TextView
         android:id="@+id/name"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/color"
-        android:layout_margin="8dp"
-        android:textColor="@color/menu_text_primary"
-        android:textSize="20sp"/>
+        android:layout_marginLeft="72dp"
+        android:layout_toLeftOf="@+id/count"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/name"
-        android:layout_alignBaseline="@id/name"
-        android:textColor="@color/menu_text_primary"/>
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp" />
 
 </RelativeLayout>

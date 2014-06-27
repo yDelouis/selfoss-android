@@ -2,6 +2,12 @@
 <resources>
     <color name="main_color">#009688</color>
     <color name="main_color_dark">#3D6D69</color>
+    <color name="text">#dd000000</color>
+    <color name="text_secondary">#8A000000</color>
+    <color name="hint">#42000000</color>
+    <color name="divider">#30000000</color>
+
+
 	<color name="green_selfoss">#3D6D69</color>
     <color name="red_selfoss">#e51c23</color>
 	<color name="button_pressed">#437884</color>
@@ -11,8 +17,6 @@
 	<color name="menu_divider_section">#999999</color>
 	<color name="menu_divider">#474345</color>
 	<color name="selected_selfoss_menu">#474345</color>
-	<color name="menu_text_primary">#CCD7D7</color>
-	<color name="menu_text_secondary">#494949</color>
 	<color name="red_error">#FF0000</color>
 	<color name="article_source_divider">#AAAAAA</color>
 	<color name="text_read">#999999</color>

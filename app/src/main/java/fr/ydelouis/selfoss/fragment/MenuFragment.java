@@ -143,7 +143,6 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 			tagView.setSelected(tag.equals(filter.getTag()));
 			tagView.setOnClickListener(this);
 			tagContainer.addView(tagView);
-			tagContainer.addView(newDivider());
 		}
 	}
 
@@ -157,15 +156,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 			sourceView.setSelected(source.equals(filter.getSource()));
 			sourceView.setOnClickListener(this);
 			sourceContainer.addView(sourceView);
-			sourceContainer.addView(newDivider());
 		}
-	}
-
-	private View newDivider() {
-		View view = new View(getActivity());
-		view.setBackgroundResource(R.color.menu_divider);
-		view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getResources().getDimensionPixelSize(R.dimen.divider_height)));
-		return view;
 	}
 
 	private void selectTagAndSource() {
