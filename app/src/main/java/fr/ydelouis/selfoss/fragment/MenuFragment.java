@@ -21,6 +21,7 @@ import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -128,9 +129,10 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 		updateTags(tags);
 	}
 
+    @Background
 	protected void sortAndUpdateSources(List<Source> sources) {
 		Collections.sort(sources, Source.COMPARATOR_UNREAD_INVERSE);
-		updateSources(sources);
+		updateSources(sources, tagDao.queryForAll());
 	}
 
 	@UiThread
@@ -140,6 +142,9 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 		for (Tag tag : tags) {
 			TagView tagView = TagView_.build(getActivity());
 			tagView.setTag(tag);
+            if (tag.equals(Tag.ALL)) {
+                tagView.setAllTags(tags.subList(1,tags.size()));
+            }
 			tagView.setSelected(tag.equals(filter.getTag()));
 			tagView.setOnClickListener(this);
 			tagContainer.addView(tagView);
@@ -148,16 +153,26 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 
 	@UiThread
 	@IgnoredWhenDetached
-	protected void updateSources(List<Source> sources) {
+	protected void updateSources(List<Source> sources, List<Tag> tags) {
 		sourceContainer.removeAllViews();
 		for (Source source : sources) {
 			SourceView sourceView = SourceView_.build(getActivity());
-			sourceView.setSource(source);
+			sourceView.setSource(source, getTagsOfSource(source, tags));
 			sourceView.setSelected(source.equals(filter.getSource()));
 			sourceView.setOnClickListener(this);
 			sourceContainer.addView(sourceView);
 		}
 	}
+
+    private List<Tag> getTagsOfSource(Source source, List<Tag> tags) {
+        List<Tag> tagsOfSource = new ArrayList<Tag>();
+        for (Tag tag : tags) {
+            if (source.getTags().contains(tag.getName(getActivity()))) {
+                tagsOfSource.add(tag);
+            }
+        }
+        return tagsOfSource;
+    }
 
 	private void selectTagAndSource() {
 		selectTag();

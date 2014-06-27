@@ -76,7 +76,9 @@ public class Source implements Parcelable {
 	}
 
 	public void setIcon(String icon) {
-		this.icon = icon;
+        if (!"false".equals(icon)) {
+            this.icon = icon;
+        }
 	}
 
 	public int getUnread() {

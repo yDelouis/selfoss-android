@@ -10,7 +10,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import fr.ydelouis.selfoss.R;
 
@@ -26,6 +28,14 @@ public class Tag implements Parcelable {
 			return - Integer.valueOf(lhs.getUnread()).compareTo(rhs.getUnread());
 		}
 	};
+
+    public static List<Integer> colorsOfTags(List<Tag> tags) {
+        List<Integer> colors = new ArrayList<Integer>();
+        for (Tag tag : tags) {
+            colors.add(tag.getColor());
+        }
+        return colors;
+    }
 
 	@DatabaseField(id = true)
 	@JsonProperty("tag")
