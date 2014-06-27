@@ -20,7 +20,7 @@
 			android:drawableLeft="@drawable/ic_cloud"
 			android:drawablePadding="8dp"
 			android:textSize="22sp"
-			android:background="@drawable/selectable_background_selfoss"/>
+			android:background="@drawable/menu_selectable_background_selfoss"/>
 
 		<View style="@style/MenuSectionDivider"/>
 
