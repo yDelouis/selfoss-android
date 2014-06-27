@@ -5,6 +5,6 @@
 
 	<corners android:radius="@dimen/button_radius" />
 
-	<solid android:color="@color/green_selfoss" />
+	<solid android:color="@color/main_color" />
 
 </shape>

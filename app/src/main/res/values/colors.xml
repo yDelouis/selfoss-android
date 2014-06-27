@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="main_color">#009688</color>
+    <color name="main_color_dark">#3D6D69</color>
 	<color name="green_selfoss">#3D6D69</color>
     <color name="red_selfoss">#e51c23</color>
 	<color name="button_pressed">#437884</color>
