@@ -7,8 +7,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.androidquery.AQuery;
 
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
@@ -26,6 +27,7 @@ public class SourceView extends RelativeLayout {
 	private Source source;
 
 	@Bean protected SelfossUtil util;
+    private AQuery aQuery;
     @ViewById protected ImageView icon;
     @ViewById protected TextView letter;
 	@ViewById protected TextView title;
@@ -43,6 +45,11 @@ public class SourceView extends RelativeLayout {
 		super(context, attrs, defStyle);
 	}
 
+    @AfterViews
+    protected void init() {
+        aQuery = new AQuery(this);
+    }
+
 	public void setSource(Source source, List<Tag> tags) {
 		this.source = source;
         setSourceImageOrLetter(tags);
@@ -55,7 +62,7 @@ public class SourceView extends RelativeLayout {
         icon.setVisibility(GONE);
         letter.setVisibility(GONE);
         if (source.getIcon() != null && !source.getIcon().isEmpty()) {
-            Picasso.with(getContext()).load(util.faviconUrl(source)).into(icon);
+            aQuery.id(R.id.icon).image(util.faviconUrl(source));
             icon.setVisibility(VISIBLE);
         } else if (source.getTitle() != null && !source.getTitle().isEmpty()) {
             letter.setText(source.getTitle().substring(0, 1).toUpperCase());
