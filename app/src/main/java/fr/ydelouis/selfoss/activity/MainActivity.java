@@ -14,6 +14,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.FragmentById;
+import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.ViewById;
 
@@ -34,6 +35,8 @@ import fr.ydelouis.selfoss.sync.Uploader;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends Activity implements MenuFragment.Listener, ArticleListFragment.Listener, DrawerLayout.DrawerListener {
+
+    private static final int ACCOUNT_SETTINGS_FIRST_TIME = 16;
 
 	@Bean
 	protected SelfossAccount account;
@@ -78,7 +81,7 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Art
 	}
 
 	private void startConfig() {
-		SelfossAccountActivity_.intent(this).start();
+		SelfossAccountActivity_.intent(this).startForResult(ACCOUNT_SETTINGS_FIRST_TIME);
 	}
 
 	@AfterViews
@@ -190,4 +193,11 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Art
 	public void onDrawerStateChanged(int newState) {
 		drawerToggle.onDrawerStateChanged(newState);
 	}
+
+    @OnActivityResult(ACCOUNT_SETTINGS_FIRST_TIME)
+    protected void onConfigFinished(int resultCode) {
+        if (resultCode != RESULT_OK) {
+            finish();
+        }
+    }
 }

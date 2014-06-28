@@ -239,6 +239,7 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 	@UiThread(delay = TIME_TO_CLOSE)
 	public void quitDelayed() {
 		syncManager.requestSync();
+        setResult(RESULT_OK);
 		finish();
 	}
 
