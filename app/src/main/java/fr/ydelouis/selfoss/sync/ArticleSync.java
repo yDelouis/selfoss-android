@@ -6,18 +6,17 @@ import android.content.Intent;
 import com.j256.ormlite.dao.Dao;
 
 import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.rest.RestService;
 
 import java.util.List;
 
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.model.ArticleDao;
-import fr.ydelouis.selfoss.model.ArticleSyncActionDao;
 import fr.ydelouis.selfoss.model.DatabaseHelper;
-import fr.ydelouis.selfoss.rest.SelfossRest;
+import fr.ydelouis.selfoss.rest.SelfossRestWrapper;
 
 @EBean
 public class ArticleSync {
@@ -28,11 +27,10 @@ public class ArticleSync {
 	private static final int CACHE_SIZE = 50;
 
 	@RootContext protected Context context;
-	@RestService protected SelfossRest selfossRest;
+	@Bean
+    protected SelfossRestWrapper selfossRest;
 	@OrmLiteDao(helper = DatabaseHelper.class)
 	protected ArticleDao articleDao;
-	@OrmLiteDao(helper = DatabaseHelper.class)
-	protected ArticleSyncActionDao articleSyncActionDao;
 
 	@AfterInject
 	protected void init() {
@@ -54,7 +52,6 @@ public class ArticleSync {
 		do {
 			articles = selfossRest.listArticles(offset, ARTICLES_PAGE_SIZE);
 			for (Article article : articles) {
-				applySyncAction(article);
 				article.setCached(true);
 				Dao.CreateOrUpdateStatus status = articleDao.createOrUpdate(article);
 				if (!newSynced && status.isUpdated()) {
@@ -79,7 +76,6 @@ public class ArticleSync {
 		do {
 			articles = selfossRest.listUnreadArticles(offset, ARTICLES_PAGE_SIZE);
 			for (Article article : articles) {
-				applySyncAction(article);
 				articleDao.createOrUpdate(article);
 			}
 			offset += ARTICLES_PAGE_SIZE;
@@ -93,18 +89,10 @@ public class ArticleSync {
 		do {
 			articles = selfossRest.listStarredArticles(offset, ARTICLES_PAGE_SIZE);
 			for (Article article : articles) {
-				applySyncAction(article);
 				articleDao.createOrUpdate(article);
 			}
 			offset += ARTICLES_PAGE_SIZE;
 		} while (articles.size() == ARTICLES_PAGE_SIZE);
-	}
-
-	private void applySyncAction(Article article) {
-		ArticleSyncAction syncAction = articleSyncActionDao.queryForArticle(article);
-		if (syncAction != null) {
-			syncAction.getAction().execute(article);
-		}
 	}
 
 	private void sendSyncBroadcast() {

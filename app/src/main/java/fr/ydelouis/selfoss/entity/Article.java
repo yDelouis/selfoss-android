@@ -52,6 +52,8 @@ public class Article implements Parcelable {
 	private String sourceTitle;
 	@DatabaseField(columnName = ArticleDao.COLUMN_TAGS)
     private String tags;
+    @DatabaseField
+    private String imageUrl;
 
 	public Article() {
 
@@ -207,7 +209,19 @@ public class Article implements Parcelable {
 		this.tags = tags;
 	}
 
-	public boolean isCached() {
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public boolean hasImage() {
+        return imageUrl != null;
+    }
+
+    public boolean isCached() {
 		return id < 0;
 	}
 
@@ -246,6 +260,7 @@ public class Article implements Parcelable {
 		dest.writeString(this.link);
 		dest.writeString(this.sourceTitle);
 		dest.writeString(this.tags);
+        dest.writeString(this.imageUrl);
 	}
 
 	private Article(Parcel in) {
@@ -262,6 +277,7 @@ public class Article implements Parcelable {
 		this.link = in.readString();
 		this.sourceTitle = in.readString();
 		this.tags = in.readString();
+        this.imageUrl = in.readString();
 	}
 
 	public static Parcelable.Creator<Article> CREATOR = new Parcelable.Creator<Article>() {

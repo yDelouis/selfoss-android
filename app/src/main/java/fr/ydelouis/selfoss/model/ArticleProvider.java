@@ -1,9 +1,9 @@
 package fr.ydelouis.selfoss.model;
 
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
-import org.androidannotations.annotations.rest.RestService;
 
 import java.util.List;
 
@@ -11,14 +11,15 @@ import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.ArticleType;
 import fr.ydelouis.selfoss.entity.Filter;
 import fr.ydelouis.selfoss.entity.Tag;
-import fr.ydelouis.selfoss.rest.SelfossRest;
+import fr.ydelouis.selfoss.rest.SelfossRestWrapper;
 
 @EBean
 public class ArticleProvider {
 
 	private static final int PAGE_SIZE = 10;
 
-	@RestService protected SelfossRest selfossRest;
+	@Bean
+    protected SelfossRestWrapper selfossRest;
 	@OrmLiteDao(helper = DatabaseHelper.class, model = Article.class)
 	protected ArticleDao articleDao;
 	private Listener listener = new NullListener();

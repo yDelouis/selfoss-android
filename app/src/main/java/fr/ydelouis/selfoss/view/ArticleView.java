@@ -1,9 +1,6 @@
 package fr.ydelouis.selfoss.view;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.view.View;
@@ -12,7 +9,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EViewGroup;
@@ -23,11 +19,10 @@ import java.util.List;
 import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.Tag;
-import fr.ydelouis.selfoss.util.ArticleContentParser;
 import fr.ydelouis.selfoss.util.SelfossUtil;
 
 @EViewGroup(R.layout.view_article)
-public class ArticleView extends RelativeLayout implements Target {
+public class ArticleView extends RelativeLayout {
 
 	@Bean protected SelfossUtil util;
 
@@ -62,43 +57,13 @@ public class ArticleView extends RelativeLayout implements Target {
 	}
 
     private void setImage(Article article) {
-        String imageUrl = new ArticleContentParser(article).extractImage();
-        if (imageUrl != null) {
+        if (article.hasImage()) {
             image.setVisibility(VISIBLE);
             image.setImageBitmap(null);
-            Picasso.with(getContext()).load(imageUrl).into(this);
+            Picasso.with(getContext()).load(article.getImageUrl()).into(image);
         } else {
             image.setVisibility(GONE);
         }
-    }
-
-    @Override
-    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-        if(!isEmpty(bitmap)) {
-            image.setImageBitmap(bitmap);
-        } else {
-            image.setVisibility(GONE);
-        }
-    }
-
-    @Override
-    public void onBitmapFailed(Drawable errorDrawable) {
-        image.setVisibility(GONE);
-    }
-
-    @Override
-    public void onPrepareLoad(Drawable placeHolderDrawable) {
-    }
-
-    private boolean isEmpty(Bitmap bitmap) {
-        for (int x = 0; x < bitmap.getWidth(); x++) {
-            for (int y = 0; y < bitmap.getHeight(); y++) {
-                if (bitmap.getPixel(x, y) != Color.WHITE) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
     private void setFaviconOrLetter(Article article, List<Tag> tags) {

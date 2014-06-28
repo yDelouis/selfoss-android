@@ -4,6 +4,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fr.ydelouis.selfoss.entity.Article;
 
 public class ArticleContentParser {
@@ -14,15 +17,16 @@ public class ArticleContentParser {
         this.article = article;
     }
 
-    public String extractImage() {
+    public List<String> extractImageUrls() {
+        List<String> imageUrls = new ArrayList<String>();
         Document document = Jsoup.parse(article.getContent());
         for (Element element : document.getElementsByTag("img")) {
             String src = element.attr("src");
             if (src != null && !src.isEmpty()) {
-                return src;
+                imageUrls.add(src);
             }
         }
-        return null;
+        return imageUrls;
     }
 
     public String extractTitleOfImage(String imageSrc) {
