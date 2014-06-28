@@ -154,14 +154,9 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Art
 	@Override
 	public void onArticleClicked(Article article) {
 		if (articleFrame != null) {
-			if (this.article == null) {
-				articleActionHelper.markRead(article);
-				this.article = ArticleFragment_.builder().article(article).build();
-				getFragmentManager().beginTransaction().replace(R.id.articleFrame, this.article).commit();
-			} else {
-				this.article.setArticle(article);
-				this.article.markArticleRead();
-			}
+            articleActionHelper.markRead(article);
+            this.article = ArticleFragment_.builder().article(article).build();
+            getFragmentManager().beginTransaction().replace(R.id.articleFrame, this.article).commit();
 		} else {
 			ArticleActivity_.intent(this).article(article).filter(list.getFilter()).start();
 		}

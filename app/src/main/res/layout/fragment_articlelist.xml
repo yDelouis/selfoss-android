@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-	<ListView
+	<GridView
         android:id="@android:id/list"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
@@ -27,6 +27,9 @@
         android:paddingBottom="@dimen/listview_padding_vertical"
         android:paddingLeft="@dimen/listview_padding_horizontal"
         android:paddingRight="@dimen/listview_padding_horizontal"
+        android:numColumns="@integer/article_list_num_columns"
+        android:verticalSpacing="8dp"
+        android:horizontalSpacing="8dp"
         android:clipToPadding="false"
 		android:divider="@null"
         android:dividerHeight="8dp"
