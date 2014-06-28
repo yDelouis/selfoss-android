@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.Html;
 import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -116,14 +117,14 @@ public class ArticleFragment extends Fragment {
 		} else {
 			strippedUrl = url.substring(0, url.indexOf('?'));
 		}
-		String before = "<.*?title=(\".*?\")[^<]*" + "\\Q" + strippedUrl + "\\E.*?>";
-		String after = "<.*?\\Q" + strippedUrl + "\\E" + "[^>]*title=(\".*?\").*?>";
+		String before = "<.*?title=\"(.*?)\"[^<]*" + "\\Q" + strippedUrl + "\\E.*?>";
+		String after = "<.*?\\Q" + strippedUrl + "\\E" + "[^>]*title=\"(.*?)\".*?>";
 		Matcher matchBefore =  Pattern.compile(before).matcher(content);
 		Matcher matchAfter = Pattern.compile(after).matcher(content);
 		if (matchBefore.find()) {
-			return matchBefore.group(1);
+			return Html.fromHtml(matchBefore.group(1)).toString();
 		} else if (matchAfter.find()) {
-			return matchAfter.group(1);
+			return Html.fromHtml(matchAfter.group(1)).toString();
 		} else {
 			return null;
 		}
