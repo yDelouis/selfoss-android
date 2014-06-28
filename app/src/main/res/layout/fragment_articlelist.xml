@@ -29,6 +29,7 @@
         android:paddingRight="@dimen/listview_padding_horizontal"
         android:clipToPadding="false"
 		android:divider="@null"
+        android:dividerHeight="8dp"
 		android:scrollbars="none"
 		android:listSelector="@android:color/transparent" />
 

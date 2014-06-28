@@ -1,57 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:padding="8dp">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/background"
+    android:layout_width="match_parent"
+    android:layout_height="84dp"
+    android:background="@drawable/bg_card_selectable" >
 
-	<RelativeLayout
-        android:id="@+id/background"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:padding="16dp"
-		android:background="@drawable/bg_card_selectable">
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="84dp"
+        android:layout_height="84dp"
+        android:layout_marginBottom="2dp"
+        android:visibility="gone"
+        android:scaleType="centerCrop"/>
 
-		<ImageView
-			android:id="@+id/favicon"
-			android:layout_width="24dp"
-			android:layout_height="24dp"/>
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:ellipsize="end"
+        android:lines="2"
+        android:layout_toRightOf="@+id/image"
+        android:text="Sortie de la Nexus 7.2"
+        android:textColor="@color/text"/>
 
-		<TextView
-			android:id="@+id/sourceTitle"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_toRightOf="@+id/favicon"
-			android:layout_marginLeft="8dp"
-			android:layout_toLeftOf="@+id/dateTime"
-			android:layout_marginRight="8dp"
-			android:ellipsize="end"
-            android:lines="1"
-			android:text="Le journal du geek"
-			android:textSize="16sp"/>
+    <ImageView
+        android:id="@+id/favicon"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_toRightOf="@+id/image"
+        android:layout_alignBottom="@+id/sourceTitle" />
 
-		<TextView
-			android:id="@+id/dateTime"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignParentRight="true"
-			android:text="24 min ago"
-			android:textSize="14sp"/>
+    <TextView
+        android:id="@+id/sourceTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_toLeftOf="@+id/dateTime"
+        android:layout_toRightOf="@+id/favicon"
+        android:layout_below="@+id/title"
+        android:ellipsize="end"
+        android:lines="1"
+        android:text="Le journal du geek"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp" />
 
-		<View
-			android:id="@+id/divider"
-			android:layout_below="@+id/favicon"
-			android:layout_marginTop="8dp"
-			style="@style/ArticleDivider"/>
+    <TextView
+        android:id="@+id/dateTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignBaseline="@+id/sourceTitle"
+        android:layout_marginRight="16dp"
+        android:text="24 min ago"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp" />
 
-		<TextView
-			android:id="@+id/title"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="16dp"
-			android:layout_below="@+id/divider"
-			android:text="Sortie de la Nexus 7.2"
-			android:textAppearance="@android:style/TextAppearance.Holo.Large"/>
-
-	</RelativeLayout>
 </RelativeLayout>
