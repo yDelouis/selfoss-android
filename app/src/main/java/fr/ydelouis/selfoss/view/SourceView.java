@@ -7,13 +7,12 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.androidquery.AQuery;
+import com.squareup.picasso.Picasso;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import fr.ydelouis.selfoss.R;
@@ -25,7 +24,6 @@ import fr.ydelouis.selfoss.util.SelfossUtil;
 public class SourceView extends RelativeLayout {
 
 	private Source source;
-	private AQuery aQuery;
 
 	@Bean protected SelfossUtil util;
     @ViewById protected ImageView icon;
@@ -35,17 +33,14 @@ public class SourceView extends RelativeLayout {
 
 	public SourceView(Context context) {
 		super(context);
-		aQuery = new AQuery(this);
 	}
 
 	public SourceView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		aQuery = new AQuery(this);
 	}
 
 	public SourceView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		aQuery = new AQuery(this);
 	}
 
 	public void setSource(Source source, List<Tag> tags) {
@@ -60,7 +55,7 @@ public class SourceView extends RelativeLayout {
         icon.setVisibility(GONE);
         letter.setVisibility(GONE);
         if (source.getIcon() != null && !source.getIcon().isEmpty()) {
-            aQuery.id(R.id.icon).image(util.faviconUrl(source));
+            Picasso.with(getContext()).load(util.faviconUrl(source)).into(icon);
             icon.setVisibility(VISIBLE);
         } else if (source.getTitle() != null && !source.getTitle().isEmpty()) {
             letter.setText(source.getTitle().substring(0, 1).toUpperCase());

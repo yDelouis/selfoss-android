@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.androidquery.AQuery;
+import com.squareup.picasso.Picasso;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EViewGroup;
@@ -22,9 +22,9 @@ import fr.ydelouis.selfoss.util.SelfossUtil;
 public class ArticleView extends RelativeLayout {
 
 	@Bean protected SelfossUtil util;
-	private AQuery aQuery;
 
 	@ViewById protected View background;
+    @ViewById protected ImageView image;
 	@ViewById protected ImageView favicon;
 	@ViewById protected TextView sourceTitle;
 	@ViewById protected TextView dateTime;
@@ -32,22 +32,19 @@ public class ArticleView extends RelativeLayout {
 
 	public ArticleView(Context context) {
 		super(context);
-		aQuery = new AQuery(this);
 	}
 
 	public ArticleView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		aQuery = new AQuery(this);
 	}
 
 	public ArticleView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		aQuery = new AQuery(this);
 	}
 
 	public void bind(Article article) {
 		if (article.hasIcon()) {
-			aQuery.id(R.id.favicon).image(util.faviconUrl(article));
+            Picasso.with(getContext()).load(util.faviconUrl(article)).into(favicon);
 			favicon.setVisibility(View.VISIBLE);
 		} else {
 			favicon.setVisibility(View.INVISIBLE);

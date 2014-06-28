@@ -3,13 +3,12 @@ package fr.ydelouis.selfoss.activity;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewPager;
 import android.util.TypedValue;
-import android.widget.ImageView;
 
-import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxStatus;
-import com.androidquery.callback.BitmapAjaxCallback;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -49,16 +48,24 @@ public class ArticleActivity extends Activity implements ViewPager.OnPageChangeL
 	private void setArticle(Article article) {
 		setTitle(article.getSourceTitle());
 		if (article.hasIcon()) {
-			new AQuery(new ImageView(this)).image(util.faviconUrl(article), true, true, 0, 0, new BitmapAjaxCallback() {
-				@Override
-				protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status) {
-					if (bm != null) {
-						int size = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, 48, getResources().getDisplayMetrics());
-						Bitmap scaledBitmap = Bitmap.createScaledBitmap(bm, size, size, true);
-						getActionBar().setIcon(new BitmapDrawable(getResources(), scaledBitmap));
-					}
-				}
-			});
+            Picasso.with(this).load(util.faviconUrl(article)).into(new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    int size = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, 48, getResources().getDisplayMetrics());
+                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, size, size, true);
+                    getActionBar().setIcon(new BitmapDrawable(getResources(), scaledBitmap));
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                }
+            });
 		} else {
 			getActionBar().setIcon(R.drawable.ic_selfoss);
 		}
