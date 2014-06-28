@@ -1,18 +1,16 @@
 package fr.ydelouis.selfoss.rest;
 
-import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
-import com.squareup.picasso.Picasso;
-
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
-import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.rest.RestService;
 
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 
 import fr.ydelouis.selfoss.entity.Article;
@@ -30,15 +28,6 @@ public class SelfossRestWrapper {
     protected SelfossRest rest;
     @OrmLiteDao(helper = DatabaseHelper.class)
     protected ArticleSyncActionDao articleSyncActionDao;
-    @RootContext
-    protected Context context;
-    private Picasso picasso;
-
-
-    @AfterInject
-    protected void init() {
-        picasso = Picasso.with(context);
-    }
 
     public List<Article> listArticles(int offset, int count) {
         return preProcess(rest.listArticles(offset, count));
@@ -97,18 +86,28 @@ public class SelfossRestWrapper {
         ArticleContentParser parser = new ArticleContentParser(article);
         List<String> imageUrls = parser.extractImageUrls();
         for (String imageUrl : imageUrls) {
-            try {
-                Bitmap bitmap = picasso.load(imageUrl).get();
-                if (bitmap != null && !bitmapIsEmpty(bitmap)) {
-                    article.setImageUrl(imageUrl);
-                    return;
-                }
-            } catch (IOException ignored) {
+            Bitmap bitmap = loadBitmap(imageUrl);
+            if (bitmap != null && !bitmapIsEmpty(bitmap)) {
+                article.setImageUrl(imageUrl);
+                return;
             }
         }
     }
 
+    private Bitmap loadBitmap(String imageUrl) {
+        try {
+            URL url = new URL(imageUrl);
+            URLConnection connection = url.openConnection();
+            return BitmapFactory.decodeStream(connection.getInputStream());
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
     private boolean bitmapIsEmpty(Bitmap bitmap) {
+        if (bitmap.getWidth() < 50 || bitmap.getHeight() < 50) {
+            return true;
+        }
         for (int x = 0; x < bitmap.getWidth(); x++) {
             for (int y = 0; y < bitmap.getHeight(); y++) {
                 if (bitmap.getPixel(x, y) != Color.WHITE) {
