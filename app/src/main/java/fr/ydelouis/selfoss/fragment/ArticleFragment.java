@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
-import android.text.Html;
 import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,12 +24,10 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.OptionsMenuItem;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.model.ArticleActionHelper;
+import fr.ydelouis.selfoss.util.ArticleContentParser;
 
 @EFragment(R.layout.fragment_article)
 @OptionsMenu(R.menu.fragment_article)
@@ -38,6 +35,7 @@ public class ArticleFragment extends Fragment {
 
 	@FragmentArg protected Article article;
 	@Bean protected ArticleActionHelper articleActionHelper;
+    private ArticleContentParser articleContentParser;
 
 	@ViewById protected WebView webView;
 	@ViewById protected TextView title;
@@ -58,6 +56,7 @@ public class ArticleFragment extends Fragment {
 	public void setArticle(Article article) {
 		this.article = article;
 		if (article != null) {
+            articleContentParser = new ArticleContentParser(article);
 			title.setText(article.getTitle());
 			dateTime.setText(DateUtils.getRelativeTimeSpanString(getActivity(), article.getDateTime()));
 			setArticleContent();
@@ -98,7 +97,7 @@ public class ArticleFragment extends Fragment {
 	public boolean onWebViewLongClicked() {
 		HitTestResult result = webView.getHitTestResult();
 		if (result != null && (result.getType() == HitTestResult.IMAGE_TYPE || result.getType() == HitTestResult.SRC_IMAGE_ANCHOR_TYPE)) {
-			String imageTitle = getImageTitleFromImageUrl(result.getExtra());
+			String imageTitle = articleContentParser.extractTitleOfImage(result.getExtra());
 			if (imageTitle != null && !imageTitle.isEmpty()) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 				builder.setMessage(imageTitle);
@@ -107,27 +106,6 @@ public class ArticleFragment extends Fragment {
 			}
 		}
 		return false;
-	}
-
-	private String getImageTitleFromImageUrl(String url) {
-		String content = article.getContent();
-		String strippedUrl;
-		if (url.indexOf('?') == -1) {
-			strippedUrl = url;
-		} else {
-			strippedUrl = url.substring(0, url.indexOf('?'));
-		}
-		String before = "<.*?title=\"(.*?)\"[^<]*" + "\\Q" + strippedUrl + "\\E.*?>";
-		String after = "<.*?\\Q" + strippedUrl + "\\E" + "[^>]*title=\"(.*?)\".*?>";
-		Matcher matchBefore =  Pattern.compile(before).matcher(content);
-		Matcher matchAfter = Pattern.compile(after).matcher(content);
-		if (matchBefore.find()) {
-			return Html.fromHtml(matchBefore.group(1)).toString();
-		} else if (matchAfter.find()) {
-			return Html.fromHtml(matchAfter.group(1)).toString();
-		} else {
-			return null;
-		}
 	}
 
 	@Override
