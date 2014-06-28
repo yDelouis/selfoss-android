@@ -7,18 +7,10 @@
     <color name="hint">#42000000</color>
     <color name="divider">#30000000</color>
 
-
-	<color name="green_selfoss">#3D6D69</color>
-    <color name="red_selfoss">#e51c23</color>
-	<color name="button_pressed">#437884</color>
+	<color name="button_pressed">#3D6D69</color>
     <color name="pressed_selfoss">#993D6D69</color>
 	<color name="green_success">#00bf00</color>
-	<color name="grey_menu">#191718</color>
-	<color name="menu_divider_section">#999999</color>
-	<color name="menu_divider">#474345</color>
-	<color name="selected_selfoss_menu">#474345</color>
-	<color name="red_error">#FF0000</color>
-	<color name="article_source_divider">#AAAAAA</color>
-	<color name="text_read">#999999</color>
+    <color name="red_error">#FF0000</color>
+
     <color name="starred">#CAFFC800</color>
 </resources>
