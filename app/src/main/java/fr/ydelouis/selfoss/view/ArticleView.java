@@ -18,19 +18,23 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.List;
+
 import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.entity.Article;
+import fr.ydelouis.selfoss.entity.Tag;
 import fr.ydelouis.selfoss.util.ArticleContentParser;
 import fr.ydelouis.selfoss.util.SelfossUtil;
 
 @EViewGroup(R.layout.view_article)
-public class ArticleView extends RelativeLayout {
+public class ArticleView extends RelativeLayout implements Target {
 
 	@Bean protected SelfossUtil util;
 
 	@ViewById protected View background;
     @ViewById protected ImageView image;
 	@ViewById protected ImageView favicon;
+    @ViewById protected TextView letter;
 	@ViewById protected TextView sourceTitle;
 	@ViewById protected TextView dateTime;
 	@ViewById protected TextView title;
@@ -47,9 +51,9 @@ public class ArticleView extends RelativeLayout {
 		super(context, attrs, defStyle);
 	}
 
-	public void bind(Article article) {
+	public void bind(Article article, List<Tag> tags) {
         setImage(article);
-        setFaviconOrLetter(article);
+        setFaviconOrLetter(article, tags);
 		sourceTitle.setText(article.getSourceTitle());
 		dateTime.setText(DateUtils.getRelativeTimeSpanString(getContext(), article.getDateTime()));
 		title.setText(article.getTitle());
@@ -60,30 +64,30 @@ public class ArticleView extends RelativeLayout {
     private void setImage(Article article) {
         String imageUrl = new ArticleContentParser(article).extractImage();
         if (imageUrl != null) {
-            Picasso.with(getContext()).load(imageUrl).into(new Target() {
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    if(!isEmpty(bitmap)) {
-                        image.setImageBitmap(bitmap);
-                        image.setVisibility(VISIBLE);
-                    } else {
-                        onBitmapFailed(null);
-                    }
-                }
-
-                @Override
-                public void onBitmapFailed(Drawable errorDrawable) {
-                    image.setVisibility(GONE);
-                }
-
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
-                    image.setImageBitmap(null);
-                }
-            });
+            image.setVisibility(VISIBLE);
+            image.setImageBitmap(null);
+            Picasso.with(getContext()).load(imageUrl).into(this);
         } else {
             image.setVisibility(GONE);
         }
+    }
+
+    @Override
+    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+        if(!isEmpty(bitmap)) {
+            image.setImageBitmap(bitmap);
+        } else {
+            image.setVisibility(GONE);
+        }
+    }
+
+    @Override
+    public void onBitmapFailed(Drawable errorDrawable) {
+        image.setVisibility(GONE);
+    }
+
+    @Override
+    public void onPrepareLoad(Drawable placeHolderDrawable) {
     }
 
     private boolean isEmpty(Bitmap bitmap) {
@@ -97,20 +101,23 @@ public class ArticleView extends RelativeLayout {
         return true;
     }
 
-    private void setFaviconOrLetter(Article article) {
+    private void setFaviconOrLetter(Article article, List<Tag> tags) {
+        favicon.setVisibility(GONE);
+        letter.setVisibility(GONE);
         if (article.hasIcon()) {
             Picasso.with(getContext()).load(util.faviconUrl(article)).into(favicon);
             favicon.setVisibility(View.VISIBLE);
-        } else {
-            favicon.setVisibility(View.INVISIBLE);
+        } else if (article.getSourceTitle() != null && !article.getSourceTitle().isEmpty()
+                && tags != null && !tags.isEmpty()) {
+            letter.setText(article.getSourceTitle().substring(0, 1).toUpperCase());
+            letter.setBackgroundDrawable(new ColorsOvalDrawable(Tag.colorsOfTags(tags)));
+            letter.setVisibility(VISIBLE);
         }
     }
 
 	private void setUnread(boolean unread) {
-		int colorId = unread ? android.R.color.black : R.color.text_read ;
+		int colorId = unread ? R.color.text : R.color.text_secondary ;
 		int color = getResources().getColor(colorId);
-		sourceTitle.setTextColor(color);
-		dateTime.setTextColor(color);
 		title.setTextColor(color);
 	}
 

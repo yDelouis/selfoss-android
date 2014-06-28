@@ -37,8 +37,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 	private void performSync() {
 		uploader.performSync();
-		sourceSync.performSync();
 		tagSync.performSync();
+        sourceSync.performSync();
 		articleSync.performSync();
 	}
 

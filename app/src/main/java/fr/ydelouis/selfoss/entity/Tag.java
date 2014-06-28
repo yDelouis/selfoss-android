@@ -15,8 +15,9 @@ import java.util.Comparator;
 import java.util.List;
 
 import fr.ydelouis.selfoss.R;
+import fr.ydelouis.selfoss.model.TagDao;
 
-@DatabaseTable
+@DatabaseTable(daoClass = TagDao.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Tag implements Parcelable {
 
@@ -37,7 +38,7 @@ public class Tag implements Parcelable {
         return colors;
     }
 
-	@DatabaseField(id = true)
+	@DatabaseField(id = true, columnName = TagDao.COLUMN_NAME)
 	@JsonProperty("tag")
 	private String name;
 	private int nameId;

@@ -30,7 +30,7 @@ public class ColorsOvalDrawable extends Drawable {
 
     @Override
     public void draw(Canvas canvas) {
-        if (colors != null) {
+        if (colors != null && !colors.isEmpty()) {
             RectF rect = new RectF(getBounds());
             float startAngle = -90;
             float angle = 360 / colors.size();

@@ -6,10 +6,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.view.View;
 
+import com.j256.ormlite.dao.RuntimeExceptionDao;
+
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 
@@ -18,9 +21,12 @@ import java.util.List;
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.ArticleType;
 import fr.ydelouis.selfoss.entity.Filter;
+import fr.ydelouis.selfoss.entity.Source;
+import fr.ydelouis.selfoss.entity.Tag;
 import fr.ydelouis.selfoss.model.ArticleDao;
 import fr.ydelouis.selfoss.model.ArticleProvider;
 import fr.ydelouis.selfoss.model.DatabaseHelper;
+import fr.ydelouis.selfoss.model.TagDao;
 import fr.ydelouis.selfoss.sync.ArticleSync;
 import fr.ydelouis.selfoss.view.ArticleView;
 import fr.ydelouis.selfoss.view.ArticleView_;
@@ -32,6 +38,10 @@ public class ArticleAdapter extends PagedAdapter<Article> implements ArticleProv
 
 	@RootContext protected Context context;
 	@Bean protected ArticleProvider provider;
+    @OrmLiteDao(helper = DatabaseHelper.class)
+    protected TagDao tagDao;
+    @OrmLiteDao(helper = DatabaseHelper.class)
+    protected RuntimeExceptionDao<Source, Integer> sourceDao;
 
 	private BroadcastReceiver updateReceiver = new BroadcastReceiver() {
 		@Override
@@ -88,7 +98,13 @@ public class ArticleAdapter extends PagedAdapter<Article> implements ArticleProv
 		if (view == null) {
 			view = ArticleView_.build(context);
 		}
-		view.bind(getItem(position));
+        Article article = getItem(position);
+        Source source = sourceDao.queryForId(article.getSourceId());
+        List<Tag> tags = null;
+        if (source != null) {
+            tags = tagDao.queryForNames(source.getTags());
+        }
+		view.bind(article, tags);
 		return view;
 	}
 
