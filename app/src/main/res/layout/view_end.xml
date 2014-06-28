@@ -10,7 +10,7 @@
 		android:layout_height="wrap_content"
 		android:padding="16dp"
 		android:gravity="center"
-		android:background="@drawable/bg_card_selectable"
+		android:background="@drawable/bg_card_activable"
 		android:textAppearance="@android:style/TextAppearance.Holo"
 		android:text="@string/noMoreArticle"/>
 </LinearLayout>

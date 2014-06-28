@@ -3,7 +3,7 @@
     android:id="@+id/background"
     android:layout_width="match_parent"
     android:layout_height="84dp"
-    android:background="@drawable/bg_card_selectable" >
+    android:background="@drawable/bg_card" >
 
     <ImageView
         android:id="@+id/image"

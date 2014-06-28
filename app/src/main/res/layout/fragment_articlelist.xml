@@ -31,7 +31,8 @@
 		android:divider="@null"
         android:dividerHeight="8dp"
 		android:scrollbars="none"
-		android:listSelector="@android:color/transparent" />
+        android:drawSelectorOnTop="true"
+		android:listSelector="@drawable/selector_card" />
 
     </uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout>
 </fr.ydelouis.selfoss.view.PagedAdapterViewWrapper>

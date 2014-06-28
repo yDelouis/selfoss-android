@@ -87,6 +87,6 @@ public class ArticleView extends RelativeLayout {
 	}
 
 	private void setStarred(boolean isStarred) {
-		background.setBackgroundResource(isStarred ? R.drawable.bg_card_selectable_starred : R.drawable.bg_card_selectable);
+		background.setBackgroundResource(isStarred ? R.drawable.bg_card_activable_starred : R.drawable.bg_card_activable);
 	}
 }
