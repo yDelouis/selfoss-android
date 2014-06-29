@@ -9,7 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
-import com.squareup.picasso.Picasso;
+import com.androidquery.callback.BitmapAjaxCallback;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EViewGroup;
@@ -65,7 +65,8 @@ public class ArticleView extends RelativeLayout {
         if (article.hasImage()) {
             image.setVisibility(VISIBLE);
             image.setImageBitmap(null);
-            Picasso.with(getContext()).load(article.getImageUrl()).into(image);
+            BitmapAjaxCallback callback = new BitmapAjaxCallback().animation(AQuery.FADE_IN_NETWORK);
+            aQuery.id(R.id.image).image(article.getImageUrl(), true, true, image.getWidth(), 0, callback);
         } else {
             image.setVisibility(GONE);
         }
