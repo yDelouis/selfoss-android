@@ -1,17 +1,22 @@
 package fr.ydelouis.selfoss.rest;
 
+import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.widget.ImageView;
 
+import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxStatus;
+import com.androidquery.callback.BitmapAjaxCallback;
+
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
+import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.rest.RestService;
 
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.ArticleType;
@@ -28,6 +33,14 @@ public class SelfossRestWrapper {
     protected SelfossRest rest;
     @OrmLiteDao(helper = DatabaseHelper.class)
     protected ArticleSyncActionDao articleSyncActionDao;
+    @RootContext
+    protected Context context;
+    private AQuery aQuery;
+
+    @AfterInject
+    protected void init() {
+        aQuery = new AQuery(new ImageView(context));
+    }
 
     public List<Article> listArticles(int offset, int count) {
         return preProcess(rest.listArticles(offset, count));
@@ -86,21 +99,11 @@ public class SelfossRestWrapper {
         ArticleContentParser parser = new ArticleContentParser(article);
         List<String> imageUrls = parser.extractImageUrls();
         for (String imageUrl : imageUrls) {
-            Bitmap bitmap = loadBitmap(imageUrl);
+            Bitmap bitmap = new BitmapDownloader().load(imageUrl);
             if (bitmap != null && !bitmapIsEmpty(bitmap)) {
                 article.setImageUrl(imageUrl);
                 return;
             }
-        }
-    }
-
-    private Bitmap loadBitmap(String imageUrl) {
-        try {
-            URL url = new URL(imageUrl);
-            URLConnection connection = url.openConnection();
-            return BitmapFactory.decodeStream(connection.getInputStream());
-        } catch (IOException e) {
-            return null;
         }
     }
 
@@ -116,6 +119,27 @@ public class SelfossRestWrapper {
             }
         }
         return true;
+    }
+
+    private class BitmapDownloader {
+        private Bitmap bitmap;
+
+        public Bitmap load(String imageUrl) {
+            final CountDownLatch latch = new CountDownLatch(1);
+            aQuery.image(imageUrl, true, true, 200, 0, new BitmapAjaxCallback() {
+                @Override
+                protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status) {
+                    bitmap = bm;
+                    latch.countDown();
+                }
+            });
+            try {
+                latch.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return bitmap;
+        }
     }
 
 }
