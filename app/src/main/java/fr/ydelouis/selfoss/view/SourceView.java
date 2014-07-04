@@ -1,6 +1,7 @@
 package fr.ydelouis.selfoss.view;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -69,6 +70,12 @@ public class SourceView extends RelativeLayout {
             letter.setBackgroundDrawable(new ColorsOvalDrawable(Tag.colorsOfTags(tags)));
             letter.setVisibility(VISIBLE);
         }
+    }
+
+    @Override
+    public void setSelected(boolean selected) {
+        title.setTextColor(getResources().getColor(selected ? R.color.main_color : R.color.text));
+        title.setTypeface(null, selected ? Typeface.BOLD : Typeface.NORMAL);
     }
 
 	public Source getSource() {

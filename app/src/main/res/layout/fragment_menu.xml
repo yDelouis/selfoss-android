@@ -17,12 +17,15 @@
 			android:gravity="center"
 			android:paddingLeft="16dp"
 			android:paddingRight="32dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
 			android:drawableLeft="@drawable/ic_cloud"
 			android:drawablePadding="8dp"
 			android:textSize="22sp"
 			android:background="@drawable/menu_selectable_background_selfoss"/>
 
-		<View style="@style/MenuSectionDivider"/>
+		<View style="@style/MenuSectionDivider"
+            android:layout_marginTop="0dp"/>
 
 		<fr.ydelouis.selfoss.view.TypeView_
 			android:id="@+id/newest"

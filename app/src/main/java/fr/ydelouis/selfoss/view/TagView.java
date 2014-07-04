@@ -1,7 +1,7 @@
 package fr.ydelouis.selfoss.view;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
+import android.graphics.Typeface;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.util.AttributeSet;
@@ -12,7 +12,6 @@ import android.widget.TextView;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import fr.ydelouis.selfoss.R;
@@ -51,6 +50,12 @@ public class TagView extends RelativeLayout {
 
     public void setAllTags(List<Tag> tags) {
         color.setBackgroundDrawable(new ColorsOvalDrawable(Tag.colorsOfTags(tags)));
+    }
+
+    @Override
+    public void setSelected(boolean selected) {
+        name.setTextColor(getResources().getColor(selected ? R.color.main_color : R.color.text));
+        name.setTypeface(null, selected ? Typeface.BOLD : Typeface.NORMAL);
     }
 
 	public Tag getTag() {

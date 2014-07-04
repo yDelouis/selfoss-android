@@ -1,6 +1,7 @@
 package fr.ydelouis.selfoss.view;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -48,7 +49,13 @@ public class TypeView extends RelativeLayout {
 		setSelected(this.type.equals(type));
 	}
 
-	@UiThread
+    @Override
+    public void setSelected(boolean selected) {
+        name.setTextColor(getResources().getColor(selected ? R.color.main_color : R.color.text));
+        name.setTypeface(null, selected ? Typeface.BOLD : Typeface.NORMAL);
+    }
+
+    @UiThread
 	public void setCount(int count) {
 		this.count.setText(String.valueOf(count));
 		this.count.setVisibility(count == 0 ? View.GONE : View.VISIBLE);
