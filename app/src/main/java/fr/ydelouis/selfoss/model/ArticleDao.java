@@ -28,6 +28,7 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 	public static final String COLUMN_STARRED = "starred";
 	public static final String COLUMN_TAGS = "tags";
 	public static final String COLUMN_SOURCE_ID = "sourceId";
+	public static final String COLUMN_UPDATE_TIME = "updateTime";
 
 	public static final String ACTION_CREATION = "fr.ydelouis.selfoss.article.ACTION_CREATION";
 	public static final String ACTION_UPDATE = "fr.ydelouis.selfoss.article.ACTION_UPDATE";
@@ -58,17 +59,26 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 		}
 	}
 
-	public void updateAlsoCached(Article article) {
+	@Override
+	public int update(Article article) {
 		try {
-			int updated = update(article);
-			if (updated != 0) {
+			int updated = super.update(article);
+			if (updated > 0) {
 				notifyUpdate(article);
-				article.setCached(!article.isCached());
-				createOrUpdate(article);
-				article.setCached(!article.isCached());
 			}
+			return updated;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	public void updateAlsoCached(Article article) {
+		int updated = update(article);
+		if (updated != 0) {
+			notifyUpdate(article);
+			article.setCached(!article.isCached());
+			createOrUpdate(article);
+			article.setCached(!article.isCached());
 		}
 	}
 
@@ -188,7 +198,25 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 		where.and().like(COLUMN_SOURCE_ID, source.getId());
 	}
 
-	public void removeCachedOlderThan(long dateTime) {
+	public String queryForLatestUpdateTime() {
+		try {
+			QueryBuilder<Article, Integer> queryBuilder = queryBuilder();
+			queryBuilder.where().isNotNull(COLUMN_UPDATE_TIME);
+			queryBuilder.orderBy(COLUMN_UPDATE_TIME, false);
+			queryBuilder.limit(1l);
+			Article latestUpdated = queryBuilder.queryForFirst();
+
+			if (latestUpdated != null) {
+				return latestUpdated.getUpdateTime();
+			} else {
+				return null;
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void deleteCachedOlderThan(long dateTime) {
 		try {
 			DeleteBuilder<Article, Integer> deleteBuilder = deleteBuilder();
 			deleteBuilder.where().lt(COLUMN_ID, 0).and().lt(COLUMN_DATETIME, dateTime);
@@ -212,6 +240,19 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 		try {
 			DeleteBuilder<Article, Integer> deleteBuilder = deleteBuilder();
 			deleteBuilder.where().eq(COLUMN_STARRED, true).and().gt(COLUMN_ID, 0);
+			deleteBuilder.delete();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void deleteReadNotFavoriteAndNotCached() {
+		try {
+			DeleteBuilder<Article, Integer> deleteBuilder = deleteBuilder();
+			deleteBuilder.where()
+					.eq(COLUMN_UNREAD, false)
+					.and().eq(COLUMN_STARRED, false)
+					.and().gt(COLUMN_ID, 0);
 			deleteBuilder.delete();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

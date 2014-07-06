@@ -23,12 +23,14 @@ public class ArticleSync {
 
 	public static final String ACTION_SYNC = "fr.ydelouis.selfoss.article.ACTION_SYNC";
 	public static final String ACTION_NEW_SYNCED = "fr.ydelouis.selfoss.article.ACTION_NEW_SYNCED";
+
 	private static final int ARTICLES_PAGE_SIZE = 20;
 	private static final int CACHE_SIZE = 50;
 
-	@RootContext protected Context context;
+	@RootContext
+	protected Context context;
 	@Bean
-    protected SelfossRestWrapper selfossRest;
+	protected SelfossRestWrapper selfossRest;
 	@OrmLiteDao(helper = DatabaseHelper.class)
 	protected ArticleDao articleDao;
 
@@ -38,10 +40,39 @@ public class ArticleSync {
 	}
 
 	public void performSync() {
-		syncCache();
-		syncUnread();
-		syncFavorite();
+		String updateTime = articleDao.queryForLatestUpdateTime();
+		if (updateTime != null) {
+			syncUpdated(updateTime);
+			articleDao.deleteReadNotFavoriteAndNotCached();
+		} else {
+			syncCache();
+			syncUnread();
+			syncFavorite();
+		}
 		sendSyncBroadcast();
+	}
+
+	private void syncUpdated(String updateTime) {
+		int offset = 0;
+		List<Article> articles;
+		boolean newSynced = false;
+		do {
+			articles = selfossRest.listUpdatedArticles(offset, ARTICLES_PAGE_SIZE, updateTime);
+			for (Article article : articles) {
+				article.setCached(true);
+				Dao.CreateOrUpdateStatus status = articleDao.createOrUpdate(article);
+				if (article.isStarred() || article.isUnread() || status.isUpdated()) {
+					article.setCached(false);
+					articleDao.createOrUpdate(article);
+					article.setCached(true);
+				}
+				if (!newSynced && status.isUpdated()) {
+					sendNewSyncedBroadcast();
+					newSynced = true;
+				}
+			}
+			offset += ARTICLES_PAGE_SIZE;
+		} while (articles.size() == ARTICLES_PAGE_SIZE);
 	}
 
 	private void syncCache() {
@@ -65,7 +96,7 @@ public class ArticleSync {
 			offset += ARTICLES_PAGE_SIZE;
 		} while (articles.size() == ARTICLES_PAGE_SIZE && offset < CACHE_SIZE);
 		if (lastArticle != null) {
-			articleDao.removeCachedOlderThan(lastArticle.getDateTime());
+			articleDao.deleteCachedOlderThan(lastArticle.getDateTime());
 		}
 	}
 
@@ -96,11 +127,11 @@ public class ArticleSync {
 	}
 
 	private void sendSyncBroadcast() {
-		context.sendBroadcast(new Intent(ACTION_SYNC));
+		context.sendBroadcast(new Intent(ArticleSync.ACTION_SYNC));
 	}
 
 	private void sendNewSyncedBroadcast() {
-		context.sendBroadcast(new Intent(ACTION_NEW_SYNCED));
+		context.sendBroadcast(new Intent(ArticleSync.ACTION_NEW_SYNCED));
 	}
 
 }

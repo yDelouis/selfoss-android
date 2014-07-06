@@ -20,7 +20,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	public static final String ACTION_TABLES_CLEARED = "fr.ydelouis.selfoss.ACTION_TABLES_CLEARED";
 
 	private static final String DATABASE_NAME = "selfoss.db";
-	private static final int DATABASE_VERSION = 4;
+	private static final int DATABASE_VERSION = 5;
 
 	private Context context;
 
@@ -55,6 +55,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
                 TableUtils.dropTable(connectionSource, Article.class, true);
                 TableUtils.createTable(connectionSource, Article.class);
             }
+			if (oldVersion < 5) {
+				TableUtils.dropTable(connectionSource, Article.class, true);
+				TableUtils.createTable(connectionSource, Article.class);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

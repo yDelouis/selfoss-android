@@ -54,6 +54,9 @@ public class Article implements Parcelable {
     private String tags;
     @DatabaseField
     private String imageUrl;
+	@DatabaseField(columnName = ArticleDao.COLUMN_UPDATE_TIME)
+	@JsonProperty("updatetime")
+	private String updateTime;
 
 	public Article() {
 
@@ -217,7 +220,15 @@ public class Article implements Parcelable {
         this.imageUrl = imageUrl;
     }
 
-    public boolean hasImage() {
+	public String getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(String updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public boolean hasImage() {
         return imageUrl != null;
     }
 

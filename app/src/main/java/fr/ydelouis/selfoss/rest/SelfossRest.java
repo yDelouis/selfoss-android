@@ -32,6 +32,9 @@ public interface SelfossRest extends RestClientErrorHandling {
 	@Get("/items?offset={offset}&items={count}")
 	List<Article> listArticles(int offset, int count);
 
+	@Get("/items?offset={offset}&items={count}&updatedsince={updateTime}")
+	List<Article> listUpdatedArticles(int offset, int count, String updateTime);
+
 	@Get("/items?tag={tag}&offset={offset}&items={count}")
 	List<Article> listArticles(Tag tag, int offset, int count);
 

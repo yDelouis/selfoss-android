@@ -16,6 +16,8 @@ import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.rest.RestService;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -51,7 +53,15 @@ public class SelfossRestWrapper {
         return preProcess(rest.listArticles(offset, count));
     }
 
-    public List<Article> listArticles(Tag tag, int offset, int count) {
+	public List<Article> listUpdatedArticles(int offset, int count, String updateTime) {
+		String encodedUpdateTime = updateTime;
+		try {
+			encodedUpdateTime = URLEncoder.encode(updateTime, "UTF-8");
+		} catch (UnsupportedEncodingException ignored) {}
+		return preProcess(rest.listUpdatedArticles(offset, count, encodedUpdateTime));
+	}
+
+	public List<Article> listArticles(Tag tag, int offset, int count) {
         return preProcess(rest.listArticles(tag, offset, count));
     }
 
