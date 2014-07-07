@@ -3,6 +3,7 @@ package fr.ydelouis.selfoss.rest;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.androidquery.AQuery;
@@ -18,6 +19,7 @@ import org.androidannotations.annotations.rest.RestService;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+import fr.ydelouis.selfoss.BuildConfig;
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.ArticleType;
 import fr.ydelouis.selfoss.entity.Tag;
@@ -28,6 +30,9 @@ import fr.ydelouis.selfoss.util.ArticleContentParser;
 
 @EBean
 public class SelfossRestWrapper {
+
+    private static final String TAG = "Selfoss Image Loading";
+    private static boolean LOG_IMAGE_REQUEST = BuildConfig.DEBUG && true;
 
     @RestService
     protected SelfossRest rest;
@@ -99,37 +104,28 @@ public class SelfossRestWrapper {
         ArticleContentParser parser = new ArticleContentParser(article);
         List<String> imageUrls = parser.extractImageUrls();
         for (String imageUrl : imageUrls) {
-            Bitmap bitmap = new BitmapDownloader().load(imageUrl);
-            if (bitmap != null && !bitmapIsEmpty(bitmap)) {
+            if (new BitmapDownloader().isDisplayable(imageUrl)) {
                 article.setImageUrl(imageUrl);
                 return;
             }
         }
     }
 
-    private boolean bitmapIsEmpty(Bitmap bitmap) {
-        if (bitmap.getWidth() < 50 || bitmap.getHeight() < 50) {
-            return true;
-        }
-        for (int x = 0; x < bitmap.getWidth(); x++) {
-            for (int y = 0; y < bitmap.getHeight(); y++) {
-                if (bitmap.getPixel(x, y) != Color.WHITE) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
     private class BitmapDownloader {
         private Bitmap bitmap;
+        private AjaxStatus ajaxStatus;
 
-        public Bitmap load(String imageUrl) {
+        public Bitmap get() {
+            return bitmap;
+        }
+
+        public BitmapDownloader load(String imageUrl) {
             final CountDownLatch latch = new CountDownLatch(1);
             aQuery.image(imageUrl, true, true, 200, 0, new BitmapAjaxCallback() {
                 @Override
                 protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status) {
                     bitmap = bm;
+                    ajaxStatus = status;
                     latch.countDown();
                 }
             });
@@ -138,7 +134,39 @@ public class SelfossRestWrapper {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            return bitmap;
+            return this;
+        }
+
+        public boolean isDisplayable(String imageUrl) {
+            load(imageUrl);
+            boolean isDisplayable = isDisplayable();
+            log(imageUrl, isDisplayable);
+            return isDisplayable;
+        }
+
+        private boolean isDisplayable() {
+            if (bitmap == null) {
+                return false;
+            }
+            if (bitmap.getWidth() < 50 || bitmap.getHeight() < 50) {
+                return false;
+            }
+            for (int x = 0; x < bitmap.getWidth(); x++) {
+                for (int y = 0; y < bitmap.getHeight(); y++) {
+                    if (bitmap.getPixel(x, y) != Color.WHITE) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private void log(String imageUrl, boolean isDisplayable) {
+            if (LOG_IMAGE_REQUEST) {
+                String source = ajaxStatus.getSource() == AjaxStatus.NETWORK ? "network" : "cache";
+                String valid = isDisplayable ? "Ok" : "invalid";
+                Log.i(TAG, imageUrl + " from " + source + " : " + valid);
+            }
         }
     }
 
