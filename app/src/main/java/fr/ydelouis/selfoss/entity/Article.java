@@ -272,6 +272,7 @@ public class Article implements Parcelable {
 		dest.writeString(this.sourceTitle);
 		dest.writeString(this.tags);
         dest.writeString(this.imageUrl);
+		dest.writeString(this.updateTime);
 	}
 
 	private Article(Parcel in) {
@@ -289,6 +290,7 @@ public class Article implements Parcelable {
 		this.sourceTitle = in.readString();
 		this.tags = in.readString();
         this.imageUrl = in.readString();
+		this.updateTime = in.readString();
 	}
 
 	public static Parcelable.Creator<Article> CREATOR = new Parcelable.Creator<Article>() {
