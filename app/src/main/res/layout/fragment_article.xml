@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<fr.ydelouis.selfoss.view.NotifyScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
@@ -9,32 +10,54 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@color/main_color"
         android:descendantFocusability="blocksDescendants"
         tools:ignore="WebViewLayout">
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:layout_toLeftOf="@+id/dateTime"
-            android:textColor="@android:color/white"
-            android:textAppearance="@android:style/TextAppearance.Holo.Large" />
+	    <RelativeLayout
+		    android:id="@+id/header"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:background="@color/main_color" >
 
-        <TextView
-            android:id="@+id/dateTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="24dp"
-            android:textColor="@android:color/white" />
+		    <ImageView
+			    android:id="@+id/image"
+			    android:layout_width="match_parent"
+			    android:layout_height="@dimen/article_header_height"
+			    android:scaleType="centerCrop" />
+
+		    <View
+			    android:id="@+id/scrim"
+			    android:layout_width="match_parent"
+			    android:layout_height="@dimen/article_header_height"
+			    android:background="@color/scrim" />
+
+		    <TextView
+			    android:id="@+id/title"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_marginTop="@dimen/article_title_margin_top"
+			    android:padding="16dp"
+			    android:layout_toLeftOf="@+id/dateTime"
+			    android:layout_alignParentBottom="true"
+			    android:textColor="@android:color/white"
+			    android:textAppearance="@android:style/TextAppearance.Holo.Large" />
+
+		    <TextView
+			    android:id="@+id/dateTime"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_alignParentRight="true"
+			    android:padding="18dp"
+			    android:text="16 juil."
+			    android:layout_alignParentBottom="true"
+			    android:textColor="@android:color/white" />
+
+		</RelativeLayout>
 
         <WebView
             android:id="@+id/webView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/title" />
+            android:layout_below="@+id/header" />
     </RelativeLayout>
-</ScrollView>
+</fr.ydelouis.selfoss.view.NotifyScrollView>

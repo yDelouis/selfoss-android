@@ -8,14 +8,19 @@ import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebView.HitTestResult;
+import android.widget.ImageView;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
+import com.androidquery.AQuery;
+
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.LongClick;
@@ -28,6 +33,7 @@ import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.model.ArticleActionHelper;
 import fr.ydelouis.selfoss.util.ArticleContentParser;
+import fr.ydelouis.selfoss.view.NotifyScrollView;
 
 @EFragment(R.layout.fragment_article)
 @OptionsMenu(R.menu.fragment_article)
@@ -36,10 +42,14 @@ public class ArticleFragment extends Fragment {
 	@FragmentArg protected Article article;
 	@Bean protected ArticleActionHelper articleActionHelper;
     private ArticleContentParser articleContentParser;
+	private NotifyScrollView.Listener scrollListener;
 
-	@ViewById protected WebView webView;
+	@ViewById protected NotifyScrollView scroll;
+	@ViewById protected ImageView image;
+	@ViewById protected View scrim;
 	@ViewById protected TextView title;
 	@ViewById protected TextView dateTime;
+	@ViewById protected WebView webView;
  	@OptionsMenuItem protected MenuItem markRead;
 	@OptionsMenuItem protected MenuItem markStarred;
 	@OptionsMenuItem protected MenuItem share;
@@ -50,12 +60,18 @@ public class ArticleFragment extends Fragment {
 		webView.getSettings().setBuiltInZoomControls(true);
 		webView.getSettings().setSupportZoom(true);
 		webView.getSettings().setDisplayZoomControls(false);
+	    scroll.setListener(scrollListener);
         setArticle(article);
 	}
 
 	public void setArticle(Article article) {
 		this.article = article;
 		if (article != null) {
+			if (article.hasImage()) {
+				new AQuery(getView()).id(R.id.image).image(article.getImageUrl());
+			}
+			image.setVisibility(article.hasImage() ? View.VISIBLE : View.GONE);
+			scrim.setVisibility(article.hasImage() ? View.VISIBLE : View.GONE);
             articleContentParser = new ArticleContentParser(article);
 			title.setText(article.getTitle());
 			dateTime.setText(DateUtils.getRelativeTimeSpanString(getActivity(), article.getDateTime()));
@@ -65,8 +81,15 @@ public class ArticleFragment extends Fragment {
 	}
 
 	private void setArticleContent() {
-		String html = "<style>img{display: inline;height: auto;max-width: 100%;}</style>"+ article.getContent();
+		String html = "<style>img{display: inline;height: auto;max-width: 100%;}</style>"+ articleContentParser.getContentWithoutImage();
 		webView.loadData(html, "text/html", "utf-8");
+	}
+
+	public void setScrollListener(NotifyScrollView.Listener scrollListener) {
+		this.scrollListener = scrollListener;
+		if (scroll != null) {
+			scroll.setListener(scrollListener);
+		}
 	}
 
 	private void setShareIntent() {
@@ -94,16 +117,35 @@ public class ArticleFragment extends Fragment {
 	}
 
 	@LongClick(R.id.webView)
-	public boolean onWebViewLongClicked() {
+	protected boolean onWebViewLongClicked() {
 		HitTestResult result = webView.getHitTestResult();
 		if (result != null && (result.getType() == HitTestResult.IMAGE_TYPE || result.getType() == HitTestResult.SRC_IMAGE_ANCHOR_TYPE)) {
-			String imageTitle = articleContentParser.extractTitleOfImage(result.getExtra());
-			if (imageTitle != null && !imageTitle.isEmpty()) {
-				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-				builder.setMessage(imageTitle);
-				builder.show();
-				return true;
-			}
+			return showImageTitle(result.getExtra());
+		}
+		return false;
+	}
+
+	@Click(R.id.image)
+	protected void showImageInBrowser() {
+		Intent intent = new Intent(Intent.ACTION_VIEW);
+		intent.setData(Uri.parse(article.getImageUrl()));
+		startActivity(intent);
+	}
+
+
+	@LongClick(R.id.image)
+	protected boolean onImageLongClicked() {
+		showImageTitle(article.getImageUrl());
+		return true;
+	}
+
+	private boolean showImageTitle(String imageUrl) {
+		String imageTitle = articleContentParser.getTitleOfImage(imageUrl);
+		if (imageTitle != null && !imageTitle.isEmpty()) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			builder.setMessage(imageTitle);
+			builder.show();
+			return true;
 		}
 		return false;
 	}

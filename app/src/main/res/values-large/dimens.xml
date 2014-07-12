@@ -2,4 +2,5 @@
 <resources>
     <dimen name="listview_padding_vertical">16dp</dimen>
     <dimen name="listview_padding_horizontal">16dp</dimen>
+	<dimen name="article_header_height">450dp</dimen>
 </resources>

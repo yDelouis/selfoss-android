@@ -102,7 +102,7 @@ public class SelfossRestWrapper {
 
     private void extractImage(Article article) {
         ArticleContentParser parser = new ArticleContentParser(article);
-        List<String> imageUrls = parser.extractImageUrls();
+        List<String> imageUrls = parser.getImagesUrls();
         for (String imageUrl : imageUrls) {
             if (new BitmapDownloader().isDisplayable(imageUrl)) {
                 article.setImageUrl(imageUrl);

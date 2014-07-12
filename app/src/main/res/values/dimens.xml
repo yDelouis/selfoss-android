@@ -8,4 +8,6 @@
     <dimen name="listview_padding_horizontal">8dp</dimen>
     <dimen name="card_shadow">2dp</dimen>
     <dimen name="card_border">0.5dp</dimen>
+	<dimen name="article_title_margin_top">44dp</dimen>
+	<dimen name="article_header_height">250dp</dimen>
 </resources>

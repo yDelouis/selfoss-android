@@ -17,7 +17,7 @@ public class ArticleContentParser {
         this.article = article;
     }
 
-    public List<String> extractImageUrls() {
+    public List<String> getImagesUrls() {
         List<String> imageUrls = new ArrayList<String>();
         Document document = Jsoup.parse(article.getContent());
         for (Element element : document.getElementsByTag("img")) {
@@ -29,7 +29,7 @@ public class ArticleContentParser {
         return imageUrls;
     }
 
-    public String extractTitleOfImage(String imageSrc) {
+    public String getTitleOfImage(String imageSrc) {
         Document document = Jsoup.parse(article.getContent());
         for (Element element : document.getElementsByTag("img")) {
             if (imageSrc.equals(element.attr("src"))) {
@@ -38,4 +38,21 @@ public class ArticleContentParser {
         }
         return null;
     }
+
+	public String getContentWithoutImage() {
+		String content = article.getContent();
+		if (article.hasImage()) {
+			Document document = Jsoup.parse(content);
+			for (Element element : document.getElementsByTag("img")) {
+				String src = element.attr("src");
+				if (article.getImageUrl().equals(src)) {
+					element.remove();
+					document.outputSettings().charset("ISO-8859-1");
+					content = document.html();
+					break;
+				}
+			}
+		}
+		return content;
+	}
 }

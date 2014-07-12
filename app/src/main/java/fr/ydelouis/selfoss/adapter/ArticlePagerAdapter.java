@@ -16,8 +16,10 @@ import java.util.List;
 
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.Filter;
+import fr.ydelouis.selfoss.fragment.ArticleFragment;
 import fr.ydelouis.selfoss.fragment.ArticleFragment_;
 import fr.ydelouis.selfoss.model.ArticleProvider;
+import fr.ydelouis.selfoss.view.NotifyScrollView;
 
 @EBean
 public class ArticlePagerAdapter extends FragmentPagerAdapter implements ArticleProvider.Listener {
@@ -26,6 +28,7 @@ public class ArticlePagerAdapter extends FragmentPagerAdapter implements Article
 	protected ArticleProvider provider;
 
 	private List<Article> articles = new ArrayList<Article>();
+	private NotifyScrollView.Listener scrollListener;
 
 	public ArticlePagerAdapter(Context context) {
 		super(((Activity) context).getFragmentManager());
@@ -44,6 +47,10 @@ public class ArticlePagerAdapter extends FragmentPagerAdapter implements Article
 		articles.clear();
 		articles.add(article);
 		provider.loadNew(article);
+	}
+
+	public void setScrollListener(NotifyScrollView.Listener scrollListener) {
+		this.scrollListener = scrollListener;
 	}
 
 	@Override
@@ -66,7 +73,9 @@ public class ArticlePagerAdapter extends FragmentPagerAdapter implements Article
 		if (isNewPageNeeded(position)) {
 			loadNextArticles();
 		}
-		return ArticleFragment_.builder().article(getArticle(position)).build();
+		ArticleFragment fragment = ArticleFragment_.builder().article(getArticle(position)).build();
+		fragment.setScrollListener(scrollListener);
+		return fragment;
 	}
 
 	private boolean isNewPageNeeded(int position) {

@@ -2,15 +2,19 @@ package fr.ydelouis.selfoss.activity;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
 import android.util.TypedValue;
+import android.view.Window;
 import android.widget.ImageView;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
@@ -23,9 +27,10 @@ import fr.ydelouis.selfoss.adapter.ArticlePagerAdapter;
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.Filter;
 import fr.ydelouis.selfoss.util.SelfossUtil;
+import fr.ydelouis.selfoss.view.NotifyScrollView;
 
 @EActivity(R.layout.activity_article)
-public class ArticleActivity extends Activity implements ViewPager.OnPageChangeListener {
+public class ArticleActivity extends Activity implements ViewPager.OnPageChangeListener, NotifyScrollView.Listener {
 
 	@Extra protected Article article;
 	@Extra protected Filter filter;
@@ -35,11 +40,18 @@ public class ArticleActivity extends Activity implements ViewPager.OnPageChangeL
 
 	@ViewById protected ViewPager pager;
 
+	@AfterInject
+	protected void init() {
+		getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+		getActionBar().setBackgroundDrawable(new ColorDrawable(Color.argb(0, 0, 0, 0)));
+	}
+
 	@AfterViews
 	protected void initViews() {
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		adapter.setFilter(filter);
 		adapter.setArticle(article);
+		adapter.setScrollListener(this);
 		setArticle(article);
 		pager.setAdapter(adapter);
 		pager.setOnPageChangeListener(this);
@@ -73,6 +85,7 @@ public class ArticleActivity extends Activity implements ViewPager.OnPageChangeL
 	@Override
 	public void onPageSelected(int position) {
 		setArticle(adapter.getArticle(position));
+		getActionBar().show();
 	}
 
 	@Override
@@ -81,4 +94,12 @@ public class ArticleActivity extends Activity implements ViewPager.OnPageChangeL
 	@Override
 	public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
 
+	@Override
+	public void onScroll(int delta) {
+		if (delta > 0) {
+			getActionBar().hide();
+		} else {
+			getActionBar().show();
+		}
+	}
 }
