@@ -90,6 +90,8 @@ public class ArticleView extends RelativeLayout {
 		int colorId = unread ? R.color.text : R.color.text_secondary ;
 		int color = getResources().getColor(colorId);
 		title.setTextColor(color);
+		sourceTitle.setTextColor(color);
+		dateTime.setTextColor(color);
 	}
 
 	private void setStarred(boolean isStarred) {
