@@ -7,6 +7,7 @@ import android.util.Log;
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 
@@ -178,7 +179,7 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 	private void whereTypeAndTag(Where<Article, Integer> where, ArticleType type, Tag tag) throws SQLException {
 		whereType(where, type);
 		if (!Tag.ALL.equals(tag)) {
-			where.and().like(COLUMN_TAGS, "%" + tag.getName(null) + "%");
+			where.and().like(COLUMN_TAGS, new SelectArg("%" + tag.getName(null) + "%"));
 		}
 	}
 

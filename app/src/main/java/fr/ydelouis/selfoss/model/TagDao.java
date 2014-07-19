@@ -1,6 +1,7 @@
 package fr.ydelouis.selfoss.model;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
+import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.support.ConnectionSource;
 
 import java.sql.SQLException;
@@ -19,10 +20,18 @@ public class TagDao extends BaseDaoImpl<Tag, String> {
 
     public List<Tag> queryForNames(List<String> tagsNames) {
         try {
-            return queryBuilder().where().in(COLUMN_NAME, tagsNames).query();
+            return queryBuilder().where().in(COLUMN_NAME, safeStringCollection(tagsNames)).query();
         } catch (SQLException e) {
             e.printStackTrace();
             return new ArrayList<Tag>();
         }
     }
+
+	private List<SelectArg> safeStringCollection(List<String> strings) {
+		List<SelectArg> safeStrings = new ArrayList<SelectArg>();
+		for (String string : strings) {
+			safeStrings.add(new SelectArg(string));
+		}
+		return safeStrings;
+	}
 }
