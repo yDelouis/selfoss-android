@@ -35,12 +35,12 @@ public class SyncManager {
 	}
 
 	public boolean isActive() {
-		  Account account = selfossAccount.getAccount();
-          if (account != null) {
-              return ContentResolver.isSyncActive(account, AUTHORITY);
-          } else {
-              return false;
-          }
+		Account account = selfossAccount.getAccount();
+		if (account != null) {
+			return ContentResolver.isSyncActive(account, AUTHORITY);
+		} else {
+			return false;
+		}
 	}
 
 }
