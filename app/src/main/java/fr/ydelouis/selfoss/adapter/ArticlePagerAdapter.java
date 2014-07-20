@@ -19,7 +19,6 @@ import fr.ydelouis.selfoss.entity.Filter;
 import fr.ydelouis.selfoss.fragment.ArticleFragment;
 import fr.ydelouis.selfoss.fragment.ArticleFragment_;
 import fr.ydelouis.selfoss.model.ArticleProvider;
-import fr.ydelouis.selfoss.view.NotifyScrollView;
 
 @EBean
 public class ArticlePagerAdapter extends FragmentPagerAdapter implements ArticleProvider.Listener {
@@ -28,7 +27,7 @@ public class ArticlePagerAdapter extends FragmentPagerAdapter implements Article
 	protected ArticleProvider provider;
 
 	private List<Article> articles = new ArrayList<Article>();
-	private NotifyScrollView.Listener scrollListener;
+	private ArticleFragment.ScrollListener scrollListener;
 
 	public ArticlePagerAdapter(Context context) {
 		super(((Activity) context).getFragmentManager());
@@ -49,7 +48,7 @@ public class ArticlePagerAdapter extends FragmentPagerAdapter implements Article
 		provider.loadNew(article);
 	}
 
-	public void setScrollListener(NotifyScrollView.Listener scrollListener) {
+	public void setScrollListener(ArticleFragment.ScrollListener scrollListener) {
 		this.scrollListener = scrollListener;
 	}
 

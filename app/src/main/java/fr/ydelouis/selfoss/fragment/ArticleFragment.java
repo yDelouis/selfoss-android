@@ -37,12 +37,12 @@ import fr.ydelouis.selfoss.view.NotifyScrollView;
 
 @EFragment(R.layout.fragment_article)
 @OptionsMenu(R.menu.fragment_article)
-public class ArticleFragment extends Fragment {
+public class ArticleFragment extends Fragment implements NotifyScrollView.Listener {
 
 	@FragmentArg protected Article article;
 	@Bean protected ArticleActionHelper articleActionHelper;
     private ArticleContentParser articleContentParser;
-	private NotifyScrollView.Listener scrollListener;
+	private ScrollListener scrollListener;
 
 	@ViewById protected NotifyScrollView scroll;
 	@ViewById protected ImageView image;
@@ -60,7 +60,8 @@ public class ArticleFragment extends Fragment {
 		webView.getSettings().setBuiltInZoomControls(true);
 		webView.getSettings().setSupportZoom(true);
 		webView.getSettings().setDisplayZoomControls(false);
-	    scroll.setListener(scrollListener);
+	    scroll.setListener(this);
+	    scroll.setOverScrollEnabled(false);
         setArticle(article);
 	}
 
@@ -85,11 +86,8 @@ public class ArticleFragment extends Fragment {
 		webView.loadData(html, "text/html", "utf-8");
 	}
 
-	public void setScrollListener(NotifyScrollView.Listener scrollListener) {
+	public void setScrollListener(ScrollListener scrollListener) {
 		this.scrollListener = scrollListener;
-		if (scroll != null) {
-			scroll.setListener(scrollListener);
-		}
 	}
 
 	private void setShareIntent() {
@@ -199,5 +197,18 @@ public class ArticleFragment extends Fragment {
 			intent.setData(Uri.parse(article.getLink()));
 			startActivity(intent);
 		}
+	}
+
+	@Override
+	public void onScroll(int l, int t, int oldl, int oldt) {
+		if (scrollListener != null) {
+			float percentageImage = ((float) t) / ((float) image.getHeight());
+			percentageImage = Math.min(percentageImage, 1);
+			scrollListener.onScroll(t-oldt, percentageImage);
+		}
+	}
+
+	public interface ScrollListener {
+		void onScroll(int delta, float percentageImage);
 	}
 }
