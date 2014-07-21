@@ -43,5 +43,9 @@
     <string name="share">Share</string>
     <string name="error_usernameEmpty">Username is required</string>
     <string name="never">Never</string>
+	<string name="newVersion_2_11_message">Version 2.11 of Selfoss server has been released !\nIt enables the app to sync more efficiently.\nSo don\'t forget to upgrade !</string>
+	<string name="newVersion_title">New version released !</string>
+	<string name="remindMeLater">Remind me later</string>
+	<string name="gotIt">Got it !</string>
 
 </resources>

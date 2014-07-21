@@ -30,6 +30,7 @@ import fr.ydelouis.selfoss.fragment.ArticleListFragment;
 import fr.ydelouis.selfoss.fragment.MenuFragment;
 import fr.ydelouis.selfoss.model.ArticleActionHelper;
 import fr.ydelouis.selfoss.model.DatabaseHelper;
+import fr.ydelouis.selfoss.rest.NewVersionHelper;
 import fr.ydelouis.selfoss.sync.SyncManager;
 import fr.ydelouis.selfoss.sync.Uploader;
 
@@ -46,6 +47,8 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Art
 	protected Uploader uploader;
 	@Bean
 	protected ArticleActionHelper articleActionHelper;
+	@Bean
+	protected NewVersionHelper newVersionHelper;
 
 	@ViewById
 	protected DrawerLayout drawer;
@@ -64,6 +67,7 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Art
 		if (savedInstanceState == null) {
 			if (isConfigFilled()) {
 				synchronize();
+				newVersionHelper.showNewVersionMessageIfNeeded();
 			} else {
 				startConfig();
 			}

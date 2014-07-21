@@ -136,6 +136,14 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 		}
 	}
 
+	public int queryForCount() {
+		try {
+			return (int) queryBuilder().countOf();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public int queryForCount(ArticleType type) {
 		return queryForCount(type, Tag.ALL);
 	}
