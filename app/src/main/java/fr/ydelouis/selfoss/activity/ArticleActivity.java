@@ -98,11 +98,6 @@ public class ArticleActivity extends Activity implements ViewPager.OnPageChangeL
 
 	@Override
 	public void onScroll(int delta, float percentage) {
-		if (delta > 0) {
-			getActionBar().hide();
-		} else {
-			getActionBar().show();
-		}
 		actionBarBackground.setAlpha((int)(255 * percentage));
 	}
 }

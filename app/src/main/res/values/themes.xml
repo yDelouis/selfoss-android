@@ -31,12 +31,15 @@
         <item name="android:activatedBackgroundIndicator">@drawable/selfoss_activated_background_holo_light</item>
         <!-- End of generated -->
 
-
         <item name="ptrHeaderStyle">@style/Widget.Custom.PtrHeader</item>
         <item name="android:actionOverflowButtonStyle">@style/ActionButton.Overflow.Selfoss</item>
         <item name="android:homeAsUpIndicator">@drawable/ic_homeasupindicator</item>
         <item name="android:selectableItemBackground">@drawable/menu_selectable_background_selfoss</item>
 
+	</style>
+
+	<style name="Theme.Selfoss.Article" parent="Theme.Selfoss">
+		<item name="android:windowContentOverlay">@null</item>
 	</style>
 
     <!-- File created by the Android Action Bar Style Generator -->
