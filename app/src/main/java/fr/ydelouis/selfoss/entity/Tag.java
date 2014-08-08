@@ -1,7 +1,6 @@
 package fr.ydelouis.selfoss.entity;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -16,6 +15,7 @@ import java.util.List;
 
 import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.model.TagDao;
+import fr.ydelouis.selfoss.util.ColorUtil;
 
 @DatabaseTable(daoClass = TagDao.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -71,7 +71,7 @@ public class Tag implements Parcelable {
 
 	@JsonProperty("color")
 	public void setColor(String color) {
-		this.color = Color.parseColor(color);
+		this.color = ColorUtil.parseColor(color);
 	}
 
 	public int getUnread() {
