@@ -10,8 +10,7 @@
     <item
         android:id="@+id/markRead"
         android:title="@string/markRead"
-        android:icon="@drawable/ic_menu_read"
-        android:showAsAction="always"/>
+        android:icon="@drawable/ic_menu_read"/>
 
 	<item
 		android:id="@+id/browser"

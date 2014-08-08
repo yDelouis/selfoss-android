@@ -55,7 +55,7 @@
                 android:resource="@xml/syncadapter" />
         </service>
 
-	    
+
         <provider
             android:name=".model.SelfossContentProvider"
             android:authorities="fr.ydelouis.selfoss"
