@@ -1,6 +1,8 @@
 package fr.ydelouis.selfoss.view;
 
 import android.content.Context;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.view.View;
@@ -27,6 +29,7 @@ public class ArticleView extends RelativeLayout {
 
 	@Bean protected SelfossUtil util;
     private AQuery aQuery;
+	private Article article;
 
 	@ViewById protected View background;
     @ViewById protected ImageView image;
@@ -52,13 +55,16 @@ public class ArticleView extends RelativeLayout {
 	}
 
 	public void bind(Article article, List<Tag> tags) {
-        setImage(article);
+		if (!article.equals(this.article)) {
+			setImage(article);
+		}
         setFaviconOrLetter(article, tags);
 		sourceTitle.setText(article.getSourceTitle());
 		dateTime.setText(DateUtils.getRelativeTimeSpanString(getContext(), article.getDateTime()));
 		title.setText(article.getTitle());
 		setUnread(article.isUnread());
 		setStarred(article.isStarred());
+		this.article = article;
 	}
 
     private void setImage(Article article) {
@@ -92,6 +98,11 @@ public class ArticleView extends RelativeLayout {
 		title.setTextColor(color);
 		sourceTitle.setTextColor(color);
 		dateTime.setTextColor(color);
+
+		ColorMatrix matrix = new ColorMatrix();
+		matrix.setSaturation(.1f);
+		ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+		image.setColorFilter(unread ? null : filter);
 	}
 
 	private void setStarred(boolean isStarred) {
