@@ -1,6 +1,7 @@
 package fr.ydelouis.selfoss.rest;
 
 import android.net.Uri;
+import android.util.Base64;
 import android.util.Log;
 
 import org.androidannotations.annotations.Bean;
@@ -19,6 +20,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 
 import fr.ydelouis.selfoss.BuildConfig;
 import fr.ydelouis.selfoss.account.SelfossAccount;
@@ -77,6 +79,12 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 			this.httpRequest = httpRequest;
 			this.httpRequest.getHeaders().set("Content-Length", "0");
 			this.httpRequest.getHeaders().remove("Content-Type");
+
+			if (account.requireAuth()) {
+				String auth = account.getUsername() + ":" + account.getPassword();
+				String authHeader = "Basic " + Base64.encodeToString(auth.getBytes(Charset.forName("US-ASCII")), Base64.DEFAULT);
+				this.httpRequest.getHeaders().set("Authorization", authHeader);
+			}
 		}
 
 		@Override

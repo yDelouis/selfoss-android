@@ -22,13 +22,12 @@ import java.util.List;
 import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.Tag;
-import fr.ydelouis.selfoss.util.SelfossUtil;
+import fr.ydelouis.selfoss.util.ImageUtil;
 
 @EViewGroup(R.layout.view_article)
 public class ArticleView extends RelativeLayout {
 
-	@Bean protected SelfossUtil util;
-    private AQuery aQuery;
+	@Bean protected ImageUtil imageUtil;
 	private Article article;
 
 	@ViewById protected View background;
@@ -41,17 +40,14 @@ public class ArticleView extends RelativeLayout {
 
 	public ArticleView(Context context) {
 		super(context);
-        aQuery = new AQuery(this);
 	}
 
 	public ArticleView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-        aQuery = new AQuery(this);
 	}
 
 	public ArticleView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-        aQuery = new AQuery(this);
 	}
 
 	public void bind(Article article, List<Tag> tags) {
@@ -72,7 +68,7 @@ public class ArticleView extends RelativeLayout {
             image.setVisibility(VISIBLE);
             image.setImageBitmap(null);
             BitmapAjaxCallback callback = new BitmapAjaxCallback().animation(AQuery.FADE_IN_NETWORK);
-            aQuery.id(R.id.image).image(article.getImageUrl(), true, true, image.getWidth(), 0, callback);
+	        imageUtil.loadImage(article, this, R.id.image, image.getWidth(), callback);
         } else {
             image.setVisibility(GONE);
         }
@@ -82,7 +78,7 @@ public class ArticleView extends RelativeLayout {
         favicon.setVisibility(GONE);
         letter.setVisibility(GONE);
         if (article.hasIcon()) {
-            aQuery.id(R.id.favicon).image(util.faviconUrl(article));
+	        imageUtil.loadFavicon(article, this, R.id.favicon);
             favicon.setVisibility(View.VISIBLE);
         } else if (article.getSourceTitle() != null && !article.getSourceTitle().isEmpty()
                 && tags != null && !tags.isEmpty()) {

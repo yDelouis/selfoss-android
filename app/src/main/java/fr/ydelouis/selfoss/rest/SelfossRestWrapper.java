@@ -1,19 +1,16 @@
 package fr.ydelouis.selfoss.rest;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
 
-import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
-import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.rest.RestService;
 
 import java.io.UnsupportedEncodingException;
@@ -29,6 +26,7 @@ import fr.ydelouis.selfoss.model.ArticleSyncActionDao;
 import fr.ydelouis.selfoss.model.DatabaseHelper;
 import fr.ydelouis.selfoss.sync.ArticleSyncAction;
 import fr.ydelouis.selfoss.util.ArticleContentParser;
+import fr.ydelouis.selfoss.util.ImageUtil;
 
 @EBean
 public class SelfossRestWrapper {
@@ -40,14 +38,7 @@ public class SelfossRestWrapper {
     protected SelfossRest rest;
     @OrmLiteDao(helper = DatabaseHelper.class)
     protected ArticleSyncActionDao articleSyncActionDao;
-    @RootContext
-    protected Context context;
-    private AQuery aQuery;
-
-    @AfterInject
-    protected void init() {
-        aQuery = new AQuery(new ImageView(context));
-    }
+    @Bean protected ImageUtil imageUtil;
 
     public List<Article> listArticles(int offset, int count) {
         return preProcess(rest.listArticles(offset, count));
@@ -131,7 +122,7 @@ public class SelfossRestWrapper {
 
         public BitmapDownloader load(String imageUrl) {
             final CountDownLatch latch = new CountDownLatch(1);
-            aQuery.image(imageUrl, true, true, 200, 0, new BitmapAjaxCallback() {
+            imageUtil.loadImage(imageUrl, new BitmapAjaxCallback() {
                 @Override
                 protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status) {
                     bitmap = bm;
