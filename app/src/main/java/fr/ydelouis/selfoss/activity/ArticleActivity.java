@@ -9,7 +9,6 @@ import android.util.TypedValue;
 import android.view.Window;
 import android.widget.ImageView;
 
-import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
 import com.androidquery.callback.BitmapAjaxCallback;
 
@@ -26,7 +25,7 @@ import fr.ydelouis.selfoss.adapter.ArticlePagerAdapter;
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.Filter;
 import fr.ydelouis.selfoss.fragment.ArticleFragment;
-import fr.ydelouis.selfoss.util.SelfossUtil;
+import fr.ydelouis.selfoss.util.ImageUtil;
 
 @EActivity(R.layout.activity_article)
 public class ArticleActivity extends Activity implements ViewPager.OnPageChangeListener, ArticleFragment.ScrollListener {
@@ -34,8 +33,9 @@ public class ArticleActivity extends Activity implements ViewPager.OnPageChangeL
 	@Extra protected Article article;
 	@Extra protected Filter filter;
 
-	@Bean protected SelfossUtil util;
-	@Bean ArticlePagerAdapter adapter;
+	@Bean protected ImageUtil util;
+	@Bean protected ArticlePagerAdapter adapter;
+	@Bean protected ImageUtil imageUtil;
 
 	@ViewById protected ViewPager pager;
 	private Drawable actionBarBackground;
@@ -63,7 +63,7 @@ public class ArticleActivity extends Activity implements ViewPager.OnPageChangeL
 	private void setArticle(Article article) {
 		setTitle(article.getSourceTitle());
 		if (article.hasIcon()) {
-            new AQuery(new ImageView(this)).image(util.faviconUrl(article), true, true, 0, 0, new BitmapAjaxCallback() {
+            imageUtil.loadFavicon(article, new BitmapAjaxCallback() {
                 @Override
                 protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status) {
                     if (bm != null) {

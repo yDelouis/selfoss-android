@@ -80,11 +80,11 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 			this.httpRequest.getHeaders().set("Content-Length", "0");
 			this.httpRequest.getHeaders().remove("Content-Type");
 
-            if (account.requireAuth()) {
-                String auth = account.getUsername() + ":" + account.getPassword();
-                String authHeader = "Basic " + Base64.encodeToString(auth.getBytes(Charset.forName("US-ASCII")), Base64.DEFAULT);
-                this.httpRequest.getHeaders().set("Authorization", authHeader);
-            }
+			if (account.requireAuth()) {
+				String auth = account.getUsername() + ":" + account.getPassword();
+				String authHeader = "Basic " + Base64.encodeToString(auth.getBytes(Charset.forName("US-ASCII")), Base64.DEFAULT);
+				this.httpRequest.getHeaders().set("Authorization", authHeader);
+			}
 		}
 
 		@Override
