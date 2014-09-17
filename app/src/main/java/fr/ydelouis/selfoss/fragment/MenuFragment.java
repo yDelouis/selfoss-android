@@ -209,6 +209,10 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 	@Click({ R.id.newest, R.id.unread, R.id.starred})
 	protected void onArticleTypeClick(View view) {
 		ArticleType newType = ArticleType.fromId(view.getId());
+		setArticleType(newType);
+	}
+
+	public void setArticleType(ArticleType newType) {
 		if (newType != filter.getType()) {
 			filter.setType(newType);
 			updateTypes();

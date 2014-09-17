@@ -17,6 +17,9 @@ import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.sharedpreferences.DefaultInt;
+import org.androidannotations.annotations.sharedpreferences.Pref;
+import org.androidannotations.annotations.sharedpreferences.SharedPref;
 
 import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.account.SelfossAccount;
@@ -49,6 +52,8 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Art
 	protected ArticleActionHelper articleActionHelper;
 	@Bean
 	protected NewVersionHelper newVersionHelper;
+	@Pref
+	protected MainActivity_.MainActivityPrefs_ prefs;
 
 	@ViewById
 	protected DrawerLayout drawer;
@@ -89,12 +94,15 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Art
 	}
 
 	@AfterViews
-	protected void initDrawer() {
+	protected void initViews() {
 		drawerToggle = new ActionBarDrawerToggle(this, drawer, R.drawable.ic_drawer, R.string.app_name, R.string.app_name);
 		drawer.setDrawerListener(this);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setHomeButtonEnabled(true);
+		ArticleType type = ArticleType.values()[prefs.articleTypeIndex().get()];
+		list.setArticleType(type);
 		list.setListener(this);
+		menu.setArticleType(type);
 		menu.setListener(this);
 		setFilterInTitle();
 	}
@@ -144,6 +152,7 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Art
 		list.setFilter(filter);
 		setFilterInTitle();
 		drawer.closeDrawers();
+		prefs.articleTypeIndex().put(filter.getType().ordinal());
 	}
 
 	private void setFilterInTitle() {
@@ -204,4 +213,11 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Art
             finish();
         }
     }
+
+	@SharedPref
+	public interface MainActivityPrefs {
+
+		@DefaultInt(0)
+		int articleTypeIndex();
+	}
 }

@@ -70,11 +70,9 @@ public class ArticleListFragment extends Fragment
 	@AfterViews
 	protected void initViews() {
 		wrapper.setReloadOnClickOnError(true);
-		adapter.setAdapterViewWrapper(wrapper);
 		wrapper.getAdapterView().setOnItemClickListener(this);
 		wrapper.getAdapterView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 		wrapper.getAdapterView().setMultiChoiceModeListener(this);
-		updateAdapter();
 		adapter.registerReceivers();
 		ActionBarPullToRefresh.from(getActivity())
 				.allChildrenArePullable()
@@ -103,6 +101,7 @@ public class ArticleListFragment extends Fragment
 	}
 
 	private void updateAdapter() {
+		adapter.setAdapterViewWrapper(wrapper);
 		adapter.setFilter(filter);
 	}
 
@@ -123,6 +122,11 @@ public class ArticleListFragment extends Fragment
 
 	public Filter getFilter() {
 		return filter;
+	}
+
+	public void setArticleType(ArticleType type) {
+		this.filter.setType(type);
+		updateAdapter();
 	}
 
 	@Override
