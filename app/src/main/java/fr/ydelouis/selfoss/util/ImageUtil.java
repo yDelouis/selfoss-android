@@ -28,7 +28,7 @@ public class ImageUtil {
 	}
 
 	private String getScheme() {
-		return account.useHttps() ? "https" : "http";
+		return account.useHttps() ? "https://" : "http://";
 	}
 
 	public String faviconUrl(Article article) {
