@@ -23,7 +23,7 @@ dependencies {
 	compile 'com.j256.ormlite:ormlite-android:4.45'
     compile 'com.github.chrisbanes.actionbarpulltorefresh:library:0.9.3'
     compile 'org.jsoup:jsoup:1.7.3'
-    compile files('libs/android-query-full.0.26.8.jar')
+    compile 'com.squareup.picasso:picasso:2.3.4'
 
     apt 'org.androidannotations:androidannotations:3.1'
     compile 'org.androidannotations:androidannotations-api:3.1'

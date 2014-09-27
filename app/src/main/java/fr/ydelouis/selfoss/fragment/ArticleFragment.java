@@ -16,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
@@ -31,7 +33,7 @@ import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.model.ArticleActionHelper;
 import fr.ydelouis.selfoss.util.ArticleContentParser;
-import fr.ydelouis.selfoss.util.ImageUtil;
+import fr.ydelouis.selfoss.util.FaviconUtil;
 import fr.ydelouis.selfoss.view.NotifyScrollView;
 
 @EFragment(R.layout.fragment_article)
@@ -40,7 +42,7 @@ public class ArticleFragment extends Fragment implements NotifyScrollView.Listen
 
 	@FragmentArg protected Article article;
 	@Bean protected ArticleActionHelper articleActionHelper;
-	@Bean protected ImageUtil imageUtil;
+	@Bean protected FaviconUtil faviconUtil;
     private ArticleContentParser articleContentParser;
 	private ScrollListener scrollListener;
 
@@ -68,7 +70,9 @@ public class ArticleFragment extends Fragment implements NotifyScrollView.Listen
 	public void setArticle(Article article) {
 		this.article = article;
 		if (article != null) {
-			imageUtil.loadImage(article, getView(), R.id.image);
+			if (article.hasImage()) {
+				Picasso.with(getActivity()).load(article.getImageUrl()).into(image);
+			}
 			image.setVisibility(article.hasImage() ? View.VISIBLE : View.GONE);
 			scrim.setVisibility(article.hasImage() ? View.VISIBLE : View.GONE);
             articleContentParser = new ArticleContentParser(article);

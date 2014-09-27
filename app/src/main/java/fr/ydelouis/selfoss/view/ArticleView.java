@@ -10,8 +10,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.androidquery.AQuery;
-import com.androidquery.callback.BitmapAjaxCallback;
+import com.squareup.picasso.Picasso;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EViewGroup;
@@ -22,12 +21,12 @@ import java.util.List;
 import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.Tag;
-import fr.ydelouis.selfoss.util.ImageUtil;
+import fr.ydelouis.selfoss.util.FaviconUtil;
 
 @EViewGroup(R.layout.view_article)
 public class ArticleView extends RelativeLayout {
 
-	@Bean protected ImageUtil imageUtil;
+	@Bean protected FaviconUtil faviconUtil;
 	private Article article;
 
 	@ViewById protected View background;
@@ -67,8 +66,7 @@ public class ArticleView extends RelativeLayout {
         if (article.hasImage()) {
             image.setVisibility(VISIBLE);
             image.setImageBitmap(null);
-            BitmapAjaxCallback callback = new BitmapAjaxCallback().animation(AQuery.FADE_IN_NETWORK);
-	        imageUtil.loadImage(article, this, R.id.image, image.getWidth(), callback);
+	        Picasso.with(getContext()).load(article.getImageUrl()).into(image);
         } else {
             image.setVisibility(GONE);
         }
@@ -78,7 +76,7 @@ public class ArticleView extends RelativeLayout {
         favicon.setVisibility(GONE);
         letter.setVisibility(GONE);
         if (article.hasIcon()) {
-	        imageUtil.loadFavicon(article, this, R.id.favicon);
+	        faviconUtil.loadFavicon(article, favicon);
             favicon.setVisibility(View.VISIBLE);
         } else if (article.getSourceTitle() != null && !article.getSourceTitle().isEmpty()
                 && tags != null && !tags.isEmpty()) {

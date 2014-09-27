@@ -1,22 +1,22 @@
 package fr.ydelouis.selfoss.rest;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.util.Log;
-import android.widget.ImageView;
 
-import com.androidquery.callback.AjaxStatus;
-import com.androidquery.callback.BitmapAjaxCallback;
+import com.squareup.picasso.Picasso;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
+import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.rest.RestService;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 import fr.ydelouis.selfoss.BuildConfig;
 import fr.ydelouis.selfoss.entity.Article;
@@ -26,7 +26,7 @@ import fr.ydelouis.selfoss.model.ArticleSyncActionDao;
 import fr.ydelouis.selfoss.model.DatabaseHelper;
 import fr.ydelouis.selfoss.sync.ArticleSyncAction;
 import fr.ydelouis.selfoss.util.ArticleContentParser;
-import fr.ydelouis.selfoss.util.ImageUtil;
+import fr.ydelouis.selfoss.util.FaviconUtil;
 
 @EBean
 public class SelfossRestWrapper {
@@ -38,7 +38,14 @@ public class SelfossRestWrapper {
     protected SelfossRest rest;
     @OrmLiteDao(helper = DatabaseHelper.class)
     protected ArticleSyncActionDao articleSyncActionDao;
-    @Bean protected ImageUtil imageUtil;
+    @Bean protected FaviconUtil faviconUtil;
+	@RootContext protected Context context;
+	private Picasso picasso;
+
+	@AfterInject
+	public void init() {
+		picasso = Picasso.with(context);
+	}
 
     public List<Article> listArticles(int offset, int count) {
         return preProcess(rest.listArticles(offset, count));
@@ -105,70 +112,36 @@ public class SelfossRestWrapper {
         ArticleContentParser parser = new ArticleContentParser(article);
         List<String> imageUrls = parser.getImagesUrls();
         for (String imageUrl : imageUrls) {
-            if (new BitmapDownloader().isDisplayable(imageUrl)) {
+            if (isImageDisplayable(imageUrl)) {
                 article.setImageUrl(imageUrl);
                 return;
             }
         }
     }
 
-    private class BitmapDownloader {
-        private Bitmap bitmap;
-        private AjaxStatus ajaxStatus;
+	private boolean isImageDisplayable(String imageUrl) {
+		try {
+			Bitmap bitmap = picasso.load(imageUrl).resize(200, 200).get();
+			return isDisplayable(bitmap);
+		} catch (IOException e) {
+			return false;
+		}
+	}
 
-        public Bitmap get() {
-            return bitmap;
-        }
-
-        public BitmapDownloader load(String imageUrl) {
-            final CountDownLatch latch = new CountDownLatch(1);
-            imageUtil.loadImage(imageUrl, new BitmapAjaxCallback() {
-                @Override
-                protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status) {
-                    bitmap = bm;
-                    ajaxStatus = status;
-                    latch.countDown();
-                }
-            });
-            try {
-                latch.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return this;
-        }
-
-        public boolean isDisplayable(String imageUrl) {
-            load(imageUrl);
-            boolean isDisplayable = isDisplayable();
-            log(imageUrl, isDisplayable);
-            return isDisplayable;
-        }
-
-        private boolean isDisplayable() {
-            if (bitmap == null) {
-                return false;
-            }
-            if (bitmap.getWidth() < 50 || bitmap.getHeight() < 50) {
-                return false;
-            }
-            for (int x = 0; x < bitmap.getWidth(); x++) {
-                for (int y = 0; y < bitmap.getHeight(); y++) {
-                    if (bitmap.getPixel(x, y) != Color.WHITE) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        private void log(String imageUrl, boolean isDisplayable) {
-            if (LOG_IMAGE_REQUEST) {
-                String source = ajaxStatus.getSource() == AjaxStatus.NETWORK ? "network" : "cache";
-                String valid = isDisplayable ? "Ok" : "invalid";
-                Log.i(TAG, imageUrl + " from " + source + " : " + valid);
-            }
-        }
-    }
-
+	private boolean isDisplayable(Bitmap bitmap) {
+		if (bitmap == null) {
+			return false;
+		}
+		if (bitmap.getWidth() < 50 || bitmap.getHeight() < 50) {
+			return false;
+		}
+		for (int x = 0; x < bitmap.getWidth(); x++) {
+			for (int y = 0; y < bitmap.getHeight(); y++) {
+				if (bitmap.getPixel(x, y) != Color.WHITE) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

@@ -7,10 +7,9 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewPager;
 import android.util.TypedValue;
 import android.view.Window;
-import android.widget.ImageView;
 
-import com.androidquery.callback.AjaxStatus;
-import com.androidquery.callback.BitmapAjaxCallback;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -25,17 +24,17 @@ import fr.ydelouis.selfoss.adapter.ArticlePagerAdapter;
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.Filter;
 import fr.ydelouis.selfoss.fragment.ArticleFragment;
-import fr.ydelouis.selfoss.util.ImageUtil;
+import fr.ydelouis.selfoss.util.FaviconUtil;
 
 @EActivity(R.layout.activity_article)
-public class ArticleActivity extends Activity implements ViewPager.OnPageChangeListener, ArticleFragment.ScrollListener {
+public class ArticleActivity extends Activity implements ViewPager.OnPageChangeListener, ArticleFragment.ScrollListener, Target {
 
 	@Extra protected Article article;
 	@Extra protected Filter filter;
 
-	@Bean protected ImageUtil util;
+	@Bean protected FaviconUtil util;
 	@Bean protected ArticlePagerAdapter adapter;
-	@Bean protected ImageUtil imageUtil;
+	@Bean protected FaviconUtil faviconUtil;
 
 	@ViewById protected ViewPager pager;
 	private Drawable actionBarBackground;
@@ -63,16 +62,7 @@ public class ArticleActivity extends Activity implements ViewPager.OnPageChangeL
 	private void setArticle(Article article) {
 		setTitle(article.getSourceTitle());
 		if (article.hasIcon()) {
-            imageUtil.loadFavicon(article, new BitmapAjaxCallback() {
-                @Override
-                protected void callback(String url, ImageView iv, Bitmap bm, AjaxStatus status) {
-                    if (bm != null) {
-                        int size = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, 48, getResources().getDisplayMetrics());
-                        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bm, size, size, true);
-                        getActionBar().setIcon(new BitmapDrawable(getResources(), scaledBitmap));
-                    }
-                }
-            });
+            faviconUtil.loadFavicon(article, this);
 		} else {
 			getActionBar().setIcon(R.drawable.ic_selfoss);
 		}
@@ -100,4 +90,17 @@ public class ArticleActivity extends Activity implements ViewPager.OnPageChangeL
 	public void onScroll(int delta, float percentage) {
 		actionBarBackground.setAlpha((int)(255 * percentage));
 	}
+
+	@Override
+	public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+		int size = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, 48, getResources().getDisplayMetrics());
+		Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, size, size, true);
+		getActionBar().setIcon(new BitmapDrawable(getResources(), scaledBitmap));
+	}
+
+	@Override
+	public void onBitmapFailed(Drawable errorDrawable) {}
+
+	@Override
+	public void onPrepareLoad(Drawable placeHolderDrawable) {}
 }
