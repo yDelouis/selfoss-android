@@ -10,8 +10,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
@@ -21,12 +19,12 @@ import java.util.List;
 import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.Tag;
-import fr.ydelouis.selfoss.util.FaviconUtil;
+import fr.ydelouis.selfoss.util.SelfossImageLoader;
 
 @EViewGroup(R.layout.view_article)
 public class ArticleView extends RelativeLayout {
 
-	@Bean protected FaviconUtil faviconUtil;
+	@Bean protected SelfossImageLoader imageLoader;
 	private Article article;
 
 	@ViewById protected View background;
@@ -66,7 +64,7 @@ public class ArticleView extends RelativeLayout {
         if (article.hasImage()) {
             image.setVisibility(VISIBLE);
             image.setImageBitmap(null);
-	        Picasso.with(getContext()).load(article.getImageUrl()).into(image);
+	        imageLoader.displayImage(article, image);
         } else {
             image.setVisibility(GONE);
         }
@@ -76,7 +74,7 @@ public class ArticleView extends RelativeLayout {
         favicon.setVisibility(GONE);
         letter.setVisibility(GONE);
         if (article.hasIcon()) {
-	        faviconUtil.loadFavicon(article, favicon);
+	        imageLoader.displayFavicon(article, favicon);
             favicon.setVisibility(View.VISIBLE);
         } else if (article.getSourceTitle() != null && !article.getSourceTitle().isEmpty()
                 && tags != null && !tags.isEmpty()) {

@@ -17,14 +17,14 @@ import java.util.List;
 import fr.ydelouis.selfoss.R;
 import fr.ydelouis.selfoss.entity.Source;
 import fr.ydelouis.selfoss.entity.Tag;
-import fr.ydelouis.selfoss.util.FaviconUtil;
+import fr.ydelouis.selfoss.util.SelfossImageLoader;
 
 @EViewGroup(R.layout.view_source)
 public class SourceView extends RelativeLayout {
 
 	private Source source;
 
-	@Bean protected FaviconUtil faviconUtil;
+	@Bean protected SelfossImageLoader imageLoader;
     @ViewById protected ImageView icon;
     @ViewById protected TextView letter;
 	@ViewById protected TextView title;
@@ -54,7 +54,7 @@ public class SourceView extends RelativeLayout {
         icon.setVisibility(GONE);
         letter.setVisibility(GONE);
         if (source.getIcon() != null && !source.getIcon().isEmpty()) {
-			faviconUtil.loadFavicon(source, icon);
+			imageLoader.displayFavicon(source, icon);
             icon.setVisibility(VISIBLE);
         } else if (source.getTitle() != null && !source.getTitle().isEmpty()) {
             letter.setText(source.getTitle().substring(0, 1).toUpperCase());

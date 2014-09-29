@@ -6,10 +6,11 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewPager;
 import android.util.TypedValue;
+import android.view.View;
 import android.view.Window;
 
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -24,17 +25,17 @@ import fr.ydelouis.selfoss.adapter.ArticlePagerAdapter;
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.Filter;
 import fr.ydelouis.selfoss.fragment.ArticleFragment;
-import fr.ydelouis.selfoss.util.FaviconUtil;
+import fr.ydelouis.selfoss.util.SelfossImageLoader;
 
 @EActivity(R.layout.activity_article)
-public class ArticleActivity extends Activity implements ViewPager.OnPageChangeListener, ArticleFragment.ScrollListener, Target {
+public class ArticleActivity extends Activity implements ViewPager.OnPageChangeListener, ArticleFragment.ScrollListener, ImageLoadingListener {
 
 	@Extra protected Article article;
 	@Extra protected Filter filter;
 
-	@Bean protected FaviconUtil util;
+	@Bean protected SelfossImageLoader util;
 	@Bean protected ArticlePagerAdapter adapter;
-	@Bean protected FaviconUtil faviconUtil;
+	@Bean protected SelfossImageLoader imageLoader;
 
 	@ViewById protected ViewPager pager;
 	private Drawable actionBarBackground;
@@ -62,7 +63,7 @@ public class ArticleActivity extends Activity implements ViewPager.OnPageChangeL
 	private void setArticle(Article article) {
 		setTitle(article.getSourceTitle());
 		if (article.hasIcon()) {
-            faviconUtil.loadFavicon(article, this);
+            imageLoader.displayFavicon(article, this);
 		} else {
 			getActionBar().setIcon(R.drawable.ic_selfoss);
 		}
@@ -92,15 +93,24 @@ public class ArticleActivity extends Activity implements ViewPager.OnPageChangeL
 	}
 
 	@Override
-	public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+	public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
 		int size = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, 48, getResources().getDisplayMetrics());
-		Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, size, size, true);
+		Bitmap scaledBitmap = Bitmap.createScaledBitmap(loadedImage, size, size, true);
 		getActionBar().setIcon(new BitmapDrawable(getResources(), scaledBitmap));
 	}
 
 	@Override
-	public void onBitmapFailed(Drawable errorDrawable) {}
+	public void onLoadingCancelled(String imageUri, View view) {
+
+	}
 
 	@Override
-	public void onPrepareLoad(Drawable placeHolderDrawable) {}
+	public void onLoadingStarted(String imageUri, View view) {
+
+	}
+
+	@Override
+	public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+
+	}
 }

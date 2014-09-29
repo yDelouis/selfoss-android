@@ -4,8 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
-import com.squareup.picasso.Picasso;
-
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -13,12 +11,10 @@ import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.rest.RestService;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 
-import fr.ydelouis.selfoss.BuildConfig;
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.ArticleType;
 import fr.ydelouis.selfoss.entity.Tag;
@@ -26,26 +22,16 @@ import fr.ydelouis.selfoss.model.ArticleSyncActionDao;
 import fr.ydelouis.selfoss.model.DatabaseHelper;
 import fr.ydelouis.selfoss.sync.ArticleSyncAction;
 import fr.ydelouis.selfoss.util.ArticleContentParser;
-import fr.ydelouis.selfoss.util.FaviconUtil;
+import fr.ydelouis.selfoss.util.SelfossImageLoader;
 
 @EBean
 public class SelfossRestWrapper {
-
-    private static final String TAG = "Selfoss Image Loading";
-    private static boolean LOG_IMAGE_REQUEST = BuildConfig.DEBUG && true;
 
     @RestService
     protected SelfossRest rest;
     @OrmLiteDao(helper = DatabaseHelper.class)
     protected ArticleSyncActionDao articleSyncActionDao;
-    @Bean protected FaviconUtil faviconUtil;
-	@RootContext protected Context context;
-	private Picasso picasso;
-
-	@AfterInject
-	public void init() {
-		picasso = Picasso.with(context);
-	}
+    @Bean protected SelfossImageLoader imageLoader;
 
     public List<Article> listArticles(int offset, int count) {
         return preProcess(rest.listArticles(offset, count));
@@ -120,12 +106,8 @@ public class SelfossRestWrapper {
     }
 
 	private boolean isImageDisplayable(String imageUrl) {
-		try {
-			Bitmap bitmap = picasso.load(imageUrl).resize(200, 200).get();
-			return isDisplayable(bitmap);
-		} catch (IOException e) {
-			return false;
-		}
+		Bitmap bitmap = imageLoader.loadImageSync(imageUrl);
+		return isDisplayable(bitmap);
 	}
 
 	private boolean isDisplayable(Bitmap bitmap) {
