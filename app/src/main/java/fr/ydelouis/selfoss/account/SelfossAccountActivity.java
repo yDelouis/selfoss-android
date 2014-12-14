@@ -106,6 +106,10 @@ public class SelfossAccountActivity extends AccountAuthenticatorActivity {
 	}
 
 	private boolean validateFields() {
+		if (url.getText().toString().isEmpty()) {
+			url.setError(getString(R.string.error_urlEmpty));
+			return false;
+		}
 		if (requireAuth.isChecked() && username.getText().toString().isEmpty()) {
 			username.setError(getString(R.string.error_usernameEmpty));
 			return false;

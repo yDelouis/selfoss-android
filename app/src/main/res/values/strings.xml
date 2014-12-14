@@ -47,5 +47,6 @@
 	<string name="newVersion_title">New version released !</string>
 	<string name="remindMeLater">Remind me later</string>
 	<string name="gotIt">Got it !</string>
+	<string name="error_urlEmpty">Set the url you type in the browser</string>
 
 </resources>
