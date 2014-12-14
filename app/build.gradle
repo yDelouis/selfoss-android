@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.13.2'
+        classpath 'com.android.tools.build:gradle:1.0.0'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
     }
 }
@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:20.0.0'
+    compile 'com.android.support:support-v4:21.0.3'
     compile 'com.android.support:support-v13:20.0.0'
 	compile 'org.apache.commons:commons-lang3:3.1'
 	compile 'org.springframework.android:spring-android-rest-template:1.0.1.RELEASE'
@@ -31,7 +31,7 @@ dependencies {
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.1"
+    buildToolsVersion '21.1.2'
 
     defaultConfig {
         minSdkVersion 15
@@ -72,7 +72,7 @@ android {
 apt {
     arguments {
         logLevel 'warn'
-        androidManifestFile variant.processResources.manifestFile
+        androidManifestFile variant.outputs[0].processResources.manifestFile
         resourcePackageName 'fr.ydelouis.selfoss'
     }
 }
