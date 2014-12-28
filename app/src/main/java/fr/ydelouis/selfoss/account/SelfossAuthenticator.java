@@ -8,9 +8,12 @@ import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.text.TextUtils;
 
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.EService;
 
 @EBean
 public class SelfossAuthenticator extends AbstractAccountAuthenticator {
@@ -70,5 +73,17 @@ public class SelfossAuthenticator extends AbstractAccountAuthenticator {
 	@Override
 	public Bundle hasFeatures(AccountAuthenticatorResponse response, Account account, String[] features) throws NetworkErrorException {
 		return null;
+	}
+
+	@EService
+	public static class Service extends android.app.Service {
+
+		@Bean
+		protected SelfossAuthenticator authenticator;
+
+		@Override
+		public IBinder onBind(Intent intent) {
+			return authenticator.getIBinder();
+		}
 	}
 }
