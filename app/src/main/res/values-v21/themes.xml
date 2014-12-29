@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<style name="Theme.Selfoss" parent="@android:style/Theme.Material.Light.DarkActionBar">
+
+		<item name="android:colorPrimary">@color/main_color</item>
+		<item name="android:colorPrimaryDark">@color/main_color_dark</item>
+		<item name="android:colorAccent">@color/main_color_accent</item>
+
+        <item name="ptrHeaderStyle">@style/Widget.Custom.PtrHeader</item>
+        <item name="android:actionOverflowButtonStyle">@style/ActionButton.Overflow.Selfoss</item>
+        <item name="android:homeAsUpIndicator">@drawable/ic_homeasupindicator</item>
+        <item name="android:selectableItemBackground">@drawable/menu_selectable_background_selfoss</item>
+
+	</style>
+
+    <style name="ActionButton.Overflow.Selfoss" parent="android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_menu_overflow</item>
+    </style>
+
+</resources>

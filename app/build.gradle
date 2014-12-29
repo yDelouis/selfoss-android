@@ -16,6 +16,7 @@ repositories {
 
 dependencies {
     compile 'com.android.support:support-v4:21.0.3'
+    compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:support-v13:20.0.0'
 	compile 'org.apache.commons:commons-lang3:3.1'
 	compile 'org.springframework.android:spring-android-rest-template:1.0.1.RELEASE'
@@ -24,9 +25,10 @@ dependencies {
     compile 'com.github.chrisbanes.actionbarpulltorefresh:library:0.9.3'
     compile 'org.jsoup:jsoup:1.7.3'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
+    compile 'com.wrapp.floatlabelededittext:library:0.0.5'
 
-    apt 'org.androidannotations:androidannotations:3.1'
-    compile 'org.androidannotations:androidannotations-api:3.1'
+    apt 'org.androidannotations:androidannotations:3.2'
+    compile 'org.androidannotations:androidannotations-api:3.2'
 }
 
 android {
@@ -36,8 +38,14 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 21
+        applicationId "fr.ydelouis.selfoss"
         versionCode 27
         versionName "0.8.3"
+
+        resValue "string", "accountType", "\"fr.ydelouis.selfoss\""
+        buildConfigField "String", "ACCOUNT_TYPE", "\"fr.ydelouis.selfoss\""
+        resValue "string", "authority", "\"fr.ydelouis.selfoss\""
+        buildConfigField "String", "AUTHORITY", "\"fr.ydelouis.selfoss\""
     }
 
     signingConfigs {
@@ -50,6 +58,15 @@ android {
     }
 
     buildTypes {
+
+        debug {
+            applicationIdSuffix ".debug"
+            resValue "string", "accountType", "\"fr.ydelouis.selfoss.debug\""
+            buildConfigField "String", "ACCOUNT_TYPE", "\"fr.ydelouis.selfoss.debug\""
+            resValue "string", "authority", "\"fr.ydelouis.selfoss.debug\""
+            buildConfigField "String", "AUTHORITY", "\"fr.ydelouis.selfoss.debug\""
+        }
+
         release {
             signingConfig signingConfigs.release
         }

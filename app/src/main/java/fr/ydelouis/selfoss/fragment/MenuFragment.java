@@ -26,8 +26,9 @@ import java.util.Collections;
 import java.util.List;
 
 import fr.ydelouis.selfoss.R;
-import fr.ydelouis.selfoss.account.SelfossAccount;
-import fr.ydelouis.selfoss.account.SelfossAccountActivity_;
+import fr.ydelouis.selfoss.config.model.Config;
+import fr.ydelouis.selfoss.config.ui.ConfigActivity_;
+import fr.ydelouis.selfoss.config.model.ConfigManager;
 import fr.ydelouis.selfoss.entity.ArticleType;
 import fr.ydelouis.selfoss.entity.Filter;
 import fr.ydelouis.selfoss.entity.Source;
@@ -45,7 +46,7 @@ import fr.ydelouis.selfoss.view.TypeView;
 @EFragment(R.layout.fragment_menu)
 public class MenuFragment extends Fragment implements View.OnClickListener {
 
-	@Bean protected SelfossAccount account;
+	@Bean protected ConfigManager configManager;
 	@FragmentArg @InstanceState
 	protected Filter filter = new Filter();
 	@OrmLiteDao(helper = DatabaseHelper.class)
@@ -70,7 +71,10 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 	@AfterViews
 	protected void updateViews() {
 		articleDao.setContext(getActivity());
-		url.setText(account.getUrl());
+		Config config = configManager.get();
+		if (config != null) {
+			url.setText(config.getUrl());
+		}
 		updateTypes();
 		loadAndUpdateTags();
 		loadAndUpdateSources();
@@ -165,7 +169,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 	}
 
     private List<Tag> getTagsOfSource(Source source, List<Tag> tags) {
-        List<Tag> tagsOfSource = new ArrayList<Tag>();
+        List<Tag> tagsOfSource = new ArrayList<>();
         for (Tag tag : tags) {
             if (source.getTags().contains(tag.getName(getActivity()))) {
                 tagsOfSource.add(tag);
@@ -202,7 +206,7 @@ public class MenuFragment extends Fragment implements View.OnClickListener {
 
 	@Click(R.id.url)
 	protected void openSelfossAccountActivity() {
-		SelfossAccountActivity_.intent(getActivity()).start();
+		ConfigActivity_.intent(getActivity()).start();
 		listener.onAccountActivityStarted();
 	}
 

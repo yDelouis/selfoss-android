@@ -23,7 +23,8 @@ import java.net.URLDecoder;
 import java.nio.charset.Charset;
 
 import fr.ydelouis.selfoss.BuildConfig;
-import fr.ydelouis.selfoss.account.SelfossAccount;
+import fr.ydelouis.selfoss.config.model.Config;
+import fr.ydelouis.selfoss.config.model.ConfigManager;
 import fr.ydelouis.selfoss.util.Streams;
 
 @EBean
@@ -33,10 +34,23 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 	private static final String KEY_USERNAME = "username";
 	private static final String KEY_PASSWORD = "password";
 	private static boolean LOG_REQUEST = BuildConfig.DEBUG && true;
-	private static boolean LOG_FULL_REQUEST = BuildConfig.DEBUG && false;
-	private static boolean LOG_RESPONSE = BuildConfig.DEBUG && false;
+	private static boolean LOG_FULL_REQUEST = BuildConfig.DEBUG && true;
+	private static boolean LOG_RESPONSE = BuildConfig.DEBUG && true;
 
-	@Bean protected SelfossAccount account;
+	@Bean protected ConfigManager configManager;
+
+	private Config config;
+
+	public void setConfig(Config config) {
+		this.config = config;
+	}
+
+	private Config getConfig() {
+		if (config != null) {
+			return config;
+		}
+		return configManager.get();
+	}
 
 	public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
 		HttpRequest apiRequest = new ApiHttpRequest(request);
@@ -54,7 +68,7 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 	private void logRequest(HttpRequest request) throws UnsupportedEncodingException {
 		String requestUri = URLDecoder.decode(request.getURI().toString(), "UTF-8");
 		if(!LOG_FULL_REQUEST && LOG_REQUEST) {
-			String url = account.getUrl();
+			String url = getConfig().getUrl();
 			int start = requestUri.indexOf(url);
 			if (start != -1) {
 				requestUri = requestUri.substring(start+url.length());
@@ -65,8 +79,8 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 	}
 
 	private String hidePassword(String requestUri) {
-		if (account.requireAuth()) {
-			return requestUri.replace(account.getPassword(), "************");
+		if (getConfig().requireAuth()) {
+			return requestUri.replace(getConfig().getPassword(), "************");
 		}
 		return requestUri;
 	}
@@ -80,8 +94,8 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 			this.httpRequest.getHeaders().set("Content-Length", "0");
 			this.httpRequest.getHeaders().remove("Content-Type");
 
-			if (account.requireAuth()) {
-				String auth = account.getUsername() + ":" + account.getPassword();
+			if (getConfig().requireAuth()) {
+				String auth = getConfig().getUsername() + ":" + getConfig().getPassword();
 				String authHeader = "Basic " + Base64.encodeToString(auth.getBytes(Charset.forName("US-ASCII")), Base64.DEFAULT);
 				this.httpRequest.getHeaders().set("Authorization", authHeader);
 			}
@@ -102,12 +116,12 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 			URI uri = httpRequest.getURI();
 			Uri.Builder builder = new Uri.Builder();
 			builder.scheme(getScheme());
-			builder.authority(account.getUrl());
+			builder.authority(getConfig().getUrl());
 			builder.path(uri.getPath());
 			builder.encodedQuery(uri.getQuery());
-			if (account.requireAuth()) {
-				builder.appendQueryParameter(KEY_USERNAME, account.getUsername());
-				builder.appendQueryParameter(KEY_PASSWORD, account.getPassword());
+			if (getConfig().requireAuth()) {
+				builder.appendQueryParameter(KEY_USERNAME, getConfig().getUsername());
+				builder.appendQueryParameter(KEY_PASSWORD, getConfig().getPassword());
 			}
 			Uri newUri = builder.build();
 			String uriStr = newUri.toString().replace(newUri.getEncodedAuthority(), newUri.getAuthority());
@@ -115,7 +129,7 @@ public class SelfossApiInterceptor implements ClientHttpRequestInterceptor {
 		}
 
 		private String getScheme() {
-			return account.useHttps() ? "https" : "http";
+			return getConfig().useHttps() ? "https" : "http";
 		}
 	}
 

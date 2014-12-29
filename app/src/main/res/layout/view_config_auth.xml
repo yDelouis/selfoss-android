@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:padding="16dp"
+	android:orientation="vertical"
+	android:gravity="center">
+
+	<com.wrapp.floatlabelededittext.FloatLabeledEditText
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		>
+
+		<EditText
+			android:id="@+id/username"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="@string/username"
+			android:inputType="text"/>
+
+	</com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+	<com.wrapp.floatlabelededittext.FloatLabeledEditText
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		>
+
+		<EditText
+			android:id="@+id/password"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="@string/password"
+			android:inputType="textPassword"/>
+
+	</com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+</LinearLayout>

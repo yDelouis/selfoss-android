@@ -3,9 +3,11 @@ package fr.ydelouis.selfoss.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Base64;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.nostra13.universalimageloader.core.download.ImageDownloader;
@@ -22,7 +24,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
 
-import fr.ydelouis.selfoss.account.SelfossAccount;
+import fr.ydelouis.selfoss.config.model.Config;
+import fr.ydelouis.selfoss.config.model.ConfigManager;
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.Source;
 import fr.ydelouis.selfoss.rest.SelfossApiRequestFactory;
@@ -30,13 +33,10 @@ import fr.ydelouis.selfoss.rest.SelfossApiRequestFactory;
 @EBean
 public class SelfossImageLoader implements ImageDownloader {
 
-	@Bean
-	protected SelfossAccount account;
-	@RootContext
-	protected Context context;
-	@Bean
-	protected SelfossApiRequestFactory requestFactory;
-	private com.nostra13.universalimageloader.core.ImageLoader loader;
+	@Bean protected ConfigManager configManager;
+	@RootContext protected Context context;
+	@Bean protected SelfossApiRequestFactory requestFactory;
+	private ImageLoader loader;
 
 	@AfterInject
 	protected void init() {
@@ -56,11 +56,15 @@ public class SelfossImageLoader implements ImageDownloader {
 	}
 
 	public String faviconUrl(String favicon) {
-		return getScheme() + account.getUrl() + "/favicons/" + favicon;
+		Config config = configManager.get();
+		String url = config != null ? config.getUrl() : "";
+		return getScheme() + url + "/favicons/" + favicon;
 	}
 
 	private String getScheme() {
-		return account.useHttps() ? "https://" : "http://";
+		Config config = configManager.get();
+		boolean useHttps = config != null && config.useHttps();
+		return useHttps ? "https://" : "http://";
 	}
 
 	public String faviconUrl(Article article) {
@@ -92,11 +96,13 @@ public class SelfossImageLoader implements ImageDownloader {
 	}
 
 	@Override
-	public InputStream getStream(String imageUri, Object extra) throws IOException {
-		URL url = new URL(imageUri);
+	public InputStream getStream(String imageUrl, Object extra) throws IOException {
+		Config config = configManager.get();
+		Log.d("Plop", imageUrl);
+		URL url = new URL(imageUrl);
 		URLConnection http = url.openConnection();
-		if (account.requireAuth()) {
-			String auth = account.getUsername() + ":" + account.getPassword();
+		if (config != null && config.requireAuth()) {
+			String auth = config.getUsername() + ":" + config.getPassword();
 			String authHeader = "Basic " + Base64.encodeToString(auth.getBytes(Charset.forName("US-ASCII")), Base64.DEFAULT);
 			http.setRequestProperty("Authorization", authHeader);
 		}

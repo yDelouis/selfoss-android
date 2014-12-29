@@ -16,20 +16,34 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import fr.ydelouis.selfoss.account.SelfossAccount;
+import fr.ydelouis.selfoss.config.model.Config;
+import fr.ydelouis.selfoss.config.model.ConfigManager;
 
 @EBean
 public class SelfossApiRequestFactory extends SimpleClientHttpRequestFactory implements HostnameVerifier, X509TrustManager {
 
-	@Bean protected SelfossAccount account;
+	@Bean protected ConfigManager configManager;
+	private Config config;
 
 	public SelfossApiRequestFactory() {
 		trustAllHosts();
 	}
 
+	public void setConfig(Config config) {
+		this.config = config;
+	}
+
+	private Config getConfig() {
+		if (config != null) {
+			return config;
+		}
+		return configManager.get();
+	}
+
 	@Override
 	protected void prepareConnection(HttpURLConnection connection, String httpMethod) throws IOException {
-		if (account.trustAllCertificates() && connection instanceof HttpsURLConnection) {
+		Config config = getConfig();
+		if (config != null && config.trustAllCertificates() && connection instanceof HttpsURLConnection) {
 			((HttpsURLConnection) connection).setHostnameVerifier(this);
 		}
 		super.prepareConnection(connection, httpMethod);

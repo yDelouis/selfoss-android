@@ -48,5 +48,14 @@
 	<string name="remindMeLater">Remind me later</string>
 	<string name="gotIt">Got it !</string>
 	<string name="error_urlEmpty">Set the url you type in the browser</string>
+	<string name="next">Next</string>
+	<string name="back">Back</string>
+	<string name="finish">Finish</string>
+	<string name="account_url_title">Your Selfoss server</string>
+	<string name="account_url_explanation">Enter the url you type in your browser.</string>
+	<string name="account_auth_title">Your credentials</string>
+	<string name="account_syncPeriod_title">Automatic synchronization</string>
+	<string name="automaticSynchronization">Automatic synchronization</string>
+	<string name="min">min</string>
 
 </resources>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <sync-adapter
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:contentAuthority="fr.ydelouis.selfoss"
-	android:accountType="fr.ydelouis.selfoss"
+	android:contentAuthority="@string/authority"
+	android:accountType="@string/accountType"
 	android:userVisible="true"
 	android:allowParallelSyncs="false"
 	android:isAlwaysSyncable="true"

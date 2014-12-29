@@ -7,25 +7,27 @@ import android.os.Bundle;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
-import fr.ydelouis.selfoss.account.SelfossAccount;
+import fr.ydelouis.selfoss.BuildConfig;
+import fr.ydelouis.selfoss.config.model.Config;
+import fr.ydelouis.selfoss.config.model.ConfigManager;
 
 @EBean
 public class SyncManager {
 
-	private static final String AUTHORITY = "fr.ydelouis.selfoss";
+	private static final String AUTHORITY = BuildConfig.AUTHORITY;
 
-	public static void setPeriodicSync(SelfossAccount selfossAccount) {
-		Account account = selfossAccount.getAccount();
+	public static void setPeriodicSync(ConfigManager configManager, Config config) {
+		Account account = configManager.getAccountForConfig(config);
 		if (account != null) {
-			ContentResolver.setSyncAutomatically(account, AUTHORITY, selfossAccount.getSyncPeriod().isAutomatic());
-			ContentResolver.addPeriodicSync(account, AUTHORITY, new Bundle(), selfossAccount.getSyncPeriod().getTime());
+			ContentResolver.setSyncAutomatically(account, AUTHORITY, config.getSyncPeriod() > 0);
+			ContentResolver.addPeriodicSync(account, AUTHORITY, new Bundle(), config.getSyncPeriod());
 		}
 	}
 
-	@Bean protected SelfossAccount selfossAccount;
+	@Bean protected ConfigManager configManager;
 
 	public void requestSync() {
-		Account account = selfossAccount.getAccount();
+		Account account = configManager.getAccount();
 		if (account != null) {
 			Bundle extras = new Bundle();
 			extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
@@ -35,7 +37,7 @@ public class SyncManager {
 	}
 
 	public boolean isActive() {
-		Account account = selfossAccount.getAccount();
+		Account account = configManager.getAccount();
 		if (account != null) {
 			return ContentResolver.isSyncActive(account, AUTHORITY);
 		} else {

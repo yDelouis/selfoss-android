@@ -4,6 +4,7 @@ import org.androidannotations.annotations.rest.Get;
 import org.androidannotations.annotations.rest.Post;
 import org.androidannotations.annotations.rest.Rest;
 import org.androidannotations.api.rest.RestClientErrorHandling;
+import org.androidannotations.api.rest.RestClientSupport;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
@@ -18,7 +19,7 @@ import fr.ydelouis.selfoss.entity.Tag;
 @Rest(converters = { StringHttpMessageConverter.class, MappingJackson2HttpMessageConverter.class },
 		interceptors = { SelfossApiInterceptor.class },
 		requestFactory = SelfossApiRequestFactory.class)
-public interface SelfossRest extends RestClientErrorHandling {
+public interface SelfossRest extends RestClientErrorHandling, RestClientSupport {
 
 	@Get("/login")
 	Success login();

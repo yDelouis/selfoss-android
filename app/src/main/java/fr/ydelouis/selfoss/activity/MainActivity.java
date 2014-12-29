@@ -22,8 +22,8 @@ import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.androidannotations.annotations.sharedpreferences.SharedPref;
 
 import fr.ydelouis.selfoss.R;
-import fr.ydelouis.selfoss.account.SelfossAccount;
-import fr.ydelouis.selfoss.account.SelfossAccountActivity_;
+import fr.ydelouis.selfoss.config.ui.ConfigActivity_;
+import fr.ydelouis.selfoss.config.model.ConfigManager;
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.entity.ArticleType;
 import fr.ydelouis.selfoss.entity.Filter;
@@ -43,7 +43,7 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Art
     private static final int ACCOUNT_SETTINGS_FIRST_TIME = 16;
 
 	@Bean
-	protected SelfossAccount account;
+	protected ConfigManager account;
 	@Bean
 	protected SyncManager syncManager;
 	@Bean
@@ -90,7 +90,7 @@ public class MainActivity extends Activity implements MenuFragment.Listener, Art
 	}
 
 	private void startConfig() {
-		SelfossAccountActivity_.intent(this).startForResult(ACCOUNT_SETTINGS_FIRST_TIME);
+		ConfigActivity_.intent(this).startForResult(ACCOUNT_SETTINGS_FIRST_TIME);
 	}
 
 	@AfterViews

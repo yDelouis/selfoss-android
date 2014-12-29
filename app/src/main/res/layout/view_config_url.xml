@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+    android:orientation="vertical"
+	>
+
+	<TextView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:layout_above="@+id/urlContainer"
+		android:gravity="center_vertical"
+		android:paddingLeft="32dp"
+		android:paddingRight="32dp"
+		android:text="@string/account_url_explanation"
+		android:textAppearance="@android:style/TextAppearance.Holo.Medium"
+		/>
+
+	<com.wrapp.floatlabelededittext.FloatLabeledEditText
+		android:id="@+id/urlContainer"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft="16dp"
+		android:layout_marginRight="16dp"
+	    android:layout_centerInParent="true"
+		>
+
+		<EditText
+			android:id="@+id/url"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:hint="@string/selfossInstanceUrl"
+			android:inputType="textUri"/>
+
+	</com.wrapp.floatlabelededittext.FloatLabeledEditText>
+
+</RelativeLayout>

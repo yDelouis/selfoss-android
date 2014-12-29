@@ -32,12 +32,13 @@
 	        android:theme="@style/Theme.Selfoss.Article"/>
 
 	    <activity
-            android:name=".account.SelfossAccountActivity_"
-            android:windowSoftInputMode="adjustPan" />
+            android:name=".config.ui.ConfigActivity_"
+            android:theme="@style/Theme.Selfoss.New"
+            android:windowSoftInputMode="adjustResize" />
 
 
         <service
-	        android:name=".account.SelfossAuthenticator_$Service_"
+	        android:name=".config.model.SelfossAuthenticator_$Service_"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
@@ -61,7 +62,7 @@
 
         <provider
             android:name=".model.SelfossContentProvider"
-            android:authorities="fr.ydelouis.selfoss"
+            android:authorities="@string/authority"
             android:exported="false"
             android:label="@string/app_name" />
     </application>
