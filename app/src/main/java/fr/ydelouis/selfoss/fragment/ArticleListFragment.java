@@ -14,11 +14,10 @@ import android.widget.ListView;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.InstanceState;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
@@ -37,7 +36,6 @@ import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 @EFragment(R.layout.fragment_articlelist)
-@OptionsMenu(R.menu.fragment_articlelist)
 public class ArticleListFragment extends Fragment
 	implements
 		AdapterView.OnItemClickListener,
@@ -238,7 +236,7 @@ public class ArticleListFragment extends Fragment
 		}
 	}
 
-	@OptionsItem(R.id.markAllRead)
+	@Click(R.id.markAllRead)
 	@Background
 	protected void markAllRead() {
 		actionHelper.markAllRead(filter);
