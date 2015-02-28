@@ -57,5 +57,6 @@
 	<string name="account_syncPeriod_title">Automatic synchronization</string>
 	<string name="automaticSynchronization">Automatic synchronization</string>
 	<string name="min">min</string>
+	<string name="syncOverWifiOnly">Synchronization via wifi only</string>
 
 </resources>

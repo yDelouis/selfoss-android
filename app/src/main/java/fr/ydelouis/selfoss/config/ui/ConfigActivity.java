@@ -40,8 +40,7 @@ public class ConfigActivity extends AccountAuthenticatorActivity implements Conf
 	@ViewById(R.id.progress) protected ProgressBar progress;
 	@ViewById(R.id.urlView) protected ConfigUrlView urlView;
 	@ViewById(R.id.authView) protected ConfigAuthView authView;
-	@ViewById(R.id.syncPeriodView) protected ConfigSyncPeriodView syncPeriodView;
-	@ViewById(R.id.back) protected View back;
+	@ViewById(R.id.syncPeriodView) protected ConfigSyncView syncPeriodView;
 	@ViewById(R.id.next) protected TextView next;
 
 	@AfterInject
@@ -70,6 +69,7 @@ public class ConfigActivity extends AccountAuthenticatorActivity implements Conf
 		authView.setUsername(config.getUsername());
 		authView.setPassword(config.getPassword());
 		syncPeriodView.setSyncPeriod(config.getSyncPeriod());
+		syncPeriodView.setSyncOverWifiOnly(config.syncOverWifiOnly());
 	}
 
 	@Click(R.id.next)
@@ -83,8 +83,7 @@ public class ConfigActivity extends AccountAuthenticatorActivity implements Conf
 		}
 	}
 
-	@Click(R.id.back)
-	protected void back() {
+	private void back() {
 		if (urlView.getVisibility() == View.VISIBLE) {
 			quit();
 		} else if (authView.getVisibility() == View.VISIBLE) {
@@ -186,6 +185,7 @@ public class ConfigActivity extends AccountAuthenticatorActivity implements Conf
 
 	private void nextSyncPeriod() {
 		config.setSyncPeriod(syncPeriodView.getSyncPeriod());
+		config.setSyncOverWifiOnly(syncPeriodView.getSyncOverWifiOnly());
 		configManager.save(config);
 		setResult(RESULT_OK);
 		finish();
@@ -195,13 +195,11 @@ public class ConfigActivity extends AccountAuthenticatorActivity implements Conf
 
 	private void setChecking(boolean checking){
 		progress.setVisibility(checking ? View.VISIBLE : View.INVISIBLE);
-		back.setEnabled(!checking);
 		next.setEnabled(!checking);
 	}
 
 	private void showUrlView() {
 		title.setText(R.string.account_url_title);
-		back.setVisibility(View.GONE);
 		urlView.setVisibility(View.VISIBLE);
 		authView.setVisibility(View.GONE);
 		syncPeriodView.setVisibility(View.GONE);
@@ -210,7 +208,6 @@ public class ConfigActivity extends AccountAuthenticatorActivity implements Conf
 
 	private void showAuthView() {
 		title.setText(R.string.account_auth_title);
-		back.setVisibility(View.VISIBLE);
 		urlView.setVisibility(View.GONE);
 		authView.setVisibility(View.VISIBLE);
 		syncPeriodView.setVisibility(View.GONE);
@@ -219,7 +216,6 @@ public class ConfigActivity extends AccountAuthenticatorActivity implements Conf
 
 	private void showSyncPeriodView() {
 		title.setText(R.string.account_syncPeriod_title);
-		back.setVisibility(View.VISIBLE);
 		urlView.setVisibility(View.GONE);
 		authView.setVisibility(View.GONE);
 		syncPeriodView.setVisibility(View.VISIBLE);

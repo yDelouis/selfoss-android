@@ -8,6 +8,7 @@ public class Config {
 	private String username;
 	private String password;
 	private long syncPeriod;
+	private boolean syncOverWifiOnly;
 
 
 	public String getUrl() {
@@ -60,5 +61,13 @@ public class Config {
 
 	public boolean requireAuth() {
 		return username != null;
+	}
+
+	public boolean syncOverWifiOnly() {
+		return syncOverWifiOnly;
+	}
+
+	public void setSyncOverWifiOnly(boolean syncOverWifiOnly) {
+		this.syncOverWifiOnly = syncOverWifiOnly;
 	}
 }

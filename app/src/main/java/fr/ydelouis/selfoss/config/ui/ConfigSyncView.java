@@ -17,30 +17,31 @@ import org.androidannotations.annotations.ViewById;
 
 import fr.ydelouis.selfoss.R;
 
-@EViewGroup(R.layout.view_config_syncperiod)
-public class ConfigSyncPeriodView extends LinearLayout implements TimePickerDialog.OnTimeSetListener {
+@EViewGroup(R.layout.view_config_sync)
+public class ConfigSyncView extends LinearLayout implements TimePickerDialog.OnTimeSetListener {
 
 	private static final long DEFAULT_TIME_IN_SECOND = 15 * 60;
 
 	@ViewById(R.id.autoSync) protected CheckBox autoSyncCheckBox;
 	@ViewById(R.id.syncPeriod) protected TextView syncPeriodText;
+	@ViewById(R.id.syncOverWifiOnly) protected CheckBox syncOverWifiCheckBox;
 
 	private long time;
 
-	public ConfigSyncPeriodView(Context context) {
+	public ConfigSyncView(Context context) {
 		super(context);
 	}
 
-	public ConfigSyncPeriodView(Context context, AttributeSet attrs) {
+	public ConfigSyncView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
-	public ConfigSyncPeriodView(Context context, AttributeSet attrs, int defStyleAttr) {
+	public ConfigSyncView(Context context, AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 	}
 
 	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
-	public ConfigSyncPeriodView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+	public ConfigSyncView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
 		super(context, attrs, defStyleAttr, defStyleRes);
 	}
 
@@ -52,17 +53,26 @@ public class ConfigSyncPeriodView extends LinearLayout implements TimePickerDial
 		autoSyncCheckBox.setChecked(autoSyncEnabled);
 		time = autoSyncEnabled ? syncPeriod : -syncPeriod;
 		setSyncPeriodText();
-		setSyncPeriodEnabled(autoSyncEnabled);
+		setSyncEnabled(autoSyncEnabled);
+	}
+
+	public void setSyncOverWifiOnly(boolean syncOverWifiOnly) {
+		syncOverWifiCheckBox.setChecked(syncOverWifiOnly);
 	}
 
 	public long getSyncPeriod() {
 		return autoSyncCheckBox.isChecked() ? time : 0;
 	}
 
+	public boolean getSyncOverWifiOnly() {
+		return syncOverWifiCheckBox.isChecked();
+	}
+
 	@CheckedChange(R.id.autoSync)
-	protected void setSyncPeriodEnabled(boolean enabled) {
+	protected void setSyncEnabled(boolean enabled) {
 		syncPeriodText.setTextColor(getResources().getColor(enabled ? R.color.main_color : R.color.main_color_disabled));
 		syncPeriodText.setEnabled(enabled);
+		syncOverWifiCheckBox.setEnabled(enabled);
 	}
 
 	@Click(R.id.syncPeriod)

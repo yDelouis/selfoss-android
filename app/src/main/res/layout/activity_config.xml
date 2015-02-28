@@ -52,7 +52,7 @@
 		android:layout_weight="2"
 		android:visibility="gone"/>
 
-	<fr.ydelouis.selfoss.config.ui.ConfigSyncPeriodView_
+	<fr.ydelouis.selfoss.config.ui.ConfigSyncView_
 		android:id="@+id/syncPeriodView"
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
@@ -61,16 +61,7 @@
 
 	<RelativeLayout
 		style="@style/WorkflowBar"
-		android:layout_alignParentBottom="true"
 		>
-
-		<TextView
-			android:id="@+id/back"
-			style="@style/WorkflowBar.Item"
-			android:layout_alignParentLeft="true"
-			android:text="@string/back"
-		    android:visibility="gone"
-			/>
 
 		<TextView
 			android:id="@+id/next"
