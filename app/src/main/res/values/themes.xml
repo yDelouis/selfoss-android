@@ -34,7 +34,10 @@
         <item name="ptrHeaderStyle">@style/Widget.Custom.PtrHeader</item>
         <item name="android:actionOverflowButtonStyle">@style/ActionButton.Overflow.Selfoss</item>
         <item name="android:homeAsUpIndicator">@drawable/ic_homeasupindicator</item>
-        <item name="android:selectableItemBackground">@drawable/menu_selectable_background_selfoss</item>
+
+        <item name="android:selectableItemBackground">@drawable/selectable_background_selfoss</item>
+		<item name="selectableItemBackground">?android:selectableItemBackground</item>
+		<item name="selectableItemBackgroundBorderless">@drawable/selectable_background_selfoss</item>
 
 	</style>
 
@@ -61,7 +64,7 @@
     </style>
 
     <style name="DropDownListView.Selfoss" parent="@android:style/Widget.Holo.ListView.DropDown">
-        <item name="android:listSelector">@drawable/menu_selectable_background_selfoss</item>
+        <item name="android:listSelector">@drawable/selectable_background_selfoss</item>
     </style>
 
     <style name="ActionBarTabStyle.Selfoss" parent="@android:style/Widget.Holo.ActionBar.TabView">
@@ -71,7 +74,7 @@
     <style name="DropDownNav.Selfoss" parent="@android:style/Widget.Holo.Spinner">
         <item name="android:background">@drawable/spinner_background_ab_selfoss</item>
         <item name="android:popupBackground">@drawable/menu_dropdown_panel_selfoss</item>
-        <item name="android:dropDownSelector">@drawable/menu_selectable_background_selfoss</item>
+        <item name="android:dropDownSelector">@drawable/selectable_background_selfoss</item>
     </style>
 
     <style name="ProgressBar.Selfoss" parent="@android:style/Widget.Holo.ProgressBar.Horizontal">
