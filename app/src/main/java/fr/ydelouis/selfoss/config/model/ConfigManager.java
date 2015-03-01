@@ -22,6 +22,7 @@ public class ConfigManager {
 	private static final String KEY_SYNC_PERIOD = "syncPeriod";
 	private static final String KEY_TRUST_ALL_CERTIFICATES = "trustAllCertificates";
 	private static final String KEY_USE_HTTPS = "useHttps";
+	private static final String KEY_SYNC_OVER_WIFI_ONLY = "syncOverWifiOnly";
 
 	@SystemService protected AccountManager accountManager;
 	@RootContext protected Context context;
@@ -46,6 +47,7 @@ public class ConfigManager {
 		accountManager.setUserData(account, KEY_USE_HTTPS, String.valueOf(config.useHttps()));
 		accountManager.setUserData(account, KEY_TRUST_ALL_CERTIFICATES, String.valueOf(config.trustAllCertificates()));
 		accountManager.setUserData(account, KEY_SYNC_PERIOD, String.valueOf(config.getSyncPeriod()));
+		accountManager.setUserData(account, KEY_SYNC_OVER_WIFI_ONLY, String.valueOf(config.syncOverWifiOnly()));
 
 		SyncManager.setPeriodicSync(this, config);
 	}
@@ -60,6 +62,7 @@ public class ConfigManager {
 			config.setUsername(accountManager.getUserData(account, KEY_USERNAME));
 			config.setPassword(accountManager.getPassword(account));
 			config.setUseHttps(Boolean.valueOf(accountManager.getUserData(account, KEY_USE_HTTPS)));
+			config.setSyncOverWifiOnly(Boolean.valueOf(accountManager.getUserData(account, KEY_SYNC_OVER_WIFI_ONLY)));
 			String syncPeriod = accountManager.getUserData(account, KEY_SYNC_PERIOD);
 			if (syncPeriod != null) {
 				config.setSyncPeriod(Long.valueOf(syncPeriod));
@@ -90,147 +93,4 @@ public class ConfigManager {
 		accountManager.removeAccount(account, null, null);
 		databaseHelper.clearTables();
 	}
-
-// OLD
-/*
-	public void create(String url) {
-		Account account = getAccount();
-		if (account != null && !account.name.equals(url)) {
-			remove();
-			account = null;
-		}
-		if (account == null) {
-			account = new Account(url, ACCOUNT_TYPE);
-			accountManager.addAccountExplicitly(account, null, null);
-		}
-	}
-
-	public void create(String url, boolean useHttps, long syncPeriod) {
-		create(url, false, url, "", useHttps, syncPeriod);
-	}
-
-	public void create(String url, String username, String password, boolean useHttps, long syncPeriod) {
-		create(url, true, username, password, useHttps, syncPeriod);
-	}
-
-	private void create(String url, boolean requireAuth, String username, String password, boolean useHttps, long syncPeriod) {
-		Account account = getAccount();
-		if (account != null && !account.name.equals(username)) {
-			accountManager.removeAccount(account, null, null);
-			databaseHelper.clearTables();
-			account = null;
-		}
-		if (account == null) {
-			account = new Account(username, ACCOUNT_TYPE);
-			accountManager.addAccountExplicitly(account, password, null);
-		}
-		accountManager.setPassword(account, password);
-		accountManager.setUserData(account, KEY_USE_HTTPS, String.valueOf(useHttps));
-		accountManager.setUserData(account, KEY_SYNC_PERIOD, String.valueOf(syncPeriod));
-		accountManager.setUserData(account, KEY_REQUIRE_AUTH, String.valueOf(requireAuth));
-
-		//SyncManager.setPeriodicSync(this);
-	}
-
-
-
-	public String getUrl() {
-		Account account = getAccount();
-		if (account == null) {
-			return null;
-		} else {
-			return account.name;
-		}
-	}
-
-	public boolean requireAuth() {
-		Account account = getAccount();
-		if (account == null) {
-			return false;
-		} else {
-			return Boolean.valueOf(accountManager.getUserData(account, KEY_REQUIRE_AUTH));
-		}
-	}
-
-
-	public void setRequireAuth(boolean requireAuth) {
-		Account account = getAccount();
-		if (account != null) {
-			accountManager.setUserData(account, KEY_REQUIRE_AUTH, String.valueOf(requireAuth));
-		}
-	}
-
-	public String getUsername() {
-		Account account = getAccount();
-		if (account == null) {
-			return null;
-		} else {
-			return accountManager.getUserData(account, KEY_USERNAME);
-		}
-	}
-
-	public void setUsername(String username) {
-		Account account = getAccount();
-		if (account != null) {
-			accountManager.setUserData(account, KEY_USERNAME, username);
-		}
-	}
-
-	public String getPassword() {
-		Account account = getAccount();
-		if (account == null) {
-			return "";
-		} else {
-			return accountManager.getPassword(account);
-		}
-	}
-
-	public void setPassword(String password) {
-		Account account = getAccount();
-		if (account != null) {
-			accountManager.setPassword(account, password);
-		}
-	}
-
-	public SyncPeriod getSyncPeriod() {
-		Account account = getAccount();
-		if (account == null) {
-			return SyncPeriod.getDefault();
-		} else {
-			return SyncPeriod.fromTime(Long.valueOf(accountManager.getUserData(account, KEY_SYNC_PERIOD)));
-		}
-	}
-
-	public boolean trustAllCertificates() {
-		Account account = getAccount();
-		if (account == null) {
-			return false;
-		} else {
-			return Boolean.valueOf(accountManager.getUserData(account, KEY_TRUST_ALL_CERTIFICATES));
-		}
-	}
-
-	public void setTrustAllCertificates(boolean trustAllCertificates) {
-		Account account = getAccount();
-		if (account == null) {
-			throw new IllegalStateException("Account has not been created yet");
-		} else {
-			accountManager.setUserData(account, KEY_TRUST_ALL_CERTIFICATES, String.valueOf(trustAllCertificates));
-		}
-	}
-
-	public boolean useHttps() {
-		Account account = getAccount();
-		if (account == null) {
-			return requireAuth();
-		} else {
-			String useHttpsString = accountManager.getUserData(account, KEY_USE_HTTPS);
-			if (useHttpsString == null) {
-				return requireAuth();
-			} else {
-				return Boolean.valueOf(useHttpsString);
-			}
-		}
-	}
-	*/
 }
