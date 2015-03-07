@@ -11,7 +11,9 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.OrmLiteDao;
 import org.androidannotations.annotations.RootContext;
 
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import fr.ydelouis.selfoss.entity.Article;
 import fr.ydelouis.selfoss.model.ArticleDao;
@@ -26,6 +28,7 @@ public class ArticleSync {
 
 	private static final int ARTICLES_PAGE_SIZE = 20;
 	private static final int CACHE_SIZE = 50;
+	private static final long NOT_FAVORITE_ARTICLE_LIFETIME = TimeUnit.DAYS.toMillis(21);
 
 	@RootContext
 	protected Context context;
@@ -49,6 +52,7 @@ public class ArticleSync {
 			syncUnread();
 			syncFavorite();
 		}
+		articleDao.deleteNotFavoriteOlderThan(new Date().getTime() - NOT_FAVORITE_ARTICLE_LIFETIME);
 		sendSyncBroadcast();
 	}
 

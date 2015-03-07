@@ -267,6 +267,19 @@ public class ArticleDao extends BaseDaoImpl<Article, Integer> {
 		}
 	}
 
+	public void deleteNotFavoriteOlderThan(long dateTime) {
+		try {
+			DeleteBuilder<Article, Integer> deleteBuilder = deleteBuilder();
+			deleteBuilder.where()
+					.eq(COLUMN_STARRED, false)
+					.and().lt(COLUMN_DATETIME, dateTime);
+			deleteBuilder.delete();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+
 	private void notifyCreation(Article article) {
 		broadcast(ACTION_CREATION, article);
 	}
