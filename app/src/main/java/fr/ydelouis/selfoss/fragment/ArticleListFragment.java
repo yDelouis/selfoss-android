@@ -83,7 +83,6 @@ public class ArticleListFragment extends Fragment
 		super.onResume();
 		syncStatusHandler = ContentResolver.addStatusChangeListener(ContentResolver.SYNC_OBSERVER_TYPE_ACTIVE, this);
 		updateSyncState();
-		updateAdapterIfNotNewest();
 	}
 
 	@Override
@@ -101,12 +100,6 @@ public class ArticleListFragment extends Fragment
 	private void updateAdapter() {
 		adapter.setAdapterViewWrapper(wrapper);
 		adapter.setFilter(filter);
-	}
-
-	private void updateAdapterIfNotNewest() {
-		if (!ArticleType.Newest.equals(filter.getType())) {
-			updateAdapter();
-		}
 	}
 
 	public void setListener(Listener listener) {
@@ -187,13 +180,11 @@ public class ArticleListFragment extends Fragment
 		if (item.getItemId() == R.id.markRead) {
 			markReadOrUnread();
 			mode.finish();
-			updateAdapterIfNotNewest();
 			return true;
 		}
 		if (item.getItemId() == R.id.markStarred) {
 			markFavoriteOrUnstarred();
 			mode.finish();
-			updateAdapterIfNotNewest();
 			return true;
 		}
 		return false;
