@@ -11,9 +11,9 @@ import java.util.List;
 
 import fr.ydelouis.selfoss.view.PagedAdapterViewWrapper;
 
-public abstract class PagedAdapter<T> extends BaseAdapter implements View.OnClickListener
-{
-    private enum State { Idle, Loading, Error, End }
+public abstract class PagedAdapter<T> extends BaseAdapter implements View.OnClickListener {
+
+    private enum State {Idle, Loading, Error, End}
 
     private int anticipation = 0;
     private View loadingView;
@@ -24,34 +24,33 @@ public abstract class PagedAdapter<T> extends BaseAdapter implements View.OnClic
 
     private PagedAdapterViewWrapper adapterViewWrapper;
 
-	public PagedAdapter() {
-
-	}
+    public PagedAdapter() {
+    }
 
     public PagedAdapter(PagedAdapterViewWrapper adapterViewWrapper) {
         setAdapterViewWrapper(adapterViewWrapper);
     }
 
-	public void setAdapterViewWrapper(PagedAdapterViewWrapper adapterViewWrapper) {
-		if(adapterViewWrapper == null)
-			throw new IllegalArgumentException("The PagedAdapterViewWrapper must not be null");
-		this.adapterViewWrapper = adapterViewWrapper;
-		adapterViewWrapper.setAdapter(this);
-	}
+    public void setAdapterViewWrapper(PagedAdapterViewWrapper adapterViewWrapper) {
+        if(adapterViewWrapper == null)
+            throw new IllegalArgumentException("The PagedAdapterViewWrapper must not be null");
+        this.adapterViewWrapper = adapterViewWrapper;
+        adapterViewWrapper.setAdapter(this);
+    }
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
         if(isNewPageNeeded(position))
             loadNextItems();
         if(isFooterView(position))
-           return getFooterView();
+            return getFooterView();
         return getView(position, view);
     }
 
     private boolean isNewPageNeeded(int position) {
         if(state != State.Idle)
             return false;
-        return position >= getCount()-1 - anticipation;
+        return position >= getCount() - 1 - anticipation;
     }
 
     private boolean hasFooterView() {
@@ -59,7 +58,7 @@ public abstract class PagedAdapter<T> extends BaseAdapter implements View.OnClic
     }
 
     private View getFooterView() {
-        if(data.isEmpty() && state != State.Loading) {
+        if(isDataEmpty() && state != State.Loading) {
             if(state == State.Error && getEmptyErrorView() != null)
                 return null;
             if(getEmptyView() != null)
@@ -81,19 +80,19 @@ public abstract class PagedAdapter<T> extends BaseAdapter implements View.OnClic
     public void reset() {
         data.clear();
         setState(State.Idle);
-	    loadNextItems();
+        loadNextItems();
     }
 
     public void loadNextItems() {
         setState(State.Loading);
     }
 
-	public void loadNewItems() {
-		setState(State.Loading);
-	}
+    public void loadNewItems() {
+        setState(State.Loading);
+    }
 
     public void onItemsLoaded(List<T> newItems, boolean areNewItems) {
-        if(areNewItems && !data.isEmpty())
+        if(areNewItems && !isDataEmpty())
             addNewItems(newItems);
         else
             addNextItems(newItems);
@@ -133,17 +132,17 @@ public abstract class PagedAdapter<T> extends BaseAdapter implements View.OnClic
         }
     }
 
-	protected void replace(T item) {
-		int index = data.indexOf(item);
-		if (index > -1) {
-			data.set(index, item);
-			notifyDataSetChanged();
-		}
-	}
+    protected void replace(T item) {
+        int index = data.indexOf(item);
+        if(index > -1) {
+            data.set(index, item);
+            notifyDataSetChanged();
+        }
+    }
 
     private void setState(State state) {
         adapterViewWrapper.removeEmptyView();
-        if(data.isEmpty() && state != State.Loading)
+        if(isDataEmpty() && state != State.Loading)
             showEmptyView(state);
         this.state = state;
         notifyDataSetChanged();
@@ -207,7 +206,11 @@ public abstract class PagedAdapter<T> extends BaseAdapter implements View.OnClic
     }
 
     private boolean isFooterView(int position) {
-        return position == data.size();
+        return position == getItemCount();
+    }
+
+    private boolean isDataEmpty() {
+        return getItemCount() == 0;
     }
 
     @Override
@@ -230,27 +233,27 @@ public abstract class PagedAdapter<T> extends BaseAdapter implements View.OnClic
 
     @Override
     public int getCount() {
-        int count = data.size();
+        int count = getItemCount();
         if(hasFooterView())
             count++;
         return count;
     }
 
-	public int getItemCount() {
-		return data.size();
-	}
+    public int getItemCount() {
+        return data.size() - getHiddenCount();
+    }
 
     @Override
     public T getItem(int i) {
-        if(i < data.size())
-            return data.get(i);
+        if(i < getItemCount())
+            return data.get(getRealPosition(i));
         return null;
     }
 
     @Override
     public long getItemId(int i) {
-        if(i < data.size())
-            return i;
+        if(i < getItemCount())
+            return getRealPosition(i);
         return -1;
     }
 
@@ -259,10 +262,45 @@ public abstract class PagedAdapter<T> extends BaseAdapter implements View.OnClic
         return !isFooterView(position);
     }
 
+    private int getHiddenCount() {
+        int count = 0;
+        for(T t : data) {
+            if(isHidden(t)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private int getHiddenCountUpTo(int location) {
+        int count = 0;
+        for(int i = 0; i <= location; i++) {
+            if(isHidden(data.get(i))) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private int getRealPosition(int position) {
+        int hElements = getHiddenCountUpTo(position);
+        int diff = 0;
+        for(int i = 0; i < hElements; i++) {
+            diff++;
+            T t = data.get(position + diff);
+            if(isHidden(t)) {
+                i--;
+            }
+        }
+        return (position + diff);
+    }
+
     @Override
     public boolean areAllItemsEnabled() {
         return false;
     }
 
     public abstract View getView(int position, View view);
+
+    protected abstract boolean isHidden(T item);
 }

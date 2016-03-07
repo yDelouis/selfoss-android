@@ -109,6 +109,17 @@ public class ArticleAdapter extends PagedAdapter<Article> implements ArticleProv
 	}
 
 	@Override
+	protected boolean isHidden(Article item) {
+		ArticleType articleType = provider.getFilter().getType();
+		if(articleType.equals(ArticleType.Unread)) {
+			return !item.isUnread();
+		} else if (articleType.equals(ArticleType.Starred)) {
+			return !item.isStarred();
+		}
+		return false;
+	}
+
+	@Override
 	public void loadNextItems() {
 		super.loadNextItems();
 		loadNextInBackground();
@@ -156,13 +167,7 @@ public class ArticleAdapter extends PagedAdapter<Article> implements ArticleProv
 	}
 
 	private void updateArticle(Article article) {
-		if (isInList(article)) {
-			replace(article);
-		}
-	}
-
-	private boolean isInList(Article article) {
-		return article.isCached() == provider.getFilter().getType().equals(ArticleType.Newest);
+		replace(article);
 	}
 
 	public void setFilter(Filter filter) {
